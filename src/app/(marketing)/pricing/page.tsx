@@ -1,0 +1,233 @@
+import Link from "next/link";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { PageHeader } from "@/components/marketing/page-header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Reveal } from "@/components/ui/reveal";
+import { TiltCard } from "@/components/ui/tilt-card";
+import { cn } from "@/lib/utils";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Pricing",
+  description:
+    "Flexible Titan Fitness memberships — Essential, Pro, and Elite. No contracts, cancel anytime, first month 50% off.",
+  path: "/pricing",
+});
+
+const PLANS = [
+  {
+    slug: "essential",
+    name: "Essential",
+    price: 29,
+    period: "/month",
+    tagline: "Everything you need to start strong.",
+    cta: "Start Essential",
+    features: [
+      "Gym floor access",
+      "8 group classes / month",
+      "Basic workout tracking",
+      "BMI calculator",
+      "Community access",
+      "Locker room access",
+    ],
+    popular: false,
+  },
+  {
+    slug: "pro",
+    name: "Pro",
+    price: 59,
+    period: "/month",
+    tagline: "For those serious about transformation.",
+    cta: "Get Pro",
+    features: [
+      "Unlimited gym & classes",
+      "AI workout generator",
+      "AI nutritionist + meal plans",
+      "Advanced progress analytics",
+      "QR check-in & attendance",
+      "Priority support",
+      "All Titan branches",
+    ],
+    popular: true,
+  },
+  {
+    slug: "elite",
+    name: "Elite",
+    price: 99,
+    period: "/month",
+    tagline: "The complete performance package.",
+    cta: "Go Elite",
+    features: [
+      "Everything in Pro",
+      "4 personal training sessions / month",
+      "AI fitness chatbot (unlimited)",
+      "Recovery & physio sessions",
+      "Free Titan gear pack",
+      "Dedicated success coach",
+      "Guest passes (2 / month)",
+    ],
+    popular: false,
+  },
+];
+
+const COMPARE = [
+  { feature: "Gym access", essential: true, pro: true, elite: true },
+  { feature: "Group classes", essential: "8/mo", pro: "Unlimited", elite: "Unlimited" },
+  { feature: "AI workout generator", essential: false, pro: true, elite: true },
+  { feature: "AI nutritionist", essential: false, pro: true, elite: true },
+  { feature: "AI fitness chatbot", essential: false, pro: "Limited", elite: "Unlimited" },
+  { feature: "Personal training", essential: false, pro: false, elite: "4/mo" },
+  { feature: "QR check-in & streaks", essential: true, pro: true, elite: true },
+  { feature: "Progress analytics", essential: false, pro: true, elite: true },
+  { feature: "Priority support", essential: false, pro: true, elite: true },
+  { feature: "Recovery sessions", essential: false, pro: false, elite: true },
+  { feature: "All branches", essential: false, pro: true, elite: true },
+  { feature: "Success coach", essential: false, pro: false, elite: true },
+];
+
+export default function PricingPage() {
+  return (
+    <>
+      <PageHeader
+        badge="Membership"
+        title="Simple, Honest"
+        highlight="Pricing"
+        description="No hidden fees. No contracts. Cancel anytime. First month 50% off for new members."
+      />
+
+      <section className="pb-16">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
+          {PLANS.map((plan, i) => (
+            <Reveal key={plan.slug} delay={i * 0.1}>
+              <TiltCard maxTilt={4} className="h-full">
+                <div
+                  className={cn(
+                    "relative flex h-full flex-col rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500",
+                    plan.popular
+                      ? "border-primary/40 bg-gradient-to-b from-primary/10 to-surface/60 shadow-glow"
+                      : "border-border bg-surface/60 hover:border-white/15"
+                  )}
+                >
+                  {plan.popular && (
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2" variant="default">
+                      <Sparkles className="h-3 w-3" /> Most Popular
+                    </Badge>
+                  )}
+                  <h2 className="font-display text-xl font-bold uppercase tracking-widest text-foreground">
+                    {plan.name}
+                  </h2>
+                  <p className="mt-1.5 text-sm text-muted-foreground">{plan.tagline}</p>
+                  <div className="mt-6 flex items-end gap-1">
+                    <span
+                      className={cn(
+                        "font-display text-5xl font-bold",
+                        plan.popular ? "text-gradient" : "text-foreground"
+                      )}
+                    >
+                      ${plan.price}
+                    </span>
+                    <span className="pb-1.5 text-sm text-muted-foreground">{plan.period}</span>
+                  </div>
+                  <ul className="mt-7 flex-1 space-y-3.5">
+                    {plan.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className="flex items-start gap-3 text-sm text-muted-foreground"
+                      >
+                        <span
+                          className={cn(
+                            "mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full",
+                            plan.popular ? "bg-primary/20" : "bg-success/15"
+                          )}
+                        >
+                          <Check className={cn("h-3 w-3", plan.popular ? "text-primary" : "text-success")} />
+                        </span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    asChild
+                    variant={plan.popular ? "default" : "outline"}
+                    className="group mt-8 w-full"
+                    size="lg"
+                  >
+                    <Link href="/register">
+                      {plan.cta}
+                      <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                  </Button>
+                </div>
+              </TiltCard>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="pb-24">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="text-center">
+            <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-foreground sm:text-4xl">
+              Compare <span className="text-gradient">Plans</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="mt-10 overflow-x-auto rounded-2xl border border-border bg-surface/60 backdrop-blur-xl">
+              <table className="w-full min-w-[600px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="px-6 py-4 font-medium text-muted-foreground">Feature</th>
+                    <th className="px-6 py-4 text-center font-display font-bold uppercase tracking-wide text-foreground">
+                      Essential
+                    </th>
+                    <th className="px-6 py-4 text-center font-display font-bold uppercase tracking-wide text-primary">
+                      Pro
+                    </th>
+                    <th className="px-6 py-4 text-center font-display font-bold uppercase tracking-wide text-accent">
+                      Elite
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARE.map((row) => (
+                    <tr key={row.feature} className="border-b border-border/50 transition-colors hover:bg-white/[0.02]">
+                      <td className="px-6 py-3.5 text-muted-foreground">{row.feature}</td>
+                      <td className="px-6 py-3.5 text-center">
+                        {row.essential === true ? (
+                          <Check className="mx-auto h-4 w-4 text-success" />
+                        ) : row.essential === false ? (
+                          <span className="text-surface-2">—</span>
+                        ) : (
+                          <span className="text-muted-foreground">{row.essential}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-3.5 text-center">
+                        {row.pro === true ? (
+                          <Check className="mx-auto h-4 w-4 text-success" />
+                        ) : row.pro === false ? (
+                          <span className="text-surface-2">—</span>
+                        ) : (
+                          <span className="text-primary">{row.pro}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-3.5 text-center">
+                        {row.elite === true ? (
+                          <Check className="mx-auto h-4 w-4 text-success" />
+                        ) : row.elite === false ? (
+                          <span className="text-surface-2">—</span>
+                        ) : (
+                          <span className="text-accent">{row.elite}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </>
+  );
+}

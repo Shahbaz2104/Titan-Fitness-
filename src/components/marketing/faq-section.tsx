@@ -1,0 +1,91 @@
+"use client";
+
+import Link from "next/link";
+import { Clock, ArrowRight, MessageCircle } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Reveal } from "@/components/ui/reveal";
+
+const FAQS = [
+  {
+    q: "How does the AI workout generator work?",
+    a: "Tell us your goal, experience level, available equipment, and how many days you can train. Our AI builds a complete weekly program with exercises, sets, reps, rest times, warm-up, and cool-down — all adapted as you log progress.",
+  },
+  {
+    q: "Can I cancel my membership anytime?",
+    a: "Yes. There are no contracts or cancellation fees. Manage your membership from the dashboard — cancellations take effect at the end of your current billing cycle.",
+  },
+  {
+    q: "Do I need to be fit to join?",
+    a: "Absolutely not. Our programs range from absolute beginner to elite. Every plan adapts to your current level, and our coaches will guide you every step of the way.",
+  },
+  {
+    q: "What equipment do I need for AI-generated workouts?",
+    a: "The generator supports everything from bodyweight-only to full gym. Select what you have — dumbbells, bands, machines — and we'll build around it.",
+  },
+  {
+    q: "How do QR check-ins work?",
+    a: "Each member gets a unique QR membership card in the app. Scan at the front desk on arrival — your attendance, streaks, and rewards update automatically.",
+  },
+  {
+    q: "Can I book personal training sessions?",
+    a: "Yes. Browse trainer profiles, check live availability, and book 1-on-1 sessions directly in the app. Elite members get 4 sessions included monthly.",
+  },
+];
+
+export function FaqSection() {
+  return (
+    <section className="relative border-y border-border bg-surface/30 py-24 sm:py-32">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-5 lg:px-8">
+        <Reveal className="lg:col-span-2">
+          <Badge variant="warning" className="mb-4">
+            FAQs
+          </Badge>
+          <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground">
+            Questions? <br />
+            <span className="text-gradient">Answered.</span>
+          </h2>
+          <p className="mt-5 max-w-sm text-muted-foreground">
+            Everything you need to know before you start your journey.
+          </p>
+          <div className="mt-8 flex items-center gap-3 text-sm text-muted-foreground">
+            <Clock className="h-4 w-4 text-primary" />
+            Average response time: under 2 hours
+          </div>
+          <Button asChild variant="outline" className="mt-5 group">
+            <Link href="/faq">
+              View all FAQs
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </Button>
+        </Reveal>
+
+        <Reveal delay={0.15} className="lg:col-span-3">
+          <Accordion type="single" collapsible className="space-y-3">
+            {FAQS.map((faq, i) => (
+              <AccordionItem key={faq.q} value={`item-${i}`}>
+                <AccordionTrigger className="font-medium text-foreground">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent>{faq.a}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+          <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
+            <MessageCircle className="h-4 w-4 text-accent" />
+            Still have questions?{" "}
+            <Link href="/contact" className="font-medium text-accent hover:underline">
+              Chat with us
+            </Link>
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  );
+}

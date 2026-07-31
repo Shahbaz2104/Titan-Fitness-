@@ -1,0 +1,19 @@
+"use client";
+
+import * as React from "react";
+
+const subscribe = (callback: () => void) => {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+  return () => {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+};
+
+const getSnapshot = () => navigator.onLine;
+const getServerSnapshot = () => true;
+
+export function useOnlineStatus(): boolean {
+  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
