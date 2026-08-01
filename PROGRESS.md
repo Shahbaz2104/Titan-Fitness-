@@ -1,13 +1,20 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (night session 4 — **Phase 5 COMPLETE & COMMITTED**)
+Updated: 2026-08-01 (night session 5 — Phase 6 PWA/SEO/security audit done, **UNCOMMITTED**)
 
 ## ⚠️ CRITICAL — CURRENT STATE (read this first)
 
-- **Phase 5 fully committed.** Stripe + OTP auth + navbar fix = `267b5fb`; web push = `223d3d6`. Working tree clean.
-- **Phase 5 recap (all verified live)**: Stripe checkout w/ mock fallback + webhook route; OTP email verification + password reset (better-auth emailOTP plugin); web push notifications (VAPID keys set in `.env`, `PushSubscription` model, `sw.js`, dashboard enable card); critical navbar infinite-loop bug fixed
-- **Verified**: tsc ✓, eslint ✓, 21/21 tests ✓, build ✓ (131 static pages), prod server on :3000 restarted with final build, all pages render (Playwright sweep), push subscribe/unsubscribe/status E2E ✓, OTP E2E ✓
-- **Next step: Phase 6 — PWA/SEO/security audit** (deferred; ask user)
+- **Phase 6 (PWA/SEO/security audit) COMPLETE, uncommitted.** New/changed:
+  - `src/app/robots.ts` (NEW) — allow all, disallow `/dashboard` `/admin` `/api/auth` `/api/me`, sitemap link
+  - `src/app/sitemap.ts` (NEW) — 31 URLs: 13 static routes + 11 programs + 7 trainers + blog posts (with real publishedAt dates)
+  - `next.config.ts` — global security headers: X-Content-Type-Options: nosniff, X-Frame-Options: SAMEORIGIN, Referrer-Policy: strict-origin-when-cross-origin, Permissions-Policy (camera/mic/geo/interest-cohort blocked), X-DNS-Prefetch-Control
+  - `public/apple-icon.png` (NEW) — was referenced in layout icons but 404; generated 180px from icon-192
+  - `PROGRAMS`/`TRAINERS` arrays now exported from their pages (for sitemap)
+  - sitemap also includes `/bmi`
+- **Audit findings (already good)**: root layout has metadataBase + title template + OG + twitter + manifest + viewport themeColor; blog/program/trainer pages have generateMetadata via `buildMetadata` helper (`src/lib/seo.ts`); manifest.json complete (icons 192/512 + maskable, shortcuts); `poweredByHeader: false` already set; PWA installability OK on localhost/HTTPS
+- **Verified**: tsc ✓, eslint ✓, build ✓ (133 static pages), live: all 7 sampled pages render OK (Playwright), headers present on every response, robots.txt + sitemap.xml serve 200, server restarted with new build (PID 82571)
+- **Not done (documented)**: strict CSP — needs nonce infrastructure, risks breaking Next streaming bootstrap; left for later
+- **Next step: commit Phase 6** (`git add -A && git commit -m "feat: Phase 6 — robots.txt, sitemap, security headers, apple-icon"`), then Phase 7 (tests + CI expansion) or user review
 
 ## Phase Status Overview
 
@@ -19,7 +26,7 @@ Updated: 2026-08-01 (night session 4 — **Phase 5 COMPLETE & COMMITTED**)
 | 3 | Admin panel | ✅ Done (commit `629deb4`) |
 | 4 | AI features (real LLM wiring) | ✅ Done (commit `8e0399c`) |
 | 5 | Stripe, gamification UI, notifications | ✅ Done (Stripe+OTP `267b5fb`, web push `223d3d6`) |
-| 6 | PWA, SEO, security | ⬜ |
+| 6 | PWA, SEO, security | ✅ Built — **UNCOMMITTED** (robots, sitemap, security headers, apple-icon) |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
 | 8 | Final audit, README, GitHub push | ⬜ (README not yet written) |
 
@@ -229,6 +236,11 @@ Updated: 2026-08-01 (night session 4 — **Phase 5 COMPLETE & COMMITTED**)
 - Email requires `RESEND_API_KEY` (empty) — OTP/link emails skipped with console warning; flows still work
 - Web push: VAPID keys ARE set (real, generated) — push works on localhost; browser-level `Notification` permission is user-controlled; real delivery needs a reachable HTTPS origin (localhost is fine for dev)
 - Playwright installed as devDep (`npm i -D playwright` + `npx playwright install chromium`) for UI checks
+
+## Session Handoff (2026-08-01 night, session 5)
+1. **Commit Phase 6**: `git add -A && git commit -m "feat: Phase 6 — robots.txt, sitemap.xml, security headers, apple-icon"`
+2. Then Phase 7: tests + CI expansion (more Vitest coverage: services validators, payments logic, auth helpers)
+3. Final: Phase 8 README polish + GitHub push (gh CLI missing)
 
 ## Session Handoff (2026-08-01 night, session 4)
 1. ✅ Committed web push (`223d3d6`) — Phase 5 fully done

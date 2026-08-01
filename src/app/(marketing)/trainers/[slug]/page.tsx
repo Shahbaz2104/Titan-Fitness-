@@ -17,7 +17,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-const TRAINERS = [
+export const TRAINERS = [
   {
     slug: "marcus-cole",
     name: "Marcus Cole",

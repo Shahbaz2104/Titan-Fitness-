@@ -23,7 +23,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-const PROGRAMS = [
+export const PROGRAMS = [
   {
     slug: "weight-loss",
     name: "Weight Loss",
