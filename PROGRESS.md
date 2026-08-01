@@ -1,0 +1,105 @@
+# Titan Fitness — Build Progress
+
+Updated: 2026-08-01 (evening session — Phase 1 complete)
+
+## Phase Status Overview
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 0 | Foundation (git, env, DB, migration, seed, legal pages, PWA, tests, CI, auth fixes) | ✅ Done (commit `59e1236`) |
+| 1 | Services + API routes (82 routes) | ✅ Done |
+| 2 | User dashboard (16 pages) | ⬜ |
+| 3 | Admin panel | ⬜ |
+| 4 | AI features | ⬜ |
+| 5 | Stripe, gamification UI, notifications | ⬜ |
+| 6 | PWA, SEO, security | ⬜ |
+| 7 | Tests + CI | ⬜ (CI workflow already added) |
+| 8 | Final audit, README, GitHub push | ⬜ |
+
+## What's Done
+
+### Environment / Stack
+- Next.js 16.2.12, React 19, TypeScript, Tailwind v4, Prisma 6.16.2
+- PostgreSQL 16 local (`postgresql://shahbaz:1234@localhost:5432/titan_fitness`), migration `20260731201838_init` applied
+- better-auth configured (server `src/lib/auth.ts` + client `src/lib/auth-client.ts`), real `BETTER_AUTH_SECRET` in `.env`
+- git repo on branch `main` (user Shahbaz2104 / shahbaz21042005@gmail.com)
+- gh CLI NOT installed → GitHub push must be done by user or after installing gh
+- Docker NOT installed → local Postgres used
+
+### Phase 0 (committed)
+- Removed junk `src/{app` dir
+- Legal pages: `/terms`, `/privacy`, `/refund-policy` via `src/components/marketing/legal-page.tsx`
+- PWA assets in `public/` (manifest, icons 192/512, favicon, og-image, apple-icon)
+- Blog fixes: `generateStaticParams` via `getPosts()`, awaited `params` in `generateMetadata`
+- Vitest setup: `vitest.config.ts`, `tests/setup.ts`, 2 test files, 18 tests passing
+- CI: `.github/workflows/ci.yml`
+- Auth pages split into server `page.tsx` + client `*-form.tsx` (Next 16 limitation)
+- `eslint .` used (Next 16 removed `next lint`); `tsx` installed as devDep
+
+### Phase 1 — Services (all typecheck clean)
+- `src/lib/api.ts` — ApiError, jsonOk/jsonError, getSessionUser, requireUser, requireRole, requireAdmin, withRateLimit, auditLog, getIp, **parseBody** (zod helper, added this session)
+- `src/lib/validators/*.ts` — zod schemas: member, workout, nutrition, booking, content, payment, admin + index barrel
+- `src/services/members.ts` — profile get/update, body metrics (auto BMI), water logs (accumulates per day), calorie logs, progress photos
+- `src/services/notifications.ts` — create/get/unread/mark read, membership expiry scanner
+- `src/services/gamification.ts` — points, badge awarding, streaks, leaderboard, challenges + progress
+- `src/services/workouts.ts` — exercise library, favorites, custom exercises, plans CRUD, sessions start/complete (points+PRs), history, PRs, stats, today view
+- `src/services/bookings.ts` — class list/detail, book/cancel/reschedule, waitlist, my bookings, check-in
+- `src/services/attendance.ts` — check-in (QR), history, stats, checked-in-today
+- `src/services/nutrition.ts` — meal plans CRUD, daily nutrition logs (uses `CalorieLog`), stats
+- `src/services/payments.ts` — plans, active membership, payment history, coupon validation, membership order/activation, referrals
+- `src/services/content.ts` — blog posts/comments/likes/bookmarks, FAQs, testimonials, gallery, contact
+- `src/services/search.ts` — global search (programs/posts/classes/exercises)
+- `src/services/admin.ts` — members CRUD, dashboard stats, revenue/attendance reports, programs, classes, settings, tickets, coupons, branches, blog posts, challenges
+
+### Phase 1 — API Routes (82 total, this session)
+- **Auth/me**: `GET/PATCH /api/me/profile`, `GET/POST /api/me/body-metrics`, `/api/me/water`, `/api/me/calories`, `GET/POST /api/me/progress-photos` + `DELETE /api/me/progress-photos/[photoId]`
+- **Notifications**: `GET /api/me/notifications` (+unreadCount), `GET /api/me/notifications/unread-count`, `POST /api/me/notifications/[id]/read`, `POST /api/me/notifications/read-all`
+- **Gamification**: `GET /api/me/points`, `/api/me/badges`, `/api/me/leaderboard`, `GET /api/me/challenges`, `POST /api/me/challenges/[challengeId]/join`
+- **Workouts**: `GET /api/workouts/exercises` (category/search), `GET /api/workouts/exercises/[exerciseId]`, `GET/POST /api/workouts/exercises/[exerciseId]/favorite`, `POST /api/workouts/exercises/custom`, `GET/POST /api/workouts/plans`, `GET/DELETE /api/workouts/plans/[planId]`, `GET/POST /api/workouts/sessions`, `POST /api/workouts/sessions/[sessionId]/complete`, `GET /api/workouts/prs`, `/api/workouts/stats`, `/api/workouts/today`
+- **Classes/bookings**: `GET /api/classes` (branch/type/date/page), `GET /api/classes/[classId]`, `POST /api/classes/[classId]/book|waitlist|check-in`, `GET /api/bookings`, `POST /api/bookings/[bookingId]/cancel|reschedule`
+- **Attendance**: `POST /api/attendance/check-in`, `GET /api/attendance` (history), `/api/attendance/stats`, `/api/attendance/today`
+- **Nutrition**: `GET/POST /api/nutrition/plans`, `GET/DELETE /api/nutrition/plans/[planId]`, `GET /api/nutrition/logs?date=`, `/api/nutrition/stats`
+- **Payments**: `GET /api/payments/plans|membership|history|referrals`, `POST /api/payments/checkout|activate|referrals/apply`, `POST /api/payments/coupons/validate`
+- **Content**: `GET /api/posts` (page/category/search), `GET /api/posts/[slug]` (+related), `GET/POST /api/posts/[slug]/comments`, `POST /api/posts/[slug]/like|bookmark`, `GET /api/posts/bookmarks`, `GET /api/content/faqs`, `GET/POST /api/content/testimonials`, `GET /api/content/gallery`, `GET/POST /api/search`
+- **Admin** (SUPER_ADMIN/ADMIN only): `GET /api/admin/stats`, `GET /api/admin/reports/revenue|attendance?days=`, `GET /api/admin/members` + `GET/PATCH /api/admin/members/[memberId]`, `GET/POST /api/admin/programs` + `PATCH/DELETE /api/admin/programs/[programId]`, `GET /api/admin/classes`, `GET/PATCH /api/admin/settings`, `GET /api/admin/tickets`, `POST /api/admin/tickets/[ticketId]/reply`, `PATCH /api/admin/tickets/[ticketId]/status`, `GET/POST /api/admin/coupons` + `DELETE /api/admin/coupons/[couponId]`, `GET /api/admin/branches`, `GET/POST /api/admin/blog-posts` + `DELETE /api/admin/blog-posts/[postId]`, `GET/POST /api/admin/challenges`
+
+### Bugs fixed this session
+- **Login broken**: seed stored passwords in `User.password` but better-auth reads credentials from `Account` (providerId="credential") → added `createUserWithCredentials()` helper in seed (user + Account row); `Setting` missing from truncate list (P2002 on reseed)
+- **Seed classes always in the past** (Mon–Fri only) → now scheduled today + next 7 days
+- **`/api/me/points` P2002 race** — `getOrCreatePoints` + `getMyRank` ran in parallel upsert → route now uses `getMyRank` only
+- **`/api/admin/branches` 500** — `Branch._count` has no `trainers` relation → `users: true, classes: true`
+- zod v4 gotcha: `.default()` keeps output optional → routes map defaults explicitly (`?? 8`, `?? "SNACK"`, etc.)
+- Admin blog POST: `slug` now optional (service auto-slugifies)
+
+### Verified (this session)
+- `npx tsc --noEmit` clean, eslint clean, 18/18 tests, `npm run build` clean
+- Live smoke-tested via dev server + curl: login (member+admin), profile, points, water, calories, body metrics, exercises, classes list/book/duplicate-409/reschedule/cancel/waitlist/check-in, attendance check-in, nutrition logs/plans, workout session start/complete (points + badge + PR awarded), payments checkout/coupon validate, referrals, blog like/bookmark/comments, testimonials, progress photos, search, admin stats/members/reports/programs/tickets/coupons/branches/settings/challenges/blog, 403 for member hitting admin routes
+
+## Schema Gotchas (learned)
+- No `NutritionLog` model → use `CalorieLog` (fields: date, mealType, foodName, calories, protein, carbs, fat, portion, imageUrl)
+- No `MemberProfile` model → profile fields live on `User` (heightCm, weightKg, bodyFatPct, fitnessGoal, experience…)
+- `User.memberships` (plural) is the relation name, not `membership`
+- `BlogLike`/`BlogBookmark` unique key: `postId_userId`
+- `Testimonial`: `status` (ContentStatus), no `isApproved`/`isActive`; fields: content, rating, programId, imageUrl, isFeatured, position
+- `FAQ`: `isActive` not `isPublished`
+- `GalleryImage`: `status` (ContentStatus), no `isActive`/`sortOrder`
+- `TicketMessage`: `senderId` + `senderRole` (no `authorId`)
+- `TicketStatus`: OPEN / IN_PROGRESS / RESOLVED / CLOSED (no REPLIED)
+- `Referral`: `referredUserId` (unique), relation `referredUser`, `redeemedAt` (not rewardedAt); also has `code` field
+- `Notification.data` needs `Prisma.InputJsonValue` cast
+- `rateLimitByUser(userId, limit, windowMs)` — 3 args (no key)
+- User select has no `isVerified` (it's `emailVerified`)
+- Enum casts: string→enum values need `as never`/explicit cast (MealType, PhotoStage, GoalType, NotificationType…)
+
+## Verified
+- `npx tsc --noEmit` clean (after `rm -f tsconfig.tsbuildinfo`)
+- Lint, tests (18/18), build all pass as of Phase 0
+
+## Key Credentials / Config
+- DB: `DATABASE_URL="postgresql://shahbaz:1234@localhost:5432/titan_fitness"` (PGPASSWORD=1234)
+- Seed logins (password `Titan@12345`): `admin@titanfitness.com`, `member@titanfitness.com`, `marcus@titanfitness.com`
+- Stripe / AI / Cloudinary keys still blank in `.env`
+
+## Blockers
+- GitHub push: needs `gh` CLI or manual push
+- Marketing images: user supplies later (`public/images/programs/*.jpg` etc.)

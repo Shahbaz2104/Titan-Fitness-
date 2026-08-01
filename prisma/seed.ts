@@ -13,6 +13,20 @@ const POSTS = getPosts();
 
 const prisma = new PrismaClient();
 
+async function createUserWithCredentials(data: Prisma.UserUncheckedCreateInput) {
+  const user = await prisma.user.create({ data });
+  await prisma.account.create({
+    data: {
+      id: crypto.randomUUID(),
+      providerId: "credential",
+      accountId: user.email,
+      userId: user.id,
+      password: user.password,
+    },
+  });
+  return user;
+}
+
 async function main() {
   console.log("🌱 Seeding Titan Fitness database...");
 
@@ -30,6 +44,7 @@ async function main() {
     "TrainerReview", "TrainerBooking", "Trainer", "Program", "Attendance",
     "Payment", "Invoice", "Membership", "MembershipPlan", "Coupon", "Challenge",
     "Badge", "Branch", "Account", "Session", "Verification", "User",
+    "Setting",
   ] as const;
 
   for (const table of tables) {
@@ -80,16 +95,14 @@ async function main() {
   // ------------------------------------------------------------
   const passwordHash = await hashPassword("Titan@12345");
 
-  await prisma.user.create({
-    data: {
-      name: "Titan Admin",
-      email: "admin@titanfitness.com",
-      emailVerified: true,
-      password: passwordHash,
-      role: "SUPER_ADMIN",
-      phone: "+92 300 0000000",
-      branchId: branches[0].id,
-    },
+  await createUserWithCredentials({
+    name: "Titan Admin",
+    email: "admin@titanfitness.com",
+    emailVerified: true,
+    password: passwordHash,
+    role: "SUPER_ADMIN",
+    phone: "+92 300 0000000",
+    branchId: branches[0].id,
   });
 
   const trainerDefs = [
@@ -103,15 +116,13 @@ async function main() {
 
   const trainers: { user: { id: string }; profile: { id: string } }[] = [];
   for (const def of trainerDefs) {
-    const user = await prisma.user.create({
-      data: {
-        name: def.name,
-        email: def.email,
-        emailVerified: true,
-        password: passwordHash,
-        role: "TRAINER",
-        branchId: branches[0].id,
-      },
+    const user = await createUserWithCredentials({
+      name: def.name,
+      email: def.email,
+      emailVerified: true,
+      password: passwordHash,
+      role: "TRAINER",
+      branchId: branches[0].id,
     });
     const profile = await prisma.trainer.create({
       data: {
@@ -142,51 +153,45 @@ async function main() {
     trainers.push({ user, profile });
   }
 
-  const member = await prisma.user.create({
-    data: {
-      name: "Alex Member",
-      email: "member@titanfitness.com",
-      emailVerified: true,
-      password: passwordHash,
-      role: "MEMBER",
-      phone: "+92 300 1112223",
-      gender: "MALE",
-      dateOfBirth: new Date("1996-04-12"),
-      heightCm: 178,
-      weightKg: 82,
-      bodyFatPct: 18,
-      fitnessGoal: "MUSCLE_GAIN",
-      experience: "INTERMEDIATE",
-      referralCode: "ALEX-TITAN",
-      branchId: branches[0].id,
-    },
+  const member = await createUserWithCredentials({
+    name: "Alex Member",
+    email: "member@titanfitness.com",
+    emailVerified: true,
+    password: passwordHash,
+    role: "MEMBER",
+    phone: "+92 300 1112223",
+    gender: "MALE",
+    dateOfBirth: new Date("1996-04-12"),
+    heightCm: 178,
+    weightKg: 82,
+    bodyFatPct: 18,
+    fitnessGoal: "MUSCLE_GAIN",
+    experience: "INTERMEDIATE",
+    referralCode: "ALEX-TITAN",
+    branchId: branches[0].id,
   });
 
-  const member2 = await prisma.user.create({
-    data: {
-      name: "Sarah Member",
-      email: "sarah@titanfitness.com",
-      emailVerified: true,
-      password: passwordHash,
-      role: "MEMBER",
-      heightCm: 165,
-      weightKg: 63,
-      fitnessGoal: "WEIGHT_LOSS",
-      experience: "BEGINNER",
-      referralCode: "SARAH-TITAN",
-      branchId: branches[1].id,
-    },
+  const member2 = await createUserWithCredentials({
+    name: "Sarah Member",
+    email: "sarah@titanfitness.com",
+    emailVerified: true,
+    password: passwordHash,
+    role: "MEMBER",
+    heightCm: 165,
+    weightKg: 63,
+    fitnessGoal: "WEIGHT_LOSS",
+    experience: "BEGINNER",
+    referralCode: "SARAH-TITAN",
+    branchId: branches[1].id,
   });
 
-  const blogger = await prisma.user.create({
-    data: {
-      name: "Titan Editorial",
-      email: "editorial@titanfitness.com",
-      emailVerified: true,
-      password: passwordHash,
-      role: "ADMIN",
-      branchId: branches[0].id,
-    },
+  const blogger = await createUserWithCredentials({
+    name: "Titan Editorial",
+    email: "editorial@titanfitness.com",
+    emailVerified: true,
+    password: passwordHash,
+    role: "ADMIN",
+    branchId: branches[0].id,
   });
 
   console.log("  ✔ Created users (admin, 6 trainers, 2 members, editorial)");
@@ -352,20 +357,17 @@ async function main() {
   console.log(`  ✔ Created ${programs.length} programs`);
 
   // ------------------------------------------------------------
-  // 7. CLASS SCHEDULES (this week)
+  // 7. CLASS SCHEDULES (today + next 7 days)
   // ------------------------------------------------------------
   const classTypes: ClassType[] = ["YOGA", "CROSSFIT", "HIIT", "ZUMBA", "SPINNING", "BOXING", "PILATES", "STRENGTH", "CARDIO"];
   const now = new Date();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // Monday
-  startOfWeek.setHours(0, 0, 0, 0);
 
   const classes = await Promise.all(
     classTypes.map((type, i) => {
-      const day = new Date(startOfWeek);
-      day.setDate(day.getDate() + (i % 5));
+      const day = new Date(now);
+      day.setDate(day.getDate() + (i % 7));
       const startTime = new Date(day);
-      startTime.setHours(7 + (i % 4) * 3, 0, 0, 0);
+      startTime.setHours(8 + (i % 3) * 3, 0, 0, 0);
       const endTime = new Date(startTime);
       endTime.setHours(startTime.getHours() + 1, 0, 0, 0);
       return prisma.classSchedule.create({
