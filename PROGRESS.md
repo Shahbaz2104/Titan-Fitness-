@@ -1,21 +1,13 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (night session 4 — Phase 5 COMPLETE: Stripe + OTP auth + web push, **NOT YET COMMITTED**)
+Updated: 2026-08-01 (night session 4 — **Phase 5 COMPLETE & COMMITTED**)
 
 ## ⚠️ CRITICAL — CURRENT STATE (read this first)
 
-- **Phase 5 (Stripe + OTP + web push) COMPLETE, commits pending.** Commit `267b5fb` (Stripe + OTP + navbar fix) done; **web push is the latest uncommitted batch**:
-  - `prisma/schema.prisma` — `PushSubscription` model (endpoint unique, p256dh, auth, userAgent); migration `add_push_subscriptions` applied
-  - `src/lib/push.ts` (NEW) — `pushEnabled()`, `getVapidPublicKey()`, `getWebPush()` (web-push SDK, VAPID)
-  - `src/services/notifications.ts` — `createNotification` now ALSO sends browser push when VAPID configured (best-effort, never blocks); `subscribePush` (upsert by endpoint), `unsubscribePush`, `getPushSubscriptions`, `sendPushToUser` (per-sub, 404/410 → auto-delete dead subs)
-  - `src/app/api/me/push/{subscribe,unsubscribe,status}` (NEW) — zod-validated, requireUser
-  - `public/sw.js` (NEW) — push + notificationclick (opens url, focuses window)
-  - `src/components/dashboard/notifications-dashboard.tsx` — push enable card (permission → SW register → pushManager.subscribe w/ urlBase64ToUint8Array → POST subscribe; Turn off → unsubscribe both sides); derived state via useMemo (lint rule: no sync setState in effect)
-  - `src/components/dashboard/dashboard-layout.tsx` — silent `serviceWorker.register("/sw.js")` on mount
-  - `.env` + `.env.example` — `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` (REAL keys generated 2026-08-01, .env gitignored — safe)
-  - `tests/push.test.ts` — 3 tests (21 total)
-- **Verified**: tsc ✓, eslint ✓ (incl. react-hooks rule), 21/21 tests ✓, build ✓ (131 pages), live: status endpoint returns VAPID key, subscribe writes row, unsubscribe removes, `sw.js` served 200, login + notifications pages render OK
-- **Next step: commit web push** (`git add -A` then commit, message below), then Phase 6 (PWA/SEO/security audit)
+- **Phase 5 fully committed.** Stripe + OTP auth + navbar fix = `267b5fb`; web push = `223d3d6`. Working tree clean.
+- **Phase 5 recap (all verified live)**: Stripe checkout w/ mock fallback + webhook route; OTP email verification + password reset (better-auth emailOTP plugin); web push notifications (VAPID keys set in `.env`, `PushSubscription` model, `sw.js`, dashboard enable card); critical navbar infinite-loop bug fixed
+- **Verified**: tsc ✓, eslint ✓, 21/21 tests ✓, build ✓ (131 static pages), prod server on :3000 restarted with final build, all pages render (Playwright sweep), push subscribe/unsubscribe/status E2E ✓, OTP E2E ✓
+- **Next step: Phase 6 — PWA/SEO/security audit** (deferred; ask user)
 
 ## Phase Status Overview
 
@@ -26,7 +18,7 @@ Updated: 2026-08-01 (night session 4 — Phase 5 COMPLETE: Stripe + OTP auth + w
 | 2 | User dashboard (16 pages) | ✅ Done (commit `8234d9b`) |
 | 3 | Admin panel | ✅ Done (commit `629deb4`) |
 | 4 | AI features (real LLM wiring) | ✅ Done (commit `8e0399c`) |
-| 5 | Stripe, gamification UI, notifications | ✅ Stripe+OTP committed `267b5fb`; **web push UNCOMMITTED** |
+| 5 | Stripe, gamification UI, notifications | ✅ Done (Stripe+OTP `267b5fb`, web push `223d3d6`) |
 | 6 | PWA, SEO, security | ⬜ |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
 | 8 | Final audit, README, GitHub push | ⬜ (README not yet written) |
@@ -239,12 +231,6 @@ Updated: 2026-08-01 (night session 4 — Phase 5 COMPLETE: Stripe + OTP auth + w
 - Playwright installed as devDep (`npm i -D playwright` + `npx playwright install chromium`) for UI checks
 
 ## Session Handoff (2026-08-01 night, session 4)
-1. **Commit web push**: `git add -A && git commit -m "feat: Phase 5 — web push notifications (VAPID, PushSubscription model, sw.js, dashboard enable card)"`
-2. Then Phase 6: PWA/SEO/security audit
+1. ✅ Committed web push (`223d3d6`) — Phase 5 fully done
+2. **Phase 6 next**: PWA/SEO/security audit (manifest/meta already in place from Phase 0 — audit + gaps: OG tags on dynamic pages, security headers, PWA install criteria, sitemap/robots)
 3. Final: Phase 8 README polish + GitHub push (gh CLI missing)
-
-## Session Handoff (2026-08-01 night, session 3)
-1. ✅ Commit Phase 5 Stripe+OTP (done: `267b5fb`) + README written
-2. ✅ Finish Phase 5: web push notifications (done, uncommitted)
-3. Then Phase 6: PWA/SEO/security audit
-4. Final: Phase 8 README polish + GitHub push (gh CLI missing)
