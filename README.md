@@ -251,11 +251,11 @@ CI: `.github/workflows/ci.yml` (typecheck + lint + tests on push/PR).
 | 2 — User dashboard (16 pages)                                  | ✅ `8234d9b`              |
 | 3 — Admin panel (11 pages)                                     | ✅ `629deb4`              |
 | 4 — AI features (LLM + fallback)                               | ✅ `8e0399c`              |
-| 5 — Stripe checkout + webhook, OTP auth                        | ✅ `267b5fb`              |
-| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ (uncommitted)          |
-| 6 — PWA/SEO/security audit                                     | ⬜                        |
-| 7 — Tests + CI expansion                                       | ⬜ (CI present, 21 tests) |
-| 8 — Final audit, GitHub push                                   | ⬜ (needs `gh` CLI)       |
+| 5 — Stripe checkout + webhook, OTP auth | ✅ `267b5fb` |
+| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ `223d3d6` |
+| 6 — PWA/SEO/security audit (robots, sitemap, headers) | ✅ `aba5724` |
+| 7 — Tests + CI (51 tests, format fix) | ✅ `36a5841` |
+| 8 — Final audit, GitHub push | ✅ `origin/main` |
 
 Live status is tracked in [`PROGRESS.md`](./PROGRESS.md) — read the top section first; it always documents the current uncommitted state and the next step.
 

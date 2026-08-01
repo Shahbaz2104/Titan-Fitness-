@@ -1,18 +1,35 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (night session 6 — Phase 7 tests+CI done, **UNCOMMITTED**)
+Updated: 2026-08-01 (final — **ALL PHASES COMPLETE & PUSHED TO GITHUB**)
 
-## ⚠️ CRITICAL — CURRENT STATE (read this first)
+## ✅ PROJECT COMPLETE
 
-- **Phase 7 (tests + CI expansion) COMPLETE, uncommitted.** What changed:
-  - `tests/validators.test.ts` (NEW, 22 tests) — payment/workout/member/booking/nutrition zod schemas
-  - `tests/ai.test.ts` (NEW, 8 tests) — `estimateCostUsd` pricing table, `hasAiKey` edge cases
-  - **Test count: 21 → 51, all passing**
-  - **CI fix**: `prettier-plugin-tailwindcss` was missing from devDeps → CI `format:check` would have failed; also ran `npm run format` over the whole repo (146 files reformatted — mechanical, no logic changes)
-  - Fixed 1 lint error surfaced by formatting (`membership-dashboard.tsx` unescaped `'` → `&apos;`)
-- **Verified**: tsc ✓, eslint ✓ (full repo), 51/51 tests ✓, prettier --check ✓ (whole repo), build ✓ (133 static pages), prod server restarted (PID 89936), 6 sampled pages render OK
-- **Note**: `npm run start` logs a warning "next start does not work with output: standalone — use node .next/standalone/server.js" but works fine; switch to `node .next/standalone/server.js` for true standalone runs
-- **Next step: commit Phase 7**, then Phase 8 (final audit + GitHub push, needs `gh` CLI or manual push)
+- **Remote**: `https://github.com/Shahbaz2104/Titan-Fitness-.git` (origin/main)
+- **11 commits** pushed: phases 0–7 + fixes (see log below)
+- **Final state**: tsc ✓, eslint ✓, prettier ✓, 51/51 tests ✓, build ✓ (133 static pages), prod server verified on :3000, all sampled pages render OK
+- **CI**: `.github/workflows/ci.yml` — lint + typecheck + format + tests + build + docker on push/PR (will run on GitHub now that repo is live)
+
+## Git history
+```
+36a5841 feat: Phase 7 — 30 new tests (validators, AI pricing), fix CI format check, format whole repo
+aba5724 feat: Phase 6 — robots.txt, sitemap.xml, security headers, apple-icon
+78929d7 docs: mark Phase 5 complete in PROGRESS.md
+223d3d6 feat: Phase 5 — web push notifications (VAPID, PushSubscription model, sw.js, dashboard enable card)
+267b5fb feat: Phase 5 — Stripe checkout + webhook, OTP email verification & reset, fix marketing navbar infinite-loop, README
+8e0399c feat: Phase 4 — real LLM wiring (OpenAI SDK) with rule-based fallback
+629deb4 feat: Phase 3 — admin panel (11 pages, role guard, all CRUD screens)
+8234d9b feat: Phase 2 — all 16 dashboard pages live, AI stubs, query-key fixes
+fa71c1f feat: Phase 2 — notifications & nutrition dashboards, AI stubs, auth proxy fix
+0b9dbdd feat: Phase 1 — services, 82 API routes, seed auth fix
+59e1236 chore: foundation — migrations, seed, legal pages, PWA assets, tests, CI, fixes
+```
+
+## Remaining (nice-to-have, NOT blockers)
+- Real API keys in `.env`: `OPENAI_API_KEY`, `STRIPE_SECRET_KEY`+`STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` (all fall back gracefully)
+- Strict CSP (needs nonce infra) — documented, skipped
+- Admin branches/classes CRUD forms (read-only lists today)
+- Marketing images (`public/images/programs/*.jpg` etc.) — user supplies
+- Switch prod run to `node .next/standalone/server.js` (next start warns about standalone)
 
 ## Phase Status Overview
 
@@ -25,8 +42,8 @@ Updated: 2026-08-01 (night session 6 — Phase 7 tests+CI done, **UNCOMMITTED**)
 | 4     | AI features (real LLM wiring)                                                       | ✅ Done (commit `8e0399c`)                                                 |
 | 5     | Stripe, gamification UI, notifications                                              | ✅ Done (Stripe+OTP `267b5fb`, web push `223d3d6`)                         |
 | 6 | PWA, SEO, security | ✅ Done (commit `aba5724`) |
-| 7 | Tests + CI | ✅ Built — **UNCOMMITTED** (51 tests, prettier fix, CI green) |
-| 8     | Final audit, README, GitHub push                                                    | ⬜ (README not yet written)                                                |
+| 7 | Tests + CI | ✅ Done (commit `36a5841`, 51 tests) |
+| 8     | Final audit, README, GitHub push                                                    | ✅ Done — pushed to GitHub (`origin/main`)                                |
 
 ## Phase 5 — Stripe + OTP Auth (UNCOMMITTED)
 
