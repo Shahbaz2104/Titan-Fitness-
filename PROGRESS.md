@@ -1,6 +1,16 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (evening session — Phase 2 complete)
+Updated: 2026-08-01 (night session — Phase 3 admin panel built, **NOT YET COMMITTED**)
+
+## ⚠️ CRITICAL — CURRENT STATE (read this first)
+
+- **Phase 3 admin panel is COMPLETE but UNCOMMITTED.** Uncommitted work:
+  - `src/app/admin/` (11 pages + `layout.tsx`)
+  - `src/components/admin/` (12 components, ~2940 lines)
+  - `src/app/api/posts/categories/route.ts` (new public route)
+  - `src/lib/constants.ts` (modified — new admin QUERY_KEYS)
+- Do NOT lose this work — it is verified working (tsc ✓, eslint ✓, 18/18 tests ✓, build ✓, live API smoke ✓)
+- **Next step: commit Phase 3** (only commit if user asks)
 
 ## Phase Status Overview
 
@@ -8,13 +18,43 @@ Updated: 2026-08-01 (evening session — Phase 2 complete)
 |-------|-------------|--------|
 | 0 | Foundation (git, env, DB, migration, seed, legal pages, PWA, tests, CI, auth fixes) | ✅ Done (commit `59e1236`) |
 | 1 | Services + API routes (82 routes) | ✅ Done (commit `0b9dbdd`) |
-| 2 | User dashboard (16 pages) | ✅ Done |
-| 3 | Admin panel | ⬜ |
+| 2 | User dashboard (16 pages) | ✅ Done (commit `8234d9b`) |
+| 3 | Admin panel | ✅ Built — **UNCOMMITTED** |
 | 4 | AI features (real LLM wiring) | ⬜ (rule-based stubs live) |
 | 5 | Stripe, gamification UI, notifications | ⬜ |
 | 6 | PWA, SEO, security | ⬜ |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
 | 8 | Final audit, README, GitHub push | ⬜ |
+
+## Phase 3 — Admin Panel (BUILT, NOT COMMITTED)
+
+### Structure
+- **Layout**: `src/app/admin/layout.tsx` (server, metadata noIndex) → `src/components/admin/admin-layout.tsx` (client, 367 lines)
+  - Role guard: waits for `useUser()`, redirects to /login if signed out, blocks non-ADMIN/SUPER_ADMIN with "Access denied" screen
+  - Sidebar (desktop + mobile with framer-motion), grouped nav: Main (Overview, Reports), Management (Members, Programs, Classes), Commerce (Coupons), Support (Tickets), Content (Blog Posts, Challenges), System (Branches, Settings)
+  - Sticky header w/ tickets shortcut + dashboard link, sign-out via `authClient.signOut()`
+- **Pages**: all 11 are 5-line server shells delegating to a client component in `src/components/admin/`:
+  - `/admin` → overview-admin.tsx (175 ln) — 8 StatCards from `/api/admin/stats`, "Needs attention" (expiring memberships, open tickets), quick actions
+  - `/admin/reports` → reports-admin.tsx (249 ln) — revenue + attendance charts (uses `/api/admin/reports/revenue|attendance?days=`)
+  - `/admin/members` → members-admin.tsx (330 ln) — search, status filter, list w/ detail view (member detail query key `adminMemberDetail`), edit via PATCH
+  - `/admin/programs` → programs-admin.tsx (316 ln) — list + create form (name, category, description, imageUrl)
+  - `/admin/classes` → classes-admin.tsx (139 ln) — class management
+  - `/admin/coupons` → coupons-admin.tsx (283 ln) — list + create (code, type PERCENTAGE/FIXED, value, maxUses), delete
+  - `/admin/tickets` → tickets-admin.tsx (234 ln) — ticket list + reply composer (`POST /api/admin/tickets/[ticketId]/reply`), status change
+  - `/admin/blog` → blog-admin.tsx (277 ln) — post list + create form (title, excerpt, content, tags, coverImage, category) — uses new `GET /api/posts/categories`
+  - `/admin/challenges` → challenges-admin.tsx (270 ln) — list + create (title, description, durationDays, reward)
+  - `/admin/branches` → branches-admin.tsx (115 ln) — branch list
+  - `/admin/settings` → settings-admin.tsx (130 ln) — site settings form (PATCH /api/admin/settings)
+- **New public route**: `GET /api/posts/categories` → `getBlogCategories()` in services/content (used by blog admin form)
+- **New QUERY_KEYS** in `src/lib/constants.ts`: `adminMemberDetail`, `adminPrograms`, `adminClasses`, `adminSettings`, `adminTickets`, `adminCoupons`, `adminBranches`, `adminBlogPosts`, `adminChallenges`
+
+### Verified (2026-08-01 night)
+- `npx tsc --noEmit` clean, `eslint .` clean, 18/18 tests, `npm run build` clean (admin pages in build output)
+- Live smoke via dev server on :3000 (Postgres up):
+  - All 12 admin API routes → **401 without auth** (correct)
+  - Login as admin@titanfitness.com → all admin routes return **200 with data** (stats, members, programs, settings, tickets, coupons, branches, blog-posts, challenges, revenue + attendance reports)
+  - `/api/posts/categories` → 200 (public)
+- No TODO/FIXME/stub markers in admin components — all use `useApiQuery`/`useApiMutation`
 
 ## Phase 2 — User Dashboard (16 pages, committed)
 
@@ -140,5 +180,14 @@ Updated: 2026-08-01 (evening session — Phase 2 complete)
 - Stripe / AI / Cloudinary keys still blank in `.env`
 
 ## Blockers
+- **Phase 3 uncommitted** — commit it next session (user confirmation required)
 - GitHub push: needs `gh` CLI or manual push
 - Marketing images: user supplies later (`public/images/programs/*.jpg` etc.)
+- Admin branches page is read-only (no create/edit branch form yet) — check `branches-admin.tsx` if user wants branch CRUD
+- Admin classes page has no create/update class form — only listing (check `classes-admin.tsx`)
+
+## Session Handoff (2026-08-01 night)
+1. Phase 3 admin panel fully built + verified, NOT committed → `git add src/app/admin src/components/admin src/app/api/posts/categories src/lib/constants.ts && git commit`
+2. Then Phase 4: AI features (real LLM wiring — keys blank in .env)
+3. Then Phase 5: Stripe, gamification UI, notifications
+4. Final: Phase 8 README + GitHub push (gh CLI missing)
