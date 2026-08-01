@@ -1,22 +1,61 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (evening session — Phase 1 complete)
+Updated: 2026-08-01 (evening session — Phase 2 complete)
 
 ## Phase Status Overview
 
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 0 | Foundation (git, env, DB, migration, seed, legal pages, PWA, tests, CI, auth fixes) | ✅ Done (commit `59e1236`) |
-| 1 | Services + API routes (82 routes) | ✅ Done |
-| 2 | User dashboard (16 pages) | ⬜ |
+| 1 | Services + API routes (82 routes) | ✅ Done (commit `0b9dbdd`) |
+| 2 | User dashboard (16 pages) | ✅ Done |
 | 3 | Admin panel | ⬜ |
-| 4 | AI features | ⬜ |
+| 4 | AI features (real LLM wiring) | ⬜ (rule-based stubs live) |
 | 5 | Stripe, gamification UI, notifications | ⬜ |
 | 6 | PWA, SEO, security | ⬜ |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
 | 8 | Final audit, README, GitHub push | ⬜ |
 
-## What's Done
+## Phase 2 — User Dashboard (16 pages, committed)
+
+### Foundation (first commit `fa71c1f`)
+- `src/lib/api-client.ts` — apiGet/apiPost/apiPatch/apiDelete, ApiClientError, `useApiQuery` (queryKey typed `readonly unknown[]`), `useApiMutation`
+- `src/components/dashboard/page-header.tsx` — shared DashboardPageHeader
+- AI stub routes (rule-based, logged to `aIUsage` — note Prisma camelCasing!): `/api/ai/chat` (keyword rules), `/api/ai/workout-generator` (day-split from exercise DB), `/api/ai/nutritionist` (7-day meal plan from templates)
+- `DELETE /api/me/calories/[id]` route + `deleteCalorieLog` service
+- **Critical fix**: `src/proxy.ts` — `getCookieCache` in production looked for `__Secure-better-auth.session_data` while the server wrote the unprefixed cookie over plain HTTP → every dashboard visit looped back to /login. Fixed with `isSecure: request.nextUrl.protocol === "https:"`. Dashboard was completely unreachable in production builds before this.
+
+### Pages (all wired to live APIs via useApiQuery)
+- `/dashboard` (overview) — hero (today's workout via `/api/workouts/today`), points ring, check-in ring, stat cards (stats, attendance, rank), today's exercises, upcoming bookings, week strip, water quick-add, membership card
+- `/dashboard/workouts` — stats, active session (start → log sets/reps/weight → complete with duration/calories → points+PRs), recent sessions, PRs
+- `/dashboard/nutrition` — macro cards, meals log/add/delete, water tracker (+250/+500), meal plans (AI badge, day-by-day), monthly stats
+- `/dashboard/notifications` — list with type icons, mark-read on click, mark-all-read, empty state
+- `/dashboard/classes` — date strip (7 days), type filter tabs, book/waitlist/cancel, upcoming bookings
+- `/dashboard/attendance` — stats (total/month/streak), 7-day strip, check-in/check-out (uses profile branchId, method MANUAL), history
+- `/dashboard/membership` — current membership card (days left, auto-renew), plans grid with features, activate
+- `/dashboard/payments` — totals, history list with status badges
+- `/dashboard/leaderboard` — my rank banner, podium, full list
+- `/dashboard/challenges` — my challenges (progress bars), open challenges (join)
+- `/dashboard/referrals` — code + copy link, stats, referral list
+- `/dashboard/profile` — avatar/points/rank/BMI, editable details form (keyed remount instead of setState-in-effect), badges grid
+- `/dashboard/progress` — stats, body-weight bar chart, measurement log + history, PRs
+- `/dashboard/ai/chat`, `/dashboard/ai/workout-generator`, `/dashboard/ai/nutritionist` — chat UI, generator form → day cards → save to plans, nutritionist form → 7-day plan → save as meal plan
+
+### Service/validator extensions for Phase 2
+- `workoutPlanSchema` + `createPlan` now accept nested `days[].exercises` (AI plans save with structure)
+- `mealPlanSchema` now accepts optional `days[].meals` (AI meal plans persist)
+- `getTodayWorkout` plan query now selects `exercise.id` (needed for session completion logs FK)
+- `ProgressRing` gained optional `displayValue`
+
+### React Query gotcha (found in smoke test)
+- Two `useApiQuery` calls sharing ONE `QUERY_KEYS` value collide in the cache — second endpoint's data overwrites the first (e.g. membership "current" vs "plans" crashed with `(g ?? []).map is not a function`). Rule: same endpoint URL may share a key; different endpoints must use distinct keys (`[...KEY, "sub"]`).
+
+### Verified (this session)
+- tsc clean, eslint clean, 18/18 tests, production build clean
+- Browser smoke (Playwright): login → all 16 dashboard pages render without page errors; AI chat reply, workout generator, and nutritionist all return results
+- Note: an old `next dev` server squatting on :3000 served stale chunks (500s) — killed before final prod test
+
+## What's Done (Phases 0–1)
 
 ### Environment / Stack
 - Next.js 16.2.12, React 19, TypeScript, Tailwind v4, Prisma 6.16.2

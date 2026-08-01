@@ -28,6 +28,29 @@ export const workoutPlanSchema = z.object({
   goal: z.string().max(60).optional().nullable(),
   description: z.string().max(500).optional().nullable(),
   isAiGenerated: z.boolean().default(false),
+  days: z
+    .array(
+      z.object({
+        dayNumber: z.number().int().min(1).max(14),
+        title: z.string().min(1).max(80),
+        focus: z.string().max(80).optional().nullable(),
+        exercises: z
+          .array(
+            z.object({
+              exerciseId: z.string().min(1),
+              sets: z.number().int().min(1).max(10),
+              reps: z.string().min(1).max(50),
+              restSeconds: z.number().int().min(0).max(600).default(90),
+              weightKg: z.number().min(0).max(1000).optional().nullable(),
+              order: z.number().int().min(0).default(0),
+              notes: z.string().max(500).optional().nullable(),
+            })
+          )
+          .min(1),
+      })
+    )
+    .max(14)
+    .optional(),
 });
 
 export const workoutDaySchema = z.object({

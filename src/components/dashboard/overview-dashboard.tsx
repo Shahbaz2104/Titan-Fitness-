@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -11,7 +12,6 @@ import {
   Droplets,
   Dumbbell,
   Flame,
-  Scale,
   Sparkles,
   Zap,
 } from "lucide-react";
@@ -20,53 +20,102 @@ import { ProgressRing } from "@/components/ui/progress-ring";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { apiPost, useApiQuery } from "@/lib/api-client";
+import { QUERY_KEYS, WATER_DAILY_GOAL_ML } from "@/lib/constants";
+import { useUser } from "@/hooks/use-user";
 import { cn } from "@/lib/utils";
 
-const TODAY_WORKOUT = {
-  title: "Leg Day · Strength",
-  duration: "45 min",
-  exercises: [
-    { name: "Barbell Squat", sets: "4 × 8", done: false },
-    { name: "Romanian Deadlift", sets: "3 × 10", done: false },
-    { name: "Leg Press", sets: "4 × 12", done: false },
-    { name: "Walking Lunges", sets: "3 × 12", done: false },
-  ],
-};
+interface WorkoutStats {
+  totalWorkouts: number;
+  monthWorkouts: number;
+  totalMinutes: number;
+  totalCalories: number;
+  avgDuration: number;
+}
 
-const UPCOMING_CLASSES = [
-  {
-    id: "yoga-flow",
-    type: "Yoga",
-    time: "Today · 6:30 PM",
-    trainer: "Sara Khan",
-    spots: 12,
-    icon: "🧘",
-    color: "text-success",
-  },
-  {
-    id: "hiit-blast",
-    type: "HIIT",
-    time: "Tomorrow · 7:00 AM",
-    trainer: "David Okoro",
-    spots: 4,
-    icon: "⚡",
-    color: "text-accent",
-  },
-  {
-    id: "crossfit-wod",
-    type: "CrossFit",
-    time: "Wed · 6:00 PM",
-    trainer: "David Okoro",
-    spots: 18,
-    icon: "🏋️",
-    color: "text-warning",
-  },
-];
+interface TodayWorkout {
+  sessions: {
+    id: string;
+    isCompleted: boolean;
+    durationMinutes: number | null;
+    logs: { id: string; exercise: { name: string }; sets: number; reps: string | null }[];
+  }[];
+  plan: {
+    id: string;
+    name: string;
+    days: { exercises: { id: string; exercise: { name: string }; sets: number; reps: string }[] }[];
+  } | null;
+  completed: boolean;
+}
 
-const WEEK_STREAK = [true, true, true, true, true, true, false];
+interface TodayCheck {
+  checkedIn: boolean;
+  checkedOut: boolean;
+}
+
+interface AttendanceStats {
+  total: number;
+  thisMonth: number;
+  currentStreak: number;
+}
+
+interface PointsInfo {
+  rank: number;
+  points: number;
+}
+
+interface Booking {
+  id: string;
+  class: {
+    id: string;
+    name: string;
+    type: string;
+    startTime: string;
+    branch: { name: string; city: string };
+  };
+}
+
+interface Membership {
+  id: string;
+  status: string;
+  daysLeft: number | null;
+  plan: { name: string };
+}
+
+interface NutritionLogs {
+  water: number;
+}
+
 const WEEK_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 export function OverviewDashboard() {
+  const { data: user } = useUser();
+  const { data: stats } = useApiQuery<WorkoutStats>([...QUERY_KEYS.dashboard, "stats"], "/api/workouts/stats");
+  const { data: todayWorkout } = useApiQuery<TodayWorkout | null>([...QUERY_KEYS.dashboard, "today"], "/api/workouts/today");
+  const { data: attendance } = useApiQuery<TodayCheck>([...QUERY_KEYS.attendance, "today"], "/api/attendance/today");
+  const { data: attendanceStats } = useApiQuery<AttendanceStats>(QUERY_KEYS.attendance, "/api/attendance/stats");
+  const { data: points } = useApiQuery<PointsInfo>([...QUERY_KEYS.user, "points"], "/api/me/points");  const { data: bookings } = useApiQuery<{ upcoming: Booking[]; past: Booking[] }>(QUERY_KEYS.bookings, "/api/me/bookings");
+  const { data: membership } = useApiQuery<Membership | null>(QUERY_KEYS.membership, "/api/payments/membership");
+  const { data: nutrition } = useApiQuery<NutritionLogs>(QUERY_KEYS.nutrition, "/api/nutrition/logs");
+
+  const waterPct = Math.min(100, Math.round(((nutrition?.water ?? 0) / WATER_DAILY_GOAL_ML) * 100));
+
+  const todaySession = todayWorkout?.sessions?.[0] ?? null;
+  const todayExercises =
+    todaySession?.logs?.map((l) => ({ id: l.id, name: l.exercise.name, sets: l.sets, reps: l.reps ?? "—" })) ??
+    todayWorkout?.plan?.days?.[0]?.exercises?.map((e) => ({
+      id: e.id,
+      name: e.exercise.name,
+      sets: e.sets,
+      reps: e.reps,
+    })) ??
+    [];
+  const isCompleted = todayWorkout?.completed ?? false;
+  const todayTitle = todaySession
+    ? todayWorkout?.plan?.name ?? "Today's Session"
+    : todayWorkout?.plan?.name ?? null;
+
   return (
     <div className="space-y-6">
       {/* Hero row */}
@@ -80,19 +129,33 @@ export function OverviewDashboard() {
           <div>
             <Badge variant="accent" className="mb-3">
               <Sparkles className="h-3 w-3" />
-              Today&apos;s Plan Ready
+              {todaySession
+                ? isCompleted
+                  ? "Session Completed Today"
+                  : "Today's Plan Ready"
+                : todayWorkout
+                  ? "Plan Available"
+                  : "No Session Today"}
             </Badge>
             <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-foreground sm:text-3xl">
-              {TODAY_WORKOUT.title}
+              {todayTitle
+                ? isCompleted
+                  ? "Great work! 💪"
+                  : todayTitle
+                : `Welcome back, ${user?.name?.split(" ")[0] ?? "Athlete"} 👋`}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Estimated burn: 420 kcal · {TODAY_WORKOUT.duration}
+              {todaySession
+                ? `${todaySession.durationMinutes ?? "—"} min session · ${todayExercises.length} exercises`
+                : todayTitle
+                  ? `${todayExercises.length} exercises scheduled`
+                  : "No workout scheduled for today — plan one or hit the gym!"}
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Button asChild size="sm">
                 <Link href="/dashboard/workouts">
                   <Dumbbell className="h-4 w-4" />
-                  Start Workout
+                  {todaySession ? "Open Workout" : "Browse Workouts"}
                 </Link>
               </Button>
               <Button asChild size="sm" variant="outline">
@@ -103,8 +166,20 @@ export function OverviewDashboard() {
             </div>
           </div>
           <div className="flex gap-8">
-            <ProgressRing value={72} size={104} color="#E63946" label="Weekly Goal" suffix="%" />
-            <ProgressRing value={100} size={104} color="#00C853" label="Streak Today" suffix="%" />
+            <ProgressRing
+              value={points ? Math.min(100, points.points) : 0}
+              size={104}
+              color="#E63946"
+              label="Total Points"
+              displayValue={points ? String(points.points) : "–"}
+            />
+            <ProgressRing
+              value={attendance?.checkedIn ? 100 : 0}
+              size={104}
+              color="#00C853"
+              label="Checked In"
+              suffix="%"
+            />
           </div>
         </div>
       </motion.div>
@@ -113,36 +188,33 @@ export function OverviewDashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Calories Burned"
-          value="2,480"
+          value={(stats?.totalCalories ?? 0).toLocaleString()}
           icon={Flame}
-          delta={12.5}
           href="/dashboard/workouts"
           delay={0.05}
         />
         <StatCard
-          label="Current Weight"
-          value="78.5 kg"
-          icon={Scale}
-          delta={-1.8}
-          deltaLabel="this month"
+          label="Total Workouts"
+          value={String(stats?.totalWorkouts ?? "–")}
+          icon={Dumbbell}
+          deltaLabel={`+${stats?.monthWorkouts ?? 0} this month`}
           href="/dashboard/progress"
           delay={0.1}
         />
         <StatCard
-          label="Attendance"
-          value="18 / 22"
+          label="Check-ins"
+          value={String(attendanceStats?.total ?? "–")}
           icon={Activity}
-          delta={8.2}
+          deltaLabel={`${attendanceStats?.currentStreak ?? 0}-day streak`}
           href="/dashboard/attendance"
           delay={0.15}
         />
         <StatCard
-          label="Workout Streak"
-          value="21 days"
+          label="My Rank"
+          value={points ? `#${points.rank}` : "–"}
           icon={Zap}
-          delta={5}
-          deltaLabel="days in a row"
-          href="/dashboard/workouts"
+          deltaLabel={`${points?.points ?? 0} points`}
+          href="/dashboard/leaderboard"
           delay={0.2}
         />
       </div>
@@ -157,35 +229,53 @@ export function OverviewDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-3">
-            {TODAY_WORKOUT.exercises.map((exercise, i) => (
-              <motion.div
-                key={exercise.name}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + i * 0.07 }}
-                className={cn(
-                  "flex items-center justify-between rounded-xl border px-4 py-3 transition-all duration-300",
-                  exercise.done
-                    ? "border-success/30 bg-success/5"
-                    : "border-border bg-surface hover:border-primary/30"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <CheckCircle2
+            {todayWorkout === undefined ? (
+              <>
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-14 w-full" />
+              </>
+            ) : todayExercises.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+                Nothing scheduled today. Rest is productive too — or browse a workout to get after it.
+              </p>
+            ) : (
+              <>
+                {todayExercises.slice(0, 4).map((exercise, i) => (
+                  <motion.div
+                    key={exercise.id}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + i * 0.07 }}
                     className={cn(
-                      "h-4 w-4",
-                      exercise.done ? "text-success" : "text-muted-foreground"
+                      "flex items-center justify-between rounded-xl border px-4 py-3",
+                      isCompleted
+                        ? "border-success/30 bg-success/5"
+                        : "border-border bg-surface hover:border-primary/30"
                     )}
-                  />
-                  <span className="text-sm text-foreground">{exercise.name}</span>
-                </div>
-                <span className="text-xs text-muted-foreground">{exercise.sets}</span>
-              </motion.div>
-            ))}
-            <Button className="w-full" size="sm">
-              <Dumbbell className="h-4 w-4" />
-              Log Workout
-            </Button>
+                  >
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2
+                        className={cn(
+                          "h-4 w-4",
+                          isCompleted ? "text-success" : "text-muted-foreground"
+                        )}
+                      />
+                      <span className="text-sm text-foreground">{exercise.name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {exercise.sets}×{exercise.reps}
+                    </span>
+                  </motion.div>
+                ))}
+                <Button asChild className="w-full" size="sm">
+                  <Link href="/dashboard/workouts">
+                    <Dumbbell className="h-4 w-4" />
+                    {isCompleted ? "View Session" : "Start Session"}
+                  </Link>
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -198,35 +288,56 @@ export function OverviewDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-3">
-            {UPCOMING_CLASSES.map((cls, i) => (
-              <motion.div
-                key={cls.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.08 }}
-                className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 transition-all duration-300 hover:border-primary/30"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{cls.icon}</span>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{cls.type}</p>
-                    <p className="text-xs text-muted-foreground">{cls.time}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-[10px] text-muted-foreground">{cls.trainer}</span>
-                  <Badge variant={cls.spots <= 5 ? "warning" : "secondary"}>
-                    {cls.spots} spots
-                  </Badge>
-                </div>
-              </motion.div>
-            ))}
-            <Button asChild variant="outline" className="w-full" size="sm">
-              <Link href="/dashboard/classes">
-                <CalendarDays className="h-4 w-4" />
-                Browse Classes
-              </Link>
-            </Button>
+            {bookings === undefined ? (
+              <>
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+              </>
+            ) : !bookings || bookings.upcoming.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+                No upcoming classes. Check the schedule and book your spot!
+              </p>
+            ) : (
+              <>
+                {bookings.upcoming.slice(0, 3).map((booking, i) => (
+                  <motion.div
+                    key={booking.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + i * 0.08 }}
+                    className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 transition-all duration-300 hover:border-primary/30"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <CalendarDays className="h-4 w-4" />
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{booking.class.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(booking.class.startTime).toLocaleDateString(undefined, {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                          })}{" "}
+                          ·{" "}
+                          {new Date(booking.class.startTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge variant="secondary">{booking.class.type}</Badge>
+                  </motion.div>
+                ))}
+                <Button asChild variant="outline" className="w-full" size="sm">
+                  <Link href="/dashboard/classes">
+                    <CalendarDays className="h-4 w-4" />
+                    Browse Classes
+                  </Link>
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -239,24 +350,25 @@ export function OverviewDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                {WEEK_STREAK.map((active, i) => (
+                {WEEK_DAYS.map((day, i) => (
                   <div key={i} className="flex flex-col items-center gap-2">
                     <span
                       className={cn(
                         "flex h-10 w-10 items-center justify-center rounded-full border text-xs font-bold transition-all duration-300",
-                        active
+                        attendance?.checkedIn && new Date().getDay() === i
                           ? "border-primary bg-primary/15 text-primary shadow-glow"
                           : "border-border bg-surface text-muted-foreground"
                       )}
                     >
-                      {active ? "✓" : WEEK_DAYS[i]}
+                      {attendance?.checkedIn && new Date().getDay() === i ? "✓" : day}
                     </span>
-                    <span className="text-[10px] uppercase text-muted-foreground">
-                      {WEEK_DAYS[i]}
-                    </span>
+                    <span className="text-[10px] uppercase text-muted-foreground">{day}</span>
                   </div>
                 ))}
               </div>
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                {attendanceStats?.currentStreak ?? 0}-day check-in streak
+              </p>
             </CardContent>
           </Card>
 
@@ -267,21 +379,24 @@ export function OverviewDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-5">
-                <ProgressRing value={62} size={72} strokeWidth={6} color="#3B82F6" label="Goal" />
+                <ProgressRing
+                  value={waterPct}
+                  size={72}
+                  strokeWidth={6}
+                  color="#3B82F6"
+                  label="Goal"
+                  displayValue={`${((nutrition?.water ?? 0) / 1000).toFixed(1)}L`}
+                />
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">
-                    <span className="font-display text-xl font-bold text-foreground">1.9L</span>{" "}
-                    / 3L
+                    <span className="font-display text-xl font-bold text-foreground">
+                      {((nutrition?.water ?? 0) / 1000).toFixed(1)}L
+                    </span>{" "}
+                    / {WATER_DAILY_GOAL_ML / 1000}L
                   </p>
                   <div className="mt-2 flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Droplets className="h-3.5 w-3.5 text-blue-400" />
-                      +250ml
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Droplets className="h-3.5 w-3.5 text-blue-400" />
-                      +500ml
-                    </Button>
+                    <WaterButton amountMl={250} />
+                    <WaterButton amountMl={500} />
                   </div>
                 </div>
               </div>
@@ -296,8 +411,16 @@ export function OverviewDashboard() {
                   <CreditCard className="h-5 w-5 text-success" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Pro Membership</p>
-                  <p className="text-xs text-muted-foreground">Renews in 12 days</p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {membership?.plan.name ?? "No membership"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {membership
+                      ? membership.daysLeft !== null
+                        ? `${membership.daysLeft} days left`
+                        : "Active"
+                      : "Choose a plan"}
+                  </p>
                 </div>
               </div>
               <Link
@@ -311,5 +434,23 @@ export function OverviewDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+function WaterButton({ amountMl }: { amountMl: number }) {
+  const queryClient = useQueryClient();
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      className="flex-1"
+      onClick={async () => {
+        await apiPost("/api/me/water", { amountMl });
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nutrition });
+      }}
+    >
+      <Droplets className="h-3.5 w-3.5 text-blue-400" />
+      +{amountMl}ml
+    </Button>
   );
 }

@@ -97,12 +97,12 @@ const MACRO_TARGETS = { protein: 150, carbs: 250, fat: 70 };
 export function NutritionDashboard() {
   const queryClient = useQueryClient();
   const { data: logs, isLoading: logsLoading } = useApiQuery<NutritionLogs>(
-    QUERY_KEYS.nutrition,
+    [...QUERY_KEYS.nutrition, "logs"],
     "/api/nutrition/logs"
   );
   const { data: plans } = useApiQuery<MealPlan[]>(QUERY_KEYS.mealPlans, "/api/nutrition/plans");
   const { data: stats } = useApiQuery<Record<string, number>>(
-    QUERY_KEYS.nutrition,
+    [...QUERY_KEYS.nutrition, "stats"],
     "/api/nutrition/stats"
   );
 

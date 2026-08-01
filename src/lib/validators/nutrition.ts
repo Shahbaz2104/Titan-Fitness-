@@ -9,6 +9,26 @@ export const mealPlanSchema = z.object({
   fatGrams: z.number().int().min(0).max(400),
   durationDays: z.number().int().min(1).max(30).default(7),
   isAiGenerated: z.boolean().default(false),
+  days: z
+    .array(
+      z.object({
+        dayNumber: z.number().int().min(1).max(30),
+        meals: z.array(
+          z.object({
+            mealType: z.enum(["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_WORKOUT", "POST_WORKOUT"]),
+            name: z.string().min(1).max(120),
+            calories: z.number().int().min(0).max(3000),
+            protein: z.number().min(0).max(300).optional(),
+            carbs: z.number().min(0).max(500).optional(),
+            fat: z.number().min(0).max(300).optional(),
+            ingredients: z.array(z.string()).max(50).optional(),
+            recipe: z.string().max(3000).optional().nullable(),
+          })
+        ),
+      })
+    )
+    .max(30)
+    .optional(),
 });
 
 export const mealSchema = z.object({

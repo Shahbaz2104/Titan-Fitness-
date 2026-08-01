@@ -110,9 +110,44 @@ export async function createPlan(userId: string, data: {
   goal?: string | null;
   description?: string | null;
   isAiGenerated?: boolean;
+  days?: { dayNumber: number; title: string; focus?: string | null; exercises: {
+    exerciseId: string;
+    sets: number;
+    reps: string;
+    restSeconds?: number;
+    weightKg?: number | null;
+    order?: number;
+    notes?: string | null;
+  }[] }[];
 }) {
   return prisma.workoutPlan.create({
-    data: { userId, ...data },
+    data: {
+      userId,
+      name: data.name,
+      goal: data.goal,
+      description: data.description,
+      isAiGenerated: data.isAiGenerated ?? false,
+      days: data.days
+        ? {
+            create: data.days.map((day) => ({
+              dayNumber: day.dayNumber,
+              title: day.title,
+              focus: day.focus,
+              exercises: {
+                create: day.exercises.map((ex) => ({
+                  exerciseId: ex.exerciseId,
+                  sets: ex.sets,
+                  reps: ex.reps,
+                  restSeconds: ex.restSeconds ?? 90,
+                  weightKg: ex.weightKg,
+                  order: ex.order ?? 0,
+                  notes: ex.notes,
+                })),
+              },
+            })),
+          }
+        : undefined,
+    },
   });
 }
 
@@ -255,7 +290,11 @@ export async function getTodayWorkout(userId: string) {
     where: { userId, isActive: true, deletedAt: null },
     include: {
       days: {
-        include: { exercises: { include: { exercise: true } } },
+        include: {
+          exercises: {
+            include: { exercise: { select: { id: true, name: true, muscleGroup: true } } },
+          },
+        },
         orderBy: { dayNumber: "asc" },
       },
     },

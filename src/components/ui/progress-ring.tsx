@@ -11,6 +11,7 @@ interface ProgressRingProps {
   trackColor?: string;
   label?: string;
   suffix?: string;
+  displayValue?: string;
   className?: string;
 }
 
@@ -22,6 +23,7 @@ export function ProgressRing({
   trackColor = "#1a1a1a",
   label,
   suffix = "%",
+  displayValue,
   className,
 }: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2;
@@ -57,8 +59,7 @@ export function ProgressRing({
       </svg>
       <div className="absolute flex flex-col items-center">
         <span className="font-display text-2xl font-bold text-foreground">
-          {Math.round(clamped)}
-          {suffix}
+          {displayValue ?? `${Math.round(clamped)}${suffix}`}
         </span>
         {label && (
           <span className="mt-0.5 max-w-[80px] text-center text-[10px] uppercase tracking-widest text-muted-foreground">
