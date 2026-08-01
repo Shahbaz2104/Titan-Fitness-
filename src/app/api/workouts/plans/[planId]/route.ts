@@ -1,10 +1,7 @@
 import { jsonError, jsonOk, requireUser } from "@/lib/api";
 import { deletePlan, getPlan } from "@/services/workouts";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ planId: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ planId: string }> }) {
   try {
     const user = await requireUser();
     const { planId } = await params;
@@ -14,10 +11,7 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  _req: Request,
-  { params }: { params: Promise<{ planId: string }> }
-) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ planId: string }> }) {
   try {
     const user = await requireUser();
     const { planId } = await params;

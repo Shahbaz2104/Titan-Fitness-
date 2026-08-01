@@ -47,14 +47,14 @@ export function BlogPreview() {
             <Badge variant="default" className="mb-4">
               The Titan Blog
             </Badge>
-            <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground sm:text-5xl">
+            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
               Latest <span className="text-gradient">Insights</span>
             </h2>
           </Reveal>
           <Reveal delay={0.15}>
             <Link
               href="/blog"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-accent"
+              className="group text-primary hover:text-accent inline-flex items-center gap-2 text-sm font-medium transition-colors"
             >
               All articles
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -67,31 +67,31 @@ export function BlogPreview() {
             <Reveal key={post.slug} delay={i * 0.1}>
               <Link
                 href={`/blog/${post.slug}`}
-                className="group flex h-full flex-col rounded-2xl border border-border bg-surface/60 p-7 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:shadow-glow"
+                className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow flex h-full flex-col rounded-2xl border p-7 backdrop-blur-xl transition-all duration-500"
               >
                 <div className="mb-5 flex items-center justify-between">
                   <Badge variant="secondary">{post.category}</Badge>
-                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
                     <Clock className="h-3.5 w-3.5" />
                     {post.readTime} min read
                   </span>
                 </div>
-                <h3 className="font-display text-lg font-semibold leading-snug tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary">
+                <h3 className="font-display text-foreground group-hover:text-primary text-lg leading-snug font-semibold tracking-wide transition-colors duration-300">
                   {post.title}
                 </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-3 flex-1 text-sm leading-relaxed">
                   {post.excerpt}
                 </p>
-                <div className="mt-6 flex items-center gap-5 border-t border-border pt-4 text-xs text-muted-foreground">
+                <div className="border-border text-muted-foreground mt-6 flex items-center gap-5 border-t pt-4 text-xs">
                   <span className="flex items-center gap-1.5">
                     <Eye className="h-3.5 w-3.5" />
                     {(post.views / 1000).toFixed(1)}k
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Heart className="h-3.5 w-3.5 text-primary" />
+                    <Heart className="text-primary h-3.5 w-3.5" />
                     {post.likes}
                   </span>
-                  <span className="ml-auto flex items-center gap-1 text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <span className="text-primary ml-auto flex items-center gap-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     Read <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 </div>

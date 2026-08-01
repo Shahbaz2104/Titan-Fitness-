@@ -2,7 +2,11 @@ import { z } from "zod";
 
 export const programSchema = z.object({
   name: z.string().min(2).max(80),
-  slug: z.string().min(2).max(80).regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only"),
+  slug: z
+    .string()
+    .min(2)
+    .max(80)
+    .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only"),
   category: z.enum([
     "WEIGHT_LOSS",
     "BODYBUILDING",
@@ -26,11 +30,17 @@ export const programSchema = z.object({
 
 export const planSchema = z.object({
   name: z.string().min(2).max(80),
-  slug: z.string().min(2).max(80).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(2)
+    .max(80)
+    .regex(/^[a-z0-9-]+$/),
   description: z.string().max(500).optional().nullable(),
   price: z.number().min(0).max(100000),
   currency: z.string().length(3).default("USD"),
-  billingCycle: z.enum(["MONTHLY", "QUARTERLY", "HALF_YEARLY", "YEARLY", "LIFETIME"]).default("MONTHLY"),
+  billingCycle: z
+    .enum(["MONTHLY", "QUARTERLY", "HALF_YEARLY", "YEARLY", "LIFETIME"])
+    .default("MONTHLY"),
   durationDays: z.number().int().min(1).max(36500).default(30),
   features: z.array(z.string()).max(30).default([]),
   isActive: z.boolean().default(true),
@@ -42,7 +52,17 @@ export const classSchema = z.object({
   programId: z.string().optional().nullable(),
   trainerId: z.string().optional().nullable(),
   title: z.string().min(2).max(100),
-  type: z.enum(["YOGA", "CROSSFIT", "HIIT", "ZUMBA", "SPINNING", "BOXING", "PILATES", "STRENGTH", "CARDIO"]),
+  type: z.enum([
+    "YOGA",
+    "CROSSFIT",
+    "HIIT",
+    "ZUMBA",
+    "SPINNING",
+    "BOXING",
+    "PILATES",
+    "STRENGTH",
+    "CARDIO",
+  ]),
   description: z.string().max(500).optional().nullable(),
   location: z.string().max(100).optional().nullable(),
   capacity: z.number().int().min(1).max(500).default(20),
@@ -55,7 +75,11 @@ export const classSchema = z.object({
 
 export const branchSchema = z.object({
   name: z.string().min(2).max(100),
-  slug: z.string().min(2).max(80).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(2)
+    .max(80)
+    .regex(/^[a-z0-9-]+$/),
   description: z.string().max(500).optional().nullable(),
   address: z.string().min(5).max(200),
   city: z.string().min(2).max(80),
@@ -102,7 +126,11 @@ export const settingUpdateSchema = z.object({
 
 export const blogPostAdminSchema = z.object({
   title: z.string().min(3).max(200),
-  slug: z.string().min(3).max(200).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(3)
+    .max(200)
+    .regex(/^[a-z0-9-]+$/),
   excerpt: z.string().max(300).optional().nullable(),
   content: z.string().min(10),
   coverImage: z.string().url().optional().nullable(),

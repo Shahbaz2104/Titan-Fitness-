@@ -10,10 +10,7 @@ export async function GET() {
   }
 }
 
-export async function POST(
-  _req: Request,
-  { params }: { params: Promise<{ exerciseId: string }> }
-) {
+export async function POST(_req: Request, { params }: { params: Promise<{ exerciseId: string }> }) {
   try {
     const user = await requireUser();
     const { exerciseId } = await params;

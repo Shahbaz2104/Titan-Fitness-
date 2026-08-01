@@ -3,15 +3,7 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import {
-  CalendarCheck2,
-  CalendarDays,
-  Flame,
-  LogIn,
-  LogOut,
-  MapPin,
-  Timer,
-} from "lucide-react";
+import { CalendarCheck2, CalendarDays, Flame, LogIn, LogOut, MapPin, Timer } from "lucide-react";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,7 +43,10 @@ interface Profile {
 
 export function AttendanceDashboard() {
   const queryClient = useQueryClient();
-  const { data: stats } = useApiQuery<AttendanceStats>(QUERY_KEYS.attendance, "/api/attendance/stats");
+  const { data: stats } = useApiQuery<AttendanceStats>(
+    QUERY_KEYS.attendance,
+    "/api/attendance/stats"
+  );
   const { data: today } = useApiQuery<TodayCheck>(
     [...QUERY_KEYS.attendance, "today"],
     "/api/attendance/today"
@@ -61,7 +56,10 @@ export function AttendanceDashboard() {
     "/api/attendance",
     { limit: 60 }
   );
-  const { data: profile } = useApiQuery<Profile>([...QUERY_KEYS.user, "profile"], "/api/me/profile");
+  const { data: profile } = useApiQuery<Profile>(
+    [...QUERY_KEYS.user, "profile"],
+    "/api/me/profile"
+  );
 
   const [checkingIn, setCheckingIn] = React.useState(false);
 
@@ -128,30 +126,36 @@ export function AttendanceDashboard() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Total visits</p>
-              <CalendarDays className="h-4 w-4 text-primary" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Total visits
+              </p>
+              <CalendarDays className="text-primary h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">{stats?.total ?? "–"}</p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
+              {stats?.total ?? "–"}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">This month</p>
-              <Timer className="h-4 w-4 text-accent" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">This month</p>
+              <Timer className="text-accent h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">{stats?.thisMonth ?? "–"}</p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
+              {stats?.thisMonth ?? "–"}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Day streak</p>
-              <Flame className="h-4 w-4 text-warning" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">Day streak</p>
+              <Flame className="text-warning h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {stats?.currentStreak ?? "–"}
-              <span className="text-sm font-normal text-muted-foreground"> days</span>
+              <span className="text-muted-foreground text-sm font-normal"> days</span>
             </p>
           </CardContent>
         </Card>
@@ -160,7 +164,7 @@ export function AttendanceDashboard() {
       {/* Weekly strip */}
       <Card>
         <CardContent className="p-5">
-          <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+          <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
             Last 7 days
           </h3>
           <div className="mt-4 flex justify-between gap-2">
@@ -181,7 +185,7 @@ export function AttendanceDashboard() {
                   >
                     {record ? "✓" : day.getDate()}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <span className="text-muted-foreground text-[10px] tracking-wider uppercase">
                     {day.toLocaleDateString(undefined, { weekday: "short" }).slice(0, 2)}
                   </span>
                 </div>
@@ -194,7 +198,7 @@ export function AttendanceDashboard() {
       {/* History */}
       <Card>
         <CardContent className="p-5">
-          <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+          <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
             Check-in history
           </h3>
           {isLoading ? (
@@ -203,7 +207,7 @@ export function AttendanceDashboard() {
               <Skeleton className="h-14 w-full" />
             </div>
           ) : !history || history.length === 0 ? (
-            <p className="mt-4 rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+            <p className="border-border text-muted-foreground mt-4 rounded-2xl border border-dashed py-10 text-center text-sm">
               No check-ins yet. Check in at the gym to start tracking.
             </p>
           ) : (
@@ -214,27 +218,33 @@ export function AttendanceDashboard() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.03, 0.5) }}
-                  className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3"
+                  className="border-border bg-surface flex items-center justify-between rounded-xl border px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <span
                       className={cn(
                         "flex h-9 w-9 items-center justify-center rounded-xl",
-                        record.status === "LATE" ? "bg-warning/15 text-warning" : "bg-success/15 text-success"
+                        record.status === "LATE"
+                          ? "bg-warning/15 text-warning"
+                          : "bg-success/15 text-success"
                       )}
                     >
                       <CalendarCheck2 className="h-4 w-4" />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-foreground">
+                      <p className="text-foreground text-sm font-medium">
                         {new Date(record.checkInTime).toLocaleDateString(undefined, {
                           weekday: "short",
                           month: "short",
                           day: "numeric",
                         })}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {record.branch.name} · {new Date(record.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      <p className="text-muted-foreground text-xs">
+                        {record.branch.name} ·{" "}
+                        {new Date(record.checkInTime).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                         {record.checkOutTime
                           ? ` – ${new Date(record.checkOutTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
                           : ""}
@@ -242,10 +252,13 @@ export function AttendanceDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={record.status === "LATE" ? "warning" : "success"} className="hidden sm:inline-flex">
+                    <Badge
+                      variant={record.status === "LATE" ? "warning" : "success"}
+                      className="hidden sm:inline-flex"
+                    >
                       {record.status}
                     </Badge>
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <MapPin className="text-muted-foreground h-4 w-4" />
                   </div>
                 </motion.div>
               ))}

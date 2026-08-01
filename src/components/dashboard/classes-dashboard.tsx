@@ -3,14 +3,7 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import {
-  CalendarDays,
-  Clock,
-  Dumbbell,
-  MapPin,
-  Users,
-  X,
-} from "lucide-react";
+import { CalendarDays, Clock, Dumbbell, MapPin, Users, X } from "lucide-react";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +56,9 @@ const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function ClassesDashboard() {
   const queryClient = useQueryClient();
-  const [selectedDate, setSelectedDate] = React.useState(() => new Date().toISOString().slice(0, 10));
+  const [selectedDate, setSelectedDate] = React.useState(() =>
+    new Date().toISOString().slice(0, 10)
+  );
   const [activeType, setActiveType] = React.useState("ALL");
   const [busyClassId, setBusyClassId] = React.useState<string | null>(null);
 
@@ -131,22 +126,22 @@ export function ClassesDashboard() {
       {/* My upcoming bookings */}
       {upcoming.length > 0 && (
         <Card className="p-5">
-          <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+          <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
             Upcoming bookings
           </h3>
           <div className="mt-4 space-y-3">
             {upcoming.map((booking) => (
               <div
                 key={booking.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/25 bg-primary/5 px-4 py-3"
+                className="border-primary/25 bg-primary/5 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3"
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-primary">
+                  <span className="bg-surface text-primary flex h-10 w-10 items-center justify-center rounded-xl">
                     <Dumbbell className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{booking.class.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-foreground text-sm font-semibold">{booking.class.name}</p>
+                    <p className="text-muted-foreground text-xs">
                       {new Date(booking.class.startTime).toLocaleDateString(undefined, {
                         weekday: "short",
                         month: "short",
@@ -192,11 +187,21 @@ export function ClassesDashboard() {
                   : "border-border bg-surface hover:border-primary/30"
               )}
             >
-              <span className={cn("text-[10px] uppercase tracking-widest", selectedDate === day ? "text-primary-foreground/70" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "text-[10px] tracking-widest uppercase",
+                  selectedDate === day ? "text-primary-foreground/70" : "text-muted-foreground"
+                )}
+              >
                 {isToday ? "Today" : DAY_LABELS[date.getDay()]}
               </span>
               <span className="font-display text-lg font-bold">{date.getDate()}</span>
-              <span className={cn("text-[10px] uppercase", selectedDate === day ? "text-primary-foreground/70" : "text-muted-foreground")}>
+              <span
+                className={cn(
+                  "text-[10px] uppercase",
+                  selectedDate === day ? "text-primary-foreground/70" : "text-muted-foreground"
+                )}
+              >
                 {date.toLocaleDateString(undefined, { month: "short" })}
               </span>
             </button>
@@ -207,7 +212,10 @@ export function ClassesDashboard() {
       {/* Type filter */}
       <div className="flex flex-wrap gap-2">
         <Badge
-          className={cn("cursor-pointer", activeType === "ALL" && "bg-primary/25 border-primary/40")}
+          className={cn(
+            "cursor-pointer",
+            activeType === "ALL" && "bg-primary/25 border-primary/40"
+          )}
           variant="outline"
           onClick={() => setActiveType("ALL")}
         >
@@ -216,7 +224,10 @@ export function ClassesDashboard() {
         {CLASS_TYPES.map((type) => (
           <Badge
             key={type}
-            className={cn("cursor-pointer", activeType === type && "bg-primary/25 border-primary/40")}
+            className={cn(
+              "cursor-pointer",
+              activeType === type && "bg-primary/25 border-primary/40"
+            )}
             variant="outline"
             onClick={() => setActiveType(type)}
           >
@@ -234,11 +245,11 @@ export function ClassesDashboard() {
         </div>
       ) : !data || data.classes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center gap-3 p-14 text-center">
-          <CalendarDays className="h-10 w-10 text-muted-foreground" />
-          <p className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+          <CalendarDays className="text-muted-foreground h-10 w-10" />
+          <p className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
             No classes
           </p>
-          <p className="max-w-sm text-sm text-muted-foreground">
+          <p className="text-muted-foreground max-w-sm text-sm">
             There are no {activeType !== "ALL" ? `${activeType.toLowerCase()} ` : ""}classes on this
             day. Try another date.
           </p>
@@ -256,18 +267,20 @@ export function ClassesDashboard() {
                 transition={{ delay: Math.min(i * 0.05, 0.6) }}
                 className={cn(
                   "rounded-2xl border p-5 transition-all duration-300",
-                  isBooked ? "border-primary/30 bg-primary/5" : "border-border bg-surface hover:border-primary/30"
+                  isBooked
+                    ? "border-primary/30 bg-primary/5"
+                    : "border-border bg-surface hover:border-primary/30"
                 )}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-display text-base font-bold uppercase tracking-wide text-foreground">
+                      <h3 className="font-display text-foreground text-base font-bold tracking-wide uppercase">
                         {cls.name}
                       </h3>
                       <Badge variant="secondary">{cls.type}</Badge>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="text-muted-foreground mt-1 text-xs">
                       {cls.difficulty ? `${cls.difficulty} level` : "All levels"} ·{" "}
                       {cls.trainer?.user.name ?? "Instructor TBD"}
                     </p>
@@ -286,7 +299,7 @@ export function ClassesDashboard() {
                   </span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                <div className="text-muted-foreground mt-4 grid grid-cols-2 gap-2 text-xs">
                   <span className="flex items-center gap-1.5">
                     <Clock className="h-3.5 w-3.5" />
                     {new Date(cls.startTime).toLocaleTimeString([], {
@@ -328,7 +341,11 @@ export function ClassesDashboard() {
                       Join waitlist
                     </Button>
                   ) : (
-                    <Button className="w-full" onClick={() => book(cls.id)} disabled={busyClassId === cls.id}>
+                    <Button
+                      className="w-full"
+                      onClick={() => book(cls.id)}
+                      disabled={busyClassId === cls.id}
+                    >
                       {busyClassId === cls.id ? "Booking…" : "Book class"}
                     </Button>
                   )}

@@ -17,18 +17,23 @@ export interface LegalPageData {
 export function LegalPage({ data }: { data: LegalPageData }) {
   return (
     <div className="relative">
-      <PageHeader badge={data.badge} title={data.title} highlight={data.highlight} description={data.description} />
+      <PageHeader
+        badge={data.badge}
+        title={data.title}
+        highlight={data.highlight}
+        description={data.description}
+      />
       <section className="relative mx-auto max-w-3xl px-4 pb-24 sm:px-6">
-        <p className="mb-10 text-sm text-muted">Last updated: {data.updated}</p>
+        <p className="text-muted mb-10 text-sm">Last updated: {data.updated}</p>
         <div className="space-y-10">
           {data.sections.map((section) => (
             <div key={section.heading} className="glass rounded-2xl p-6 sm:p-8">
-              <h2 className="font-display mb-4 text-xl font-semibold uppercase tracking-tight sm:text-2xl">
+              <h2 className="font-display mb-4 text-xl font-semibold tracking-tight uppercase sm:text-2xl">
                 {section.heading}
               </h2>
               <div className="space-y-3">
                 {section.body.map((paragraph, index) => (
-                  <p key={index} className="leading-relaxed text-muted-foreground">
+                  <p key={index} className="text-muted-foreground leading-relaxed">
                     {paragraph}
                   </p>
                 ))}

@@ -53,10 +53,7 @@ export async function rateLimit(
 }
 
 /** Convenience: derive an identifier from the incoming request. */
-export async function rateLimitByIp(
-  limit = 60,
-  windowMs = 60_000
-): Promise<RateLimitResult> {
+export async function rateLimitByIp(limit = 60, windowMs = 60_000): Promise<RateLimitResult> {
   const headersList = await headers();
   const ip =
     headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ??

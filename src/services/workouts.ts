@@ -41,16 +41,22 @@ export async function getFavorites(userId: string) {
   });
 }
 
-export async function createCustomExercise(userId: string, data: {
-  name: string;
-  muscleGroup: string;
-  equipment?: string | null;
-  difficulty?: string;
-  category?: string;
-  instructions?: { setup?: string; execution?: string; tips?: string };
-}) {
+export async function createCustomExercise(
+  userId: string,
+  data: {
+    name: string;
+    muscleGroup: string;
+    equipment?: string | null;
+    difficulty?: string;
+    category?: string;
+    instructions?: { setup?: string; execution?: string; tips?: string };
+  }
+) {
   const slug =
-    data.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-") +
+    data.name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-") +
     "-" +
     Math.random().toString(36).slice(2, 7);
   return prisma.exercise.create({
@@ -105,21 +111,29 @@ export async function getPlan(userId: string, planId: string) {
   return plan;
 }
 
-export async function createPlan(userId: string, data: {
-  name: string;
-  goal?: string | null;
-  description?: string | null;
-  isAiGenerated?: boolean;
-  days?: { dayNumber: number; title: string; focus?: string | null; exercises: {
-    exerciseId: string;
-    sets: number;
-    reps: string;
-    restSeconds?: number;
-    weightKg?: number | null;
-    order?: number;
-    notes?: string | null;
-  }[] }[];
-}) {
+export async function createPlan(
+  userId: string,
+  data: {
+    name: string;
+    goal?: string | null;
+    description?: string | null;
+    isAiGenerated?: boolean;
+    days?: {
+      dayNumber: number;
+      title: string;
+      focus?: string | null;
+      exercises: {
+        exerciseId: string;
+        sets: number;
+        reps: string;
+        restSeconds?: number;
+        weightKg?: number | null;
+        order?: number;
+        notes?: string | null;
+      }[];
+    }[];
+  }
+) {
   return prisma.workoutPlan.create({
     data: {
       userId,
@@ -160,23 +174,37 @@ export async function deletePlan(userId: string, planId: string) {
   });
 }
 
-export async function startSession(userId: string, data: {
-  title: string;
-  planId?: string | null;
-  workoutDayId?: string | null;
-  notes?: string | null;
-}) {
+export async function startSession(
+  userId: string,
+  data: {
+    title: string;
+    planId?: string | null;
+    workoutDayId?: string | null;
+    notes?: string | null;
+  }
+) {
   return prisma.workoutSession.create({
     data: { userId, ...data },
   });
 }
 
-export async function completeSession(userId: string, sessionId: string, data: {
-  durationMinutes?: number | null;
-  caloriesBurned?: number | null;
-  notes?: string | null;
-  logs?: { exerciseId: string; setsCompleted: number; reps?: string | null; weightKg?: number | null; notes?: string | null; personalRecord?: boolean }[];
-}) {
+export async function completeSession(
+  userId: string,
+  sessionId: string,
+  data: {
+    durationMinutes?: number | null;
+    caloriesBurned?: number | null;
+    notes?: string | null;
+    logs?: {
+      exerciseId: string;
+      setsCompleted: number;
+      reps?: string | null;
+      weightKg?: number | null;
+      notes?: string | null;
+      personalRecord?: boolean;
+    }[];
+  }
+) {
   const session = await prisma.workoutSession.findFirst({
     where: { id: sessionId, userId },
   });
@@ -202,7 +230,8 @@ export async function completeSession(userId: string, sessionId: string, data: {
   const prCount = data.logs?.filter((l) => l.personalRecord).length ?? 0;
 
   await awardPoints(userId, WORKOUT_POINTS, "Workout completed");
-  if (prCount > 0) await awardPoints(userId, prCount * 10, `${prCount} personal record${prCount > 1 ? "s" : ""}`);
+  if (prCount > 0)
+    await awardPoints(userId, prCount * 10, `${prCount} personal record${prCount > 1 ? "s" : ""}`);
   await updateChallengeProgress(userId, "WORKOUTS");
   await checkAndAwardBadges(userId);
 
@@ -224,7 +253,10 @@ export async function getSessionHistory(userId: string, limit = 60) {
 export async function getPersonalRecords(userId: string) {
   const logs = await prisma.workoutLog.findMany({
     where: { session: { userId }, personalRecord: true },
-    include: { exercise: { select: { id: true, name: true, muscleGroup: true } }, session: { select: { date: true } } },
+    include: {
+      exercise: { select: { id: true, name: true, muscleGroup: true } },
+      session: { select: { date: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 

@@ -12,16 +12,10 @@ interface PageHeaderProps {
   className?: string;
 }
 
-export function PageHeader({
-  badge,
-  title,
-  highlight,
-  description,
-  className,
-}: PageHeaderProps) {
+export function PageHeader({ badge, title, highlight, description, className }: PageHeaderProps) {
   return (
     <section className={cn("relative overflow-hidden pt-36 pb-16 sm:pt-44 sm:pb-20", className)}>
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
+      <div className="bg-primary/8 pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full blur-3xl" />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
       <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
         {badge && (
@@ -39,7 +33,7 @@ export function PageHeader({
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-display text-4xl font-bold uppercase leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+          className="font-display text-foreground text-4xl leading-[1.05] font-bold tracking-tight uppercase sm:text-6xl lg:text-7xl"
         >
           {title}
           {highlight && (
@@ -54,7 +48,7 @@ export function PageHeader({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+            className="text-muted-foreground mx-auto mt-6 max-w-2xl text-base leading-relaxed sm:text-lg"
           >
             {description}
           </motion.p>

@@ -15,8 +15,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { GoogleIcon } from "@/components/shared/google-icon";
 
-
-
 const registerSchema = z.object({
   name: z.string().min(2, "Enter your full name"),
   email: z.string().email("Enter a valid email"),
@@ -69,12 +67,12 @@ export function RegisterPageForm() {
   };
 
   return (
-    <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl shadow-card">
+    <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-foreground">
+        <h1 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
           Join <span className="text-gradient">Titan</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-sm">
           Create your account — it takes less than a minute.
         </p>
       </div>
@@ -97,7 +95,7 @@ export function RegisterPageForm() {
 
       <div className="my-6 flex items-center gap-4">
         <Separator className="flex-1" />
-        <span className="text-xs uppercase tracking-widest text-muted-foreground">or</span>
+        <span className="text-muted-foreground text-xs tracking-widest uppercase">or</span>
         <Separator className="flex-1" />
       </div>
 
@@ -111,7 +109,7 @@ export function RegisterPageForm() {
             {...register("name")}
             aria-invalid={!!errors.name}
           />
-          {errors.name && <p className="text-xs text-primary">{errors.name.message}</p>}
+          {errors.name && <p className="text-primary text-xs">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -124,7 +122,7 @@ export function RegisterPageForm() {
             {...register("email")}
             aria-invalid={!!errors.email}
           />
-          {errors.email && <p className="text-xs text-primary">{errors.email.message}</p>}
+          {errors.email && <p className="text-primary text-xs">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -137,17 +135,13 @@ export function RegisterPageForm() {
             {...register("password")}
             aria-invalid={!!errors.password}
           />
-          {errors.password && <p className="text-xs text-primary">{errors.password.message}</p>}
+          {errors.password && <p className="text-primary text-xs">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="referralCode">Referral code (optional)</Label>
-          <Input
-            id="referralCode"
-            placeholder="TITAN-XXXXXX"
-            {...register("referralCode")}
-          />
-          <p className="text-[11px] text-muted-foreground">
+          <Input id="referralCode" placeholder="TITAN-XXXXXX" {...register("referralCode")} />
+          <p className="text-muted-foreground text-[11px]">
             Got a code from a friend? Enter it and you both earn $20.
           </p>
         </div>
@@ -162,16 +156,25 @@ export function RegisterPageForm() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-6 text-center text-sm">
         Already a member?{" "}
-        <Link href="/login" className="font-medium text-primary transition-colors hover:text-accent">
+        <Link
+          href="/login"
+          className="text-primary hover:text-accent font-medium transition-colors"
+        >
           Sign in
         </Link>
       </p>
-      <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
+      <p className="text-muted-foreground mt-3 text-center text-[11px] leading-relaxed">
         By creating an account you agree to our{" "}
-        <Link href="/terms" className="hover:text-primary">Terms</Link> and{" "}
-        <Link href="/privacy" className="hover:text-primary">Privacy Policy</Link>.
+        <Link href="/terms" className="hover:text-primary">
+          Terms
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="hover:text-primary">
+          Privacy Policy
+        </Link>
+        .
       </p>
     </div>
   );

@@ -13,7 +13,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-11 items-center justify-center rounded-full border border-border bg-surface p-1 text-muted-foreground",
+      "border-border bg-surface text-muted-foreground inline-flex h-11 items-center justify-center rounded-full border p-1",
       className
     )}
     {...props}
@@ -28,7 +28,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-glow",
+      "focus-visible:ring-primary/50 data-[state=active]:bg-primary data-[state=active]:shadow-glow inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-300 focus-visible:ring-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:text-white",
       className
     )}
     {...props}
@@ -43,7 +43,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:zoom-in-95",
+      "focus-visible:ring-primary/50 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:zoom-in-95 mt-4 focus-visible:ring-2 focus-visible:outline-none",
       className
     )}
     {...props}

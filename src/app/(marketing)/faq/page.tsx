@@ -4,7 +4,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "FAQs",
-  description: "Frequently asked questions about Titan Fitness memberships, AI coaching, classes, and more.",
+  description:
+    "Frequently asked questions about Titan Fitness memberships, AI coaching, classes, and more.",
   path: "/faq",
 });
 
@@ -103,7 +104,7 @@ export default function FaqPage() {
             <Reveal key={group.category} delay={gi * 0.05}>
               <div className="mb-6 flex items-center gap-3">
                 <span className="text-2xl">{group.icon}</span>
-                <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+                <h2 className="font-display text-foreground text-2xl font-bold tracking-tight uppercase">
                   {group.category}
                 </h2>
               </div>
@@ -111,15 +112,15 @@ export default function FaqPage() {
                 {group.faqs.map((faq) => (
                   <details
                     key={faq.q}
-                    className="group rounded-2xl border border-border bg-surface/60 backdrop-blur-xl transition-colors open:border-primary/30 hover:border-white/15"
+                    className="group border-border bg-surface/60 open:border-primary/30 rounded-2xl border backdrop-blur-xl transition-colors hover:border-white/15"
                   >
-                    <summary className="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden">
+                    <summary className="text-foreground flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-sm font-medium [&::-webkit-details-marker]:hidden">
                       {faq.q}
                       <span className="text-primary transition-transform duration-300 group-open:rotate-45">
                         +
                       </span>
                     </summary>
-                    <p className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground">
+                    <p className="text-muted-foreground px-6 pb-6 text-sm leading-relaxed">
                       {faq.a}
                     </p>
                   </details>

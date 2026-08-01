@@ -3,10 +3,13 @@ import { ApiError } from "@/lib/api";
 import { calculateStreak, updateChallengeProgress } from "@/services/gamification";
 import { createNotification } from "@/services/notifications";
 
-export async function checkIn(userId: string, params: {
-  branchId: string;
-  method?: string;
-}) {
+export async function checkIn(
+  userId: string,
+  params: {
+    branchId: string;
+    method?: string;
+  }
+) {
   const branch = await prisma.branch.findFirst({
     where: { id: params.branchId, isActive: true },
   });

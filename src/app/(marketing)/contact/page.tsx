@@ -95,17 +95,17 @@ export default function ContactPage() {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="flex items-start gap-4 rounded-2xl border border-border bg-surface/60 p-6 backdrop-blur-xl transition-colors hover:border-primary/30"
+                  className="border-border bg-surface/60 hover:border-primary/30 flex items-start gap-4 rounded-2xl border p-6 backdrop-blur-xl transition-colors"
                 >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15">
-                    <item.icon className="h-5 w-5 text-primary" />
+                  <span className="bg-primary/15 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
+                    <item.icon className="text-primary h-5 w-5" />
                   </span>
                   <div>
-                    <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+                    <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                       {item.title}
                     </h3>
                     {item.lines.map((line) => (
-                      <p key={line} className="mt-1 text-sm text-muted-foreground">
+                      <p key={line} className="text-muted-foreground mt-1 text-sm">
                         {line}
                       </p>
                     ))}
@@ -118,29 +118,36 @@ export default function ContactPage() {
           <Reveal delay={0.1} className="lg:col-span-3">
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl"
+              className="border-border bg-surface/60 rounded-3xl border p-8 backdrop-blur-xl"
             >
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+              <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                 Send a Message
               </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-1 text-sm">
                 We typically respond within 24 hours.
               </p>
 
               <div className="mt-8 grid gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full name</Label>
-                  <Input id="name" placeholder="John Doe" {...register("name")} aria-invalid={!!errors.name} />
-                  {errors.name && (
-                    <p className="text-xs text-primary">{errors.name.message}</p>
-                  )}
+                  <Input
+                    id="name"
+                    placeholder="John Doe"
+                    {...register("name")}
+                    aria-invalid={!!errors.name}
+                  />
+                  {errors.name && <p className="text-primary text-xs">{errors.name.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="john@example.com" {...register("email")} aria-invalid={!!errors.email} />
-                  {errors.email && (
-                    <p className="text-xs text-primary">{errors.email.message}</p>
-                  )}
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    {...register("email")}
+                    aria-invalid={!!errors.email}
+                  />
+                  {errors.email && <p className="text-primary text-xs">{errors.email.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone (optional)</Label>
@@ -148,9 +155,14 @@ export default function ContactPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="subject">Subject</Label>
-                  <Input id="subject" placeholder="Membership question" {...register("subject")} aria-invalid={!!errors.subject} />
+                  <Input
+                    id="subject"
+                    placeholder="Membership question"
+                    {...register("subject")}
+                    aria-invalid={!!errors.subject}
+                  />
                   {errors.subject && (
-                    <p className="text-xs text-primary">{errors.subject.message}</p>
+                    <p className="text-primary text-xs">{errors.subject.message}</p>
                   )}
                 </div>
                 <div className="space-y-2 sm:col-span-2">
@@ -163,12 +175,17 @@ export default function ContactPage() {
                     aria-invalid={!!errors.message}
                   />
                   {errors.message && (
-                    <p className="text-xs text-primary">{errors.message.message}</p>
+                    <p className="text-primary text-xs">{errors.message.message}</p>
                   )}
                 </div>
               </div>
 
-              <Button type="submit" size="lg" className="mt-8 w-full sm:w-auto" disabled={submitting}>
+              <Button
+                type="submit"
+                size="lg"
+                className="mt-8 w-full sm:w-auto"
+                disabled={submitting}
+              >
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />

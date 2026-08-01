@@ -53,8 +53,10 @@ export async function validateCoupon(code: string, amount: number) {
   if (!coupon) throw new ApiError("Invalid coupon code", 404, "INVALID_COUPON");
 
   const now = new Date();
-  if (coupon.validFrom && coupon.validFrom > now) throw new ApiError("Coupon not active yet", 400, "COUPON_INVALID");
-  if (coupon.validUntil && coupon.validUntil < now) throw new ApiError("Coupon expired", 400, "COUPON_EXPIRED");
+  if (coupon.validFrom && coupon.validFrom > now)
+    throw new ApiError("Coupon not active yet", 400, "COUPON_INVALID");
+  if (coupon.validUntil && coupon.validUntil < now)
+    throw new ApiError("Coupon expired", 400, "COUPON_EXPIRED");
   if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
     throw new ApiError("Coupon usage limit reached", 400, "COUPON_MAX_USED");
   }
@@ -62,19 +64,27 @@ export async function validateCoupon(code: string, amount: number) {
     throw new ApiError("Minimum amount not met", 400, "COUPON_MIN_AMOUNT");
   }
 
-  const discount = coupon.type === "PERCENTAGE"
-    ? (amount * Number(coupon.value)) / 100
-    : Math.min(Number(coupon.value), amount);
+  const discount =
+    coupon.type === "PERCENTAGE"
+      ? (amount * Number(coupon.value)) / 100
+      : Math.min(Number(coupon.value), amount);
 
-  return { coupon, discount, finalAmount: Math.max(0, Math.round((amount - discount) * 100) / 100) };
+  return {
+    coupon,
+    discount,
+    finalAmount: Math.max(0, Math.round((amount - discount) * 100) / 100),
+  };
 }
 
-export async function createMembershipOrder(userId: string, data: {
-  planId: string;
-  branchId?: string;
-  couponCode?: string;
-  autoRenew?: boolean;
-}) {
+export async function createMembershipOrder(
+  userId: string,
+  data: {
+    planId: string;
+    branchId?: string;
+    couponCode?: string;
+    autoRenew?: boolean;
+  }
+) {
   const plan = await prisma.membershipPlan.findFirst({
     where: { id: data.planId, isActive: true, deletedAt: null },
   });
@@ -98,7 +108,11 @@ export async function createMembershipOrder(userId: string, data: {
       type: "MEMBERSHIP",
       description: `Membership: ${plan.name}`,
       couponId,
-      metadata: { planId: plan.id, autoRenew: data.autoRenew ?? false, originalAmount: Number(plan.price) },
+      metadata: {
+        planId: plan.id,
+        autoRenew: data.autoRenew ?? false,
+        originalAmount: Number(plan.price),
+      },
     },
   });
 
@@ -193,8 +207,9 @@ export async function createCheckoutSession(
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    customer_email: (await prisma.user.findUnique({ where: { id: userId }, select: { email: true } }))
-      ?.email,
+    customer_email: (
+      await prisma.user.findUnique({ where: { id: userId }, select: { email: true } })
+    )?.email,
     line_items: [
       {
         quantity: 1,

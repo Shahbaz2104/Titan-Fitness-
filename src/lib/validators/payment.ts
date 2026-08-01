@@ -11,7 +11,11 @@ export const membershipUpdateSchema = z.object({
 });
 
 export const couponSchema = z.object({
-  code: z.string().min(3).max(30).transform((v) => v.toUpperCase()),
+  code: z
+    .string()
+    .min(3)
+    .max(30)
+    .transform((v) => v.toUpperCase()),
   type: z.enum(["PERCENTAGE", "FIXED"]),
   value: z.number().positive("Value must be positive"),
   maxUses: z.number().int().min(0).optional().nullable(),

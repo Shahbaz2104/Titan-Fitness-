@@ -41,24 +41,24 @@ const FAQS = [
 
 export function FaqSection() {
   return (
-    <section className="relative border-y border-border bg-surface/30 py-24 sm:py-32">
+    <section className="border-border bg-surface/30 relative border-y py-24 sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-5 lg:px-8">
         <Reveal className="lg:col-span-2">
           <Badge variant="warning" className="mb-4">
             FAQs
           </Badge>
-          <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground">
+          <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase">
             Questions? <br />
             <span className="text-gradient">Answered.</span>
           </h2>
-          <p className="mt-5 max-w-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-5 max-w-sm">
             Everything you need to know before you start your journey.
           </p>
-          <div className="mt-8 flex items-center gap-3 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4 text-primary" />
+          <div className="text-muted-foreground mt-8 flex items-center gap-3 text-sm">
+            <Clock className="text-primary h-4 w-4" />
             Average response time: under 2 hours
           </div>
-          <Button asChild variant="outline" className="mt-5 group">
+          <Button asChild variant="outline" className="group mt-5">
             <Link href="/faq">
               View all FAQs
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -70,17 +70,15 @@ export function FaqSection() {
           <Accordion type="single" collapsible className="space-y-3">
             {FAQS.map((faq, i) => (
               <AccordionItem key={faq.q} value={`item-${i}`}>
-                <AccordionTrigger className="font-medium text-foreground">
-                  {faq.q}
-                </AccordionTrigger>
+                <AccordionTrigger className="text-foreground font-medium">{faq.q}</AccordionTrigger>
                 <AccordionContent>{faq.a}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-          <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
-            <MessageCircle className="h-4 w-4 text-accent" />
+          <p className="text-muted-foreground mt-6 flex items-center gap-2 text-sm">
+            <MessageCircle className="text-accent h-4 w-4" />
             Still have questions?{" "}
-            <Link href="/contact" className="font-medium text-accent hover:underline">
+            <Link href="/contact" className="text-accent font-medium hover:underline">
               Chat with us
             </Link>
           </p>

@@ -45,7 +45,9 @@ export const faqSchema = z.object({
 
 export const searchQuerySchema = z.object({
   q: z.string().min(1).max(100),
-  type: z.enum(["all", "members", "trainers", "programs", "classes", "blog", "exercises"]).default("all"),
+  type: z
+    .enum(["all", "members", "trainers", "programs", "classes", "blog", "exercises"])
+    .default("all"),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(10),
 });

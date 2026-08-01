@@ -9,10 +9,7 @@ const commentSchema = z.object({
   content: z.string().min(2).max(2000),
 });
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = getPost(slug);
 
@@ -46,19 +43,14 @@ export async function GET(
       {
         id: "seed-1",
         name: post ? "Titan Member" : "Anonymous",
-        content: post
-          ? `Great read — this is exactly the kind of content I joined Titan for.`
-          : "",
+        content: post ? `Great read — this is exactly the kind of content I joined Titan for.` : "",
         createdAt: post ? post.publishedAt : new Date().toISOString(),
       },
     ].filter((c) => c.content),
   });
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const limit = await rateLimitByIp(10, 60_000);
   if (!limit.success) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });

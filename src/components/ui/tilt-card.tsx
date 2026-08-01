@@ -11,12 +11,7 @@ interface TiltCardProps {
   glare?: boolean;
 }
 
-export function TiltCard({
-  className,
-  children,
-  maxTilt = 10,
-  glare = true,
-}: TiltCardProps) {
+export function TiltCard({ className, children, maxTilt = 10, glare = true }: TiltCardProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const x = useMotionValue(0.5);
   const y = useMotionValue(0.5);

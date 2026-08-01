@@ -91,19 +91,49 @@ const WEEK_DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 export function OverviewDashboard() {
   const { data: user } = useUser();
-  const { data: stats } = useApiQuery<WorkoutStats>([...QUERY_KEYS.dashboard, "stats"], "/api/workouts/stats");
-  const { data: todayWorkout } = useApiQuery<TodayWorkout | null>([...QUERY_KEYS.dashboard, "today"], "/api/workouts/today");
-  const { data: attendance } = useApiQuery<TodayCheck>([...QUERY_KEYS.attendance, "today"], "/api/attendance/today");
-  const { data: attendanceStats } = useApiQuery<AttendanceStats>(QUERY_KEYS.attendance, "/api/attendance/stats");
-  const { data: points } = useApiQuery<PointsInfo>([...QUERY_KEYS.user, "points"], "/api/me/points");  const { data: bookings } = useApiQuery<{ upcoming: Booking[]; past: Booking[] }>(QUERY_KEYS.bookings, "/api/me/bookings");
-  const { data: membership } = useApiQuery<Membership | null>(QUERY_KEYS.membership, "/api/payments/membership");
-  const { data: nutrition } = useApiQuery<NutritionLogs>(QUERY_KEYS.nutrition, "/api/nutrition/logs");
+  const { data: stats } = useApiQuery<WorkoutStats>(
+    [...QUERY_KEYS.dashboard, "stats"],
+    "/api/workouts/stats"
+  );
+  const { data: todayWorkout } = useApiQuery<TodayWorkout | null>(
+    [...QUERY_KEYS.dashboard, "today"],
+    "/api/workouts/today"
+  );
+  const { data: attendance } = useApiQuery<TodayCheck>(
+    [...QUERY_KEYS.attendance, "today"],
+    "/api/attendance/today"
+  );
+  const { data: attendanceStats } = useApiQuery<AttendanceStats>(
+    QUERY_KEYS.attendance,
+    "/api/attendance/stats"
+  );
+  const { data: points } = useApiQuery<PointsInfo>(
+    [...QUERY_KEYS.user, "points"],
+    "/api/me/points"
+  );
+  const { data: bookings } = useApiQuery<{ upcoming: Booking[]; past: Booking[] }>(
+    QUERY_KEYS.bookings,
+    "/api/me/bookings"
+  );
+  const { data: membership } = useApiQuery<Membership | null>(
+    QUERY_KEYS.membership,
+    "/api/payments/membership"
+  );
+  const { data: nutrition } = useApiQuery<NutritionLogs>(
+    QUERY_KEYS.nutrition,
+    "/api/nutrition/logs"
+  );
 
   const waterPct = Math.min(100, Math.round(((nutrition?.water ?? 0) / WATER_DAILY_GOAL_ML) * 100));
 
   const todaySession = todayWorkout?.sessions?.[0] ?? null;
   const todayExercises =
-    todaySession?.logs?.map((l) => ({ id: l.id, name: l.exercise.name, sets: l.sets, reps: l.reps ?? "—" })) ??
+    todaySession?.logs?.map((l) => ({
+      id: l.id,
+      name: l.exercise.name,
+      sets: l.sets,
+      reps: l.reps ?? "—",
+    })) ??
     todayWorkout?.plan?.days?.[0]?.exercises?.map((e) => ({
       id: e.id,
       name: e.exercise.name,
@@ -113,8 +143,8 @@ export function OverviewDashboard() {
     [];
   const isCompleted = todayWorkout?.completed ?? false;
   const todayTitle = todaySession
-    ? todayWorkout?.plan?.name ?? "Today's Session"
-    : todayWorkout?.plan?.name ?? null;
+    ? (todayWorkout?.plan?.name ?? "Today's Session")
+    : (todayWorkout?.plan?.name ?? null);
 
   return (
     <div className="space-y-6">
@@ -122,7 +152,7 @@ export function OverviewDashboard() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/15 via-surface to-accent/10 p-8"
+        className="border-primary/25 from-primary/15 via-surface to-accent/10 relative overflow-hidden rounded-3xl border bg-gradient-to-br p-8"
       >
         <div className="bg-grid absolute inset-0 opacity-40" />
         <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
@@ -137,14 +167,14 @@ export function OverviewDashboard() {
                   ? "Plan Available"
                   : "No Session Today"}
             </Badge>
-            <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-foreground sm:text-3xl">
+            <h2 className="font-display text-foreground text-2xl font-bold tracking-tight uppercase sm:text-3xl">
               {todayTitle
                 ? isCompleted
                   ? "Great work! 💪"
                   : todayTitle
                 : `Welcome back, ${user?.name?.split(" ")[0] ?? "Athlete"} 👋`}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm">
               {todaySession
                 ? `${todaySession.durationMinutes ?? "—"} min session · ${todayExercises.length} exercises`
                 : todayTitle
@@ -159,9 +189,7 @@ export function OverviewDashboard() {
                 </Link>
               </Button>
               <Button asChild size="sm" variant="outline">
-                <Link href="/dashboard/ai/chat">
-                  Ask AI Coach
-                </Link>
+                <Link href="/dashboard/ai/chat">Ask AI Coach</Link>
               </Button>
             </div>
           </div>
@@ -224,7 +252,7 @@ export function OverviewDashboard() {
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="text-base">Today&apos;s Workout</CardTitle>
-            <Link href="/dashboard/workouts" className="text-xs text-primary hover:text-accent">
+            <Link href="/dashboard/workouts" className="text-primary hover:text-accent text-xs">
               View all
             </Link>
           </CardHeader>
@@ -236,8 +264,9 @@ export function OverviewDashboard() {
                 <Skeleton className="h-14 w-full" />
               </>
             ) : todayExercises.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
-                Nothing scheduled today. Rest is productive too — or browse a workout to get after it.
+              <p className="border-border text-muted-foreground rounded-2xl border border-dashed py-10 text-center text-sm">
+                Nothing scheduled today. Rest is productive too — or browse a workout to get after
+                it.
               </p>
             ) : (
               <>
@@ -261,9 +290,9 @@ export function OverviewDashboard() {
                           isCompleted ? "text-success" : "text-muted-foreground"
                         )}
                       />
-                      <span className="text-sm text-foreground">{exercise.name}</span>
+                      <span className="text-foreground text-sm">{exercise.name}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {exercise.sets}×{exercise.reps}
                     </span>
                   </motion.div>
@@ -283,7 +312,7 @@ export function OverviewDashboard() {
         <Card>
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="text-base">Upcoming Classes</CardTitle>
-            <Link href="/dashboard/classes" className="text-xs text-primary hover:text-accent">
+            <Link href="/dashboard/classes" className="text-primary hover:text-accent text-xs">
               Book now
             </Link>
           </CardHeader>
@@ -294,7 +323,7 @@ export function OverviewDashboard() {
                 <Skeleton className="h-16 w-full" />
               </>
             ) : !bookings || bookings.upcoming.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+              <p className="border-border text-muted-foreground rounded-2xl border border-dashed py-10 text-center text-sm">
                 No upcoming classes. Check the schedule and book your spot!
               </p>
             ) : (
@@ -305,15 +334,17 @@ export function OverviewDashboard() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + i * 0.08 }}
-                    className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 transition-all duration-300 hover:border-primary/30"
+                    className="border-border bg-surface hover:border-primary/30 flex items-center justify-between rounded-xl border px-4 py-3 transition-all duration-300"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <span className="bg-primary/10 text-primary flex h-9 w-9 items-center justify-center rounded-xl">
                         <CalendarDays className="h-4 w-4" />
                       </span>
                       <div>
-                        <p className="text-sm font-semibold text-foreground">{booking.class.name}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-foreground text-sm font-semibold">
+                          {booking.class.name}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
                           {new Date(booking.class.startTime).toLocaleDateString(undefined, {
                             weekday: "short",
                             month: "short",
@@ -362,11 +393,11 @@ export function OverviewDashboard() {
                     >
                       {attendance?.checkedIn && new Date().getDay() === i ? "✓" : day}
                     </span>
-                    <span className="text-[10px] uppercase text-muted-foreground">{day}</span>
+                    <span className="text-muted-foreground text-[10px] uppercase">{day}</span>
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-center text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-3 text-center text-xs">
                 {attendanceStats?.currentStreak ?? 0}-day check-in streak
               </p>
             </CardContent>
@@ -388,8 +419,8 @@ export function OverviewDashboard() {
                   displayValue={`${((nutrition?.water ?? 0) / 1000).toFixed(1)}L`}
                 />
                 <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-display text-xl font-bold text-foreground">
+                  <p className="text-muted-foreground text-sm">
+                    <span className="font-display text-foreground text-xl font-bold">
                       {((nutrition?.water ?? 0) / 1000).toFixed(1)}L
                     </span>{" "}
                     / {WATER_DAILY_GOAL_ML / 1000}L
@@ -407,14 +438,14 @@ export function OverviewDashboard() {
           <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/15">
-                  <CreditCard className="h-5 w-5 text-success" />
+                <span className="bg-success/15 flex h-10 w-10 items-center justify-center rounded-xl">
+                  <CreditCard className="text-success h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-foreground text-sm font-semibold">
                     {membership?.plan.name ?? "No membership"}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {membership
                       ? membership.daysLeft !== null
                         ? `${membership.daysLeft} days left`
@@ -425,7 +456,7 @@ export function OverviewDashboard() {
               </div>
               <Link
                 href="/dashboard/membership"
-                className="flex items-center gap-1 text-xs text-primary hover:text-accent"
+                className="text-primary hover:text-accent flex items-center gap-1 text-xs"
               >
                 Manage <ArrowRight className="h-3 w-3" />
               </Link>
@@ -449,8 +480,7 @@ function WaterButton({ amountMl }: { amountMl: number }) {
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.nutrition });
       }}
     >
-      <Droplets className="h-3.5 w-3.5 text-blue-400" />
-      +{amountMl}ml
+      <Droplets className="h-3.5 w-3.5 text-blue-400" />+{amountMl}ml
     </Button>
   );
 }

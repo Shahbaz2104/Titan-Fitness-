@@ -74,9 +74,7 @@ export async function notifyMembershipExpiry() {
 
   for (const membership of expiring) {
     if (!membership.endDate) continue;
-    const daysLeft = Math.ceil(
-      (membership.endDate.getTime() - Date.now()) / 86_400_000
-    );
+    const daysLeft = Math.ceil((membership.endDate.getTime() - Date.now()) / 86_400_000);
     await createNotification({
       userId: membership.userId,
       title: "Membership expiring soon",

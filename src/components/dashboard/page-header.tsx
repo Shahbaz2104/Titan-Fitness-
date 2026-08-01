@@ -21,17 +21,15 @@ export function DashboardPageHeader({
     >
       <div className="flex items-center gap-3">
         {icon && (
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10 text-primary">
+          <span className="border-primary/25 bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-2xl border">
             {icon}
           </span>
         )}
         <div>
-          <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-foreground">
+          <h2 className="font-display text-foreground text-2xl font-bold tracking-wide uppercase">
             {title}
           </h2>
-          {description && (
-            <p className={cn("text-sm text-muted-foreground")}>{description}</p>
-          )}
+          {description && <p className={cn("text-muted-foreground text-sm")}>{description}</p>}
         </div>
       </div>
       {actions && <div className="flex flex-wrap items-center gap-3">{actions}</div>}

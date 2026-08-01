@@ -169,10 +169,25 @@ export interface WorkoutGeneratorInput {
 }
 
 const DAY_FOCUS: Record<string, string[]> = {
-  MUSCLE_GAIN: ["Push · Chest & Triceps", "Pull · Back & Biceps", "Legs & Core", "Shoulders & Arms"],
+  MUSCLE_GAIN: [
+    "Push · Chest & Triceps",
+    "Pull · Back & Biceps",
+    "Legs & Core",
+    "Shoulders & Arms",
+  ],
   STRENGTH: ["Squat Focus", "Bench Focus", "Deadlift Focus", "Overhead & Accessories"],
-  WEIGHT_LOSS: ["Full Body · Circuit", "HIIT & Core", "Full Body · Circuit", "Cardio & Conditioning"],
-  ENDURANCE: ["Long Session · Low-Intensity", "Interval Training", "Aerobic Base", "Tempo & Fartlek"],
+  WEIGHT_LOSS: [
+    "Full Body · Circuit",
+    "HIIT & Core",
+    "Full Body · Circuit",
+    "Cardio & Conditioning",
+  ],
+  ENDURANCE: [
+    "Long Session · Low-Intensity",
+    "Interval Training",
+    "Aerobic Base",
+    "Tempo & Fartlek",
+  ],
   GENERAL_FITNESS: ["Full Body A", "Cardio & Mobility", "Full Body B", "Conditioning"],
 };
 
@@ -186,7 +201,9 @@ const aiWorkoutSchema = z.object({
         exercises: z
           .array(
             z.object({
-              name: z.string().describe("Exercise name — must be picked EXACTLY from the provided library"),
+              name: z
+                .string()
+                .describe("Exercise name — must be picked EXACTLY from the provided library"),
               sets: z.number().int().min(1).max(8),
               reps: z.string().describe("e.g. '8-12'"),
               restSeconds: z.number().int().min(0).max(300),
@@ -363,15 +380,33 @@ export interface NutritionistInput {
   mealsPerDay: number;
 }
 
-const MEAL_TEMPLATES: Record<string, { mealType: GeneratedMeal["mealType"]; name: string; calories: number; protein: number }[]> = {
+const MEAL_TEMPLATES: Record<
+  string,
+  { mealType: GeneratedMeal["mealType"]; name: string; calories: number; protein: number }[]
+> = {
   STANDARD: [
-    { mealType: "BREAKFAST", name: "Overnight oats with berries & almonds", calories: 420, protein: 18 },
-    { mealType: "LUNCH", name: "Grilled chicken, quinoa & roasted vegetables", calories: 560, protein: 42 },
+    {
+      mealType: "BREAKFAST",
+      name: "Overnight oats with berries & almonds",
+      calories: 420,
+      protein: 18,
+    },
+    {
+      mealType: "LUNCH",
+      name: "Grilled chicken, quinoa & roasted vegetables",
+      calories: 560,
+      protein: 42,
+    },
     { mealType: "SNACK", name: "Greek yogurt with honey & walnuts", calories: 280, protein: 20 },
     { mealType: "DINNER", name: "Salmon, sweet potato & green beans", calories: 620, protein: 38 },
   ],
   HIGH_PROTEIN: [
-    { mealType: "BREAKFAST", name: "Egg white scramble with turkey & avocado", calories: 460, protein: 40 },
+    {
+      mealType: "BREAKFAST",
+      name: "Egg white scramble with turkey & avocado",
+      calories: 460,
+      protein: 40,
+    },
     { mealType: "LUNCH", name: "Beef stir-fry with brown rice", calories: 580, protein: 48 },
     { mealType: "SNACK", name: "Whey protein shake with banana", calories: 320, protein: 35 },
     { mealType: "DINNER", name: "Chicken thighs, lentils & broccoli", calories: 640, protein: 52 },
@@ -458,7 +493,8 @@ export async function generateMealPlan(
       const result = await generateObject({
         model,
         schema: aiMealSchema,
-        system: "You are an expert sports nutritionist. Produce a 7-day meal plan as structured JSON. Vary the meals across days.",
+        system:
+          "You are an expert sports nutritionist. Produce a 7-day meal plan as structured JSON. Vary the meals across days.",
         prompt: [
           `Goal: ${data.goal}`,
           `Target daily calories: ~${data.dailyCalories}`,
@@ -486,13 +522,17 @@ export async function generateMealPlan(
         calories: d.meals.reduce((acc, m) => acc + m.calories, 0),
         protein: d.meals.reduce((acc, m) => acc + m.protein, 0),
       }));
-      const avgCalories = Math.round(dayTotals.reduce((acc, d) => acc + d.calories, 0) / dayTotals.length);
+      const avgCalories = Math.round(
+        dayTotals.reduce((acc, d) => acc + d.calories, 0) / dayTotals.length
+      );
 
       const plan: GeneratedMealPlan = {
         title: result.object.title,
         goal: data.goal,
         dailyCalories: avgCalories,
-        proteinGrams: Math.round(dayTotals.reduce((acc, d) => acc + d.protein, 0) / dayTotals.length),
+        proteinGrams: Math.round(
+          dayTotals.reduce((acc, d) => acc + d.protein, 0) / dayTotals.length
+        ),
         days,
       };
 

@@ -6,10 +6,7 @@ const statusSchema = z.object({
   status: z.enum(["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"]),
 });
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ ticketId: string }> }
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ ticketId: string }> }) {
   try {
     await requireAdmin();
     const { ticketId } = await params;

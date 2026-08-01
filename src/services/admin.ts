@@ -3,7 +3,11 @@ import { Prisma, UserRole } from "@prisma/client";
 import { ApiError } from "@/lib/api";
 
 function slugify(text: string) {
-  const base = text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const base = text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
   return `${base}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
@@ -219,16 +223,19 @@ export async function adminCreateProgram(data: {
   });
 }
 
-export async function adminUpdateProgram(programId: string, data: Partial<{
-  name: string;
-  category: string;
-  description: string;
-  difficulty: string;
-  durationWeeks: number;
-  sessionsPerWeek: number;
-  imageUrl: string | null;
-  isActive: boolean;
-}>) {
+export async function adminUpdateProgram(
+  programId: string,
+  data: Partial<{
+    name: string;
+    category: string;
+    description: string;
+    difficulty: string;
+    durationWeeks: number;
+    sessionsPerWeek: number;
+    imageUrl: string | null;
+    isActive: boolean;
+  }>
+) {
   const program = await prisma.program.findFirst({
     where: { id: programId, deletedAt: null },
   });

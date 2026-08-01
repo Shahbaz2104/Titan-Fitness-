@@ -22,10 +22,7 @@ export function AnimatedGradient({
       {...props}
     >
       <div
-        className={cn(
-          "absolute inset-[-50%] opacity-40 blur-3xl",
-          animate && "animate-gradient-x"
-        )}
+        className={cn("absolute inset-[-50%] opacity-40 blur-3xl", animate && "animate-gradient-x")}
         style={{
           background: `linear-gradient(120deg, ${colors.join(", ")})`,
           backgroundSize: "300% 300%",
@@ -35,13 +32,7 @@ export function AnimatedGradient({
   );
 }
 
-export function AnimatedText({
-  text,
-  className,
-}: {
-  text: string;
-  className?: string;
-}) {
+export function AnimatedText({ text, className }: { text: string; className?: string }) {
   const words = text.split(" ");
   return (
     <span className={className}>

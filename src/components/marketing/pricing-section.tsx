@@ -61,16 +61,16 @@ const PLANS = [
 export function PricingSection() {
   return (
     <section className="relative overflow-hidden py-24 sm:py-32">
-      <div className="pointer-events-none absolute left-1/2 top-1/3 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+      <div className="bg-primary/5 pointer-events-none absolute top-1/3 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">
           <Badge variant="accent" className="mb-4">
             Membership
           </Badge>
-          <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground sm:text-5xl">
+          <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
             Invest In <span className="text-gradient">Yourself</span>
           </h2>
-          <p className="mt-4 text-muted-foreground">
+          <p className="text-muted-foreground mt-4">
             No hidden fees. No contracts. Cancel anytime.
           </p>
         </Reveal>
@@ -83,7 +83,7 @@ export function PricingSection() {
                   className={cn(
                     "relative flex h-full flex-col rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500",
                     plan.popular
-                      ? "border-primary/40 bg-gradient-to-b from-primary/10 to-surface/60 shadow-glow"
+                      ? "border-primary/40 from-primary/10 to-surface/60 shadow-glow bg-gradient-to-b"
                       : "border-border bg-surface/60 hover:border-white/15"
                   )}
                 >
@@ -92,10 +92,10 @@ export function PricingSection() {
                       <Sparkles className="h-3 w-3" /> Most Popular
                     </Badge>
                   )}
-                  <h3 className="font-display text-xl font-bold uppercase tracking-widest text-foreground">
+                  <h3 className="font-display text-foreground text-xl font-bold tracking-widest uppercase">
                     {plan.name}
                   </h3>
-                  <p className="mt-1.5 text-sm text-muted-foreground">{plan.tagline}</p>
+                  <p className="text-muted-foreground mt-1.5 text-sm">{plan.tagline}</p>
                   <div className="mt-6 flex items-end gap-1">
                     <span
                       className={cn(
@@ -105,11 +105,14 @@ export function PricingSection() {
                     >
                       ${plan.price}
                     </span>
-                    <span className="pb-1.5 text-sm text-muted-foreground">{plan.period}</span>
+                    <span className="text-muted-foreground pb-1.5 text-sm">{plan.period}</span>
                   </div>
                   <ul className="mt-7 flex-1 space-y-3.5">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3 text-sm text-muted-foreground">
+                      <li
+                        key={feature}
+                        className="text-muted-foreground flex items-start gap-3 text-sm"
+                      >
                         <span
                           className={cn(
                             "mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full",

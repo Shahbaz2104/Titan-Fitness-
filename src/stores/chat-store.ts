@@ -36,8 +36,7 @@ export const useChatStore = create<ChatState>()(
       messages: [],
       isStreaming: false,
       suggestedQuestions: DEFAULT_SUGGESTIONS,
-      addMessage: (message) =>
-        set((state) => ({ messages: [...state.messages, message] })),
+      addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
       updateMessage: (id, content) =>
         set((state) => ({
           messages: state.messages.map((m) =>

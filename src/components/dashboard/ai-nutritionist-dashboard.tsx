@@ -127,7 +127,7 @@ export function AiNutritionistDashboard() {
         <CardContent className="p-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Goal
               </label>
               <Select value={goal} onValueChange={setGoal}>
@@ -144,7 +144,7 @@ export function AiNutritionistDashboard() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Protein preference
               </label>
               <Select value={proteinPreference} onValueChange={setProteinPreference}>
@@ -161,7 +161,7 @@ export function AiNutritionistDashboard() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Daily calories
               </label>
               <Input
@@ -172,7 +172,7 @@ export function AiNutritionistDashboard() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Meals per day
               </label>
               <Select value={mealsPerDay} onValueChange={setMealsPerDay}>
@@ -197,10 +197,14 @@ export function AiNutritionistDashboard() {
       </Card>
 
       {plan && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <h3 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+              <h3 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                 {plan.title}
               </h3>
               <Badge variant="accent">AI Generated</Badge>
@@ -228,19 +232,19 @@ export function AiNutritionistDashboard() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="rounded-2xl border border-border bg-surface p-5"
+                className="border-border bg-surface rounded-2xl border p-5"
               >
                 <div className="flex items-center gap-2">
-                  <CalendarHeart className="h-4 w-4 text-primary" />
-                  <h4 className="font-display text-sm font-bold uppercase tracking-widest text-primary">
+                  <CalendarHeart className="text-primary h-4 w-4" />
+                  <h4 className="font-display text-primary text-sm font-bold tracking-widest uppercase">
                     Day {day.dayNumber}
                   </h4>
                 </div>
                 <div className="mt-3 space-y-2">
                   {day.meals.map((meal) => (
-                    <div key={meal.name} className="rounded-lg bg-surface-2 px-3 py-2">
-                      <p className="text-sm font-medium text-foreground">{meal.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div key={meal.name} className="bg-surface-2 rounded-lg px-3 py-2">
+                      <p className="text-foreground text-sm font-medium">{meal.name}</p>
+                      <p className="text-muted-foreground text-xs">
                         {meal.calories} kcal · P {meal.protein} · C {meal.carbs} · F {meal.fat}
                       </p>
                     </div>
@@ -251,7 +255,7 @@ export function AiNutritionistDashboard() {
           </div>
 
           {day0 && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Tip: Day 1 totals {day0.meals.reduce((a, m) => a + m.calories, 0)} kcal — adjust
               portion sizes to hit your exact target.
             </p>

@@ -6,7 +6,13 @@ self.addEventListener("push", (event) => {
   } catch {
     return;
   }
-  const { title = "Titan Fitness", body = "", icon = "/icon-192.png", badge = "/icon-192.png", data: payload = {} } = data;
+  const {
+    title = "Titan Fitness",
+    body = "",
+    icon = "/icon-192.png",
+    badge = "/icon-192.png",
+    data: payload = {},
+  } = data;
   event.waitUntil(
     self.registration.showNotification(title, {
       body,

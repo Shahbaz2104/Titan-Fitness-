@@ -48,7 +48,10 @@ export function AiChatDashboard() {
     setLoading(true);
     try {
       const { reply } = await apiPost<{ reply: string }>("/api/ai/chat", { message: content });
-      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: reply }]);
+      setMessages((prev) => [
+        ...prev,
+        { id: crypto.randomUUID(), role: "assistant", content: reply },
+      ]);
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -92,13 +95,17 @@ export function AiChatDashboard() {
                       : "bg-surface-2 text-muted-foreground"
                   )}
                 >
-                  {message.role === "assistant" ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
+                  {message.role === "assistant" ? (
+                    <Bot className="h-5 w-5" />
+                  ) : (
+                    <User className="h-5 w-5" />
+                  )}
                 </span>
                 <div
                   className={cn(
                     "max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
                     message.role === "assistant"
-                      ? "border border-border bg-surface text-foreground"
+                      ? "border-border bg-surface text-foreground border"
                       : "bg-primary text-primary-foreground"
                   )}
                 >
@@ -113,16 +120,16 @@ export function AiChatDashboard() {
               animate={{ opacity: 1 }}
               className="flex items-center gap-3"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <span className="bg-primary/15 text-primary flex h-9 w-9 items-center justify-center rounded-xl">
                 <Bot className="h-5 w-5" />
               </span>
-              <div className="flex gap-1.5 rounded-2xl border border-border bg-surface px-4 py-3">
+              <div className="border-border bg-surface flex gap-1.5 rounded-2xl border px-4 py-3">
                 {[0, 1, 2].map((i) => (
                   <motion.span
                     key={i}
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
-                    className="h-2 w-2 rounded-full bg-primary"
+                    className="bg-primary h-2 w-2 rounded-full"
                   />
                 ))}
               </div>
@@ -136,7 +143,7 @@ export function AiChatDashboard() {
               <button
                 key={suggestion}
                 onClick={() => send(suggestion)}
-                className="rounded-full border border-border bg-surface px-4 py-2 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                className="border-border bg-surface text-muted-foreground hover:border-primary/40 hover:text-foreground rounded-full border px-4 py-2 text-xs transition-colors"
               >
                 {suggestion}
               </button>
@@ -144,7 +151,7 @@ export function AiChatDashboard() {
           </div>
         )}
 
-        <div className="border-t border-border p-4">
+        <div className="border-border border-t p-4">
           <form
             className="flex gap-3"
             onSubmit={(e) => {
@@ -158,7 +165,12 @@ export function AiChatDashboard() {
               placeholder="Ask about workouts, nutrition, recovery…"
               className="flex-1"
             />
-            <Button type="submit" disabled={loading || !input.trim()} size="icon" aria-label="Send message">
+            <Button
+              type="submit"
+              disabled={loading || !input.trim()}
+              size="icon"
+              aria-label="Send message"
+            >
               <Send className="h-4 w-4" />
             </Button>
           </form>

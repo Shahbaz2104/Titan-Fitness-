@@ -29,26 +29,32 @@ export async function getMealPlan(userId: string, planId: string) {
   return plan;
 }
 
-export async function createMealPlan(userId: string, data: {
-  name: string;
-  goal?: string | null;
-  dailyCalories: number;
-  proteinGrams: number;
-  carbsGrams: number;
-  fatGrams: number;
-  durationDays?: number;
-  isAiGenerated?: boolean;
-  days?: { dayNumber: number; meals: {
-    mealType: string;
+export async function createMealPlan(
+  userId: string,
+  data: {
     name: string;
-    calories: number;
-    protein?: number;
-    carbs?: number;
-    fat?: number;
-    ingredients?: unknown;
-    recipe?: string | null;
-  }[] }[];
-}) {
+    goal?: string | null;
+    dailyCalories: number;
+    proteinGrams: number;
+    carbsGrams: number;
+    fatGrams: number;
+    durationDays?: number;
+    isAiGenerated?: boolean;
+    days?: {
+      dayNumber: number;
+      meals: {
+        mealType: string;
+        name: string;
+        calories: number;
+        protein?: number;
+        carbs?: number;
+        fat?: number;
+        ingredients?: unknown;
+        recipe?: string | null;
+      }[];
+    }[];
+  }
+) {
   return prisma.mealPlan.create({
     data: {
       userId,

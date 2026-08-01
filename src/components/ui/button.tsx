@@ -14,14 +14,12 @@ const buttonVariants = cva(
           "bg-gradient-to-r from-accent to-primary text-white shadow-lg hover:shadow-[0_0_40px_rgba(255,107,53,0.35)] active:scale-[0.98]",
         outline:
           "border border-border bg-transparent text-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5 active:scale-[0.98]",
-        ghost:
-          "text-muted-foreground hover:bg-white/5 hover:text-foreground",
+        ghost: "text-muted-foreground hover:bg-white/5 hover:text-foreground",
         secondary:
           "bg-surface-2 text-foreground border border-border hover:border-white/20 hover:bg-surface active:scale-[0.98]",
         link: "text-primary underline-offset-4 hover:underline",
         destructive: "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]",
-        glass:
-          "glass text-foreground backdrop-blur-md hover:bg-white/10 active:scale-[0.98]",
+        glass: "glass text-foreground backdrop-blur-md hover:bg-white/10 active:scale-[0.98]",
         white: "bg-white text-black hover:bg-white/90 active:scale-[0.98] shadow-lg",
       },
       size: {
@@ -41,8 +39,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
@@ -50,11 +47,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
+      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
     );
   }
 );

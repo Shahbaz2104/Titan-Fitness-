@@ -9,8 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QUERY_KEYS } from "@/lib/constants";
@@ -32,7 +44,16 @@ interface Program {
   _count: { classes: number };
 }
 
-const CATEGORIES = ["WEIGHT_LOSS", "BODYBUILDING", "CROSSFIT", "YOGA", "CARDIO", "HIIT", "POWERLIFTING", "CALISTHENICS"];
+const CATEGORIES = [
+  "WEIGHT_LOSS",
+  "BODYBUILDING",
+  "CROSSFIT",
+  "YOGA",
+  "CARDIO",
+  "HIIT",
+  "POWERLIFTING",
+  "CALISTHENICS",
+];
 const DIFFICULTIES = ["BEGINNER", "INTERMEDIATE", "ADVANCED", "ELITE"];
 
 interface ProgramForm {
@@ -56,7 +77,10 @@ const EMPTY_FORM: ProgramForm = {
 };
 
 function formatCategory(cat: string) {
-  return cat.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  return cat
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function ProgramsAdmin() {
@@ -67,10 +91,17 @@ export function ProgramsAdmin() {
   const [saving, setSaving] = React.useState(false);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
-  const { data: programs, isLoading, isError } = useApiQuery<Program[]>(QUERY_KEYS.adminPrograms, "/api/admin/programs");
+  const {
+    data: programs,
+    isLoading,
+    isError,
+  } = useApiQuery<Program[]>(QUERY_KEYS.adminPrograms, "/api/admin/programs");
 
   const createProgram = useApiMutation("/api/admin/programs");
-  const updateProgram = useApiMutation<Program>(`/api/admin/programs/${editing?.id ?? ""}`, "PATCH");
+  const updateProgram = useApiMutation<Program>(
+    `/api/admin/programs/${editing?.id ?? ""}`,
+    "PATCH"
+  );
   const deleteProgram = useApiMutation(`/api/admin/programs/${deletingId ?? ""}`, "DELETE");
 
   const openCreate = () => {
@@ -163,15 +194,15 @@ export function ProgramsAdmin() {
       ) : isError || !programs ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <AlertTriangle className="h-8 w-8 text-warning" />
-            <p className="text-sm text-muted-foreground">Could not load programs.</p>
+            <AlertTriangle className="text-warning h-8 w-8" />
+            <p className="text-muted-foreground text-sm">Could not load programs.</p>
           </CardContent>
         </Card>
       ) : programs.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <Dumbbell className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No programs yet. Create your first one.</p>
+            <Dumbbell className="text-muted-foreground h-8 w-8" />
+            <p className="text-muted-foreground text-sm">No programs yet. Create your first one.</p>
           </CardContent>
         </Card>
       ) : (
@@ -183,23 +214,27 @@ export function ProgramsAdmin() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
               className={cn(
-                "group relative overflow-hidden rounded-2xl border border-border bg-surface/60 p-6 transition-all hover:border-primary/30 hover:shadow-glow",
+                "group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow relative overflow-hidden rounded-2xl border p-6 transition-all",
                 !program.isActive && "opacity-60"
               )}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+                  <h3 className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
                     {program.name}
                   </h3>
-                  <p className="mt-1 text-xs text-muted-foreground">{formatCategory(program.category)}</p>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    {formatCategory(program.category)}
+                  </p>
                 </div>
                 <Badge variant={program.isActive ? "success" : "outline"}>
                   {program.isActive ? "Active" : "Hidden"}
                 </Badge>
               </div>
 
-              <p className="mt-4 line-clamp-2 text-sm text-muted-foreground">{program.description}</p>
+              <p className="text-muted-foreground mt-4 line-clamp-2 text-sm">
+                {program.description}
+              </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
                 <Badge variant="outline">{program.difficulty}</Badge>
@@ -208,12 +243,17 @@ export function ProgramsAdmin() {
                 <Badge variant="outline">{program._count.classes} classes</Badge>
               </div>
 
-              <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
-                <p className="text-xs text-muted-foreground">
+              <div className="border-border mt-5 flex items-center justify-between border-t pt-4">
+                <p className="text-muted-foreground text-xs">
                   {program.isActive ? "Live on site" : "Not shown to members"}
                 </p>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon-sm" onClick={() => openEdit(program)} aria-label="Edit program">
+                  <Button
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => openEdit(program)}
+                    aria-label="Edit program"
+                  >
                     <Pencil className="h-3.5 w-3.5" />
                   </Button>
                   <Button
@@ -241,27 +281,45 @@ export function ProgramsAdmin() {
           <div className="grid gap-4">
             <div className="space-y-2">
               <Label>Program name</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Fat Burn Bootcamp" />
+              <Input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Fat Burn Bootcamp"
+              />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={form.category}
+                  onValueChange={(v) => setForm({ ...form, category: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {CATEGORIES.map((c) => (
-                      <SelectItem key={c} value={c}>{formatCategory(c)}</SelectItem>
+                      <SelectItem key={c} value={c}>
+                        {formatCategory(c)}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Difficulty</Label>
-                <Select value={form.difficulty} onValueChange={(v) => setForm({ ...form, difficulty: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={form.difficulty}
+                  onValueChange={(v) => setForm({ ...form, difficulty: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {DIFFICULTIES.map((d) => (
-                      <SelectItem key={d} value={d}>{formatCategory(d)}</SelectItem>
+                      <SelectItem key={d} value={d}>
+                        {formatCategory(d)}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -300,11 +358,17 @@ export function ProgramsAdmin() {
             </div>
             <div className="space-y-2">
               <Label>Image URL (optional)</Label>
-              <Input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://…" />
+              <Input
+                value={form.imageUrl}
+                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                placeholder="https://…"
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? "Saving…" : editing ? "Save changes" : "Create program"}
             </Button>

@@ -62,7 +62,9 @@ export function VerifyEmailPageForm() {
     const { error } = await authClient.emailOtp.verifyEmail({ email, otp });
     setVerifying(false);
     if (error) {
-      toast.error("Verification failed", { description: error.message ?? "Wrong or expired code." });
+      toast.error("Verification failed", {
+        description: error.message ?? "Wrong or expired code.",
+      });
       return;
     }
     setState("verified");
@@ -70,9 +72,9 @@ export function VerifyEmailPageForm() {
 
   if (state === "checking") {
     return (
-      <div className="rounded-3xl border border-border bg-surface/60 p-10 text-center backdrop-blur-xl shadow-card">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
-        <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+      <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-10 text-center backdrop-blur-xl">
+        <Loader2 className="text-primary mx-auto h-10 w-10 animate-spin" />
+        <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
           Verifying…
         </h1>
       </div>
@@ -81,14 +83,14 @@ export function VerifyEmailPageForm() {
 
   if (state === "verified") {
     return (
-      <div className="rounded-3xl border border-border bg-surface/60 p-10 text-center backdrop-blur-xl shadow-card">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-success/15">
-          <MailCheck className="h-8 w-8 text-success" />
+      <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-10 text-center backdrop-blur-xl">
+        <span className="bg-success/15 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+          <MailCheck className="text-success h-8 w-8" />
         </span>
-        <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+        <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
           Email verified!
         </h1>
-        <p className="mt-3 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-3 text-sm">
           Your account is ready. Time to start training.
         </p>
         <Button asChild className="mt-8">
@@ -99,29 +101,29 @@ export function VerifyEmailPageForm() {
   }
 
   return (
-    <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl shadow-card">
+    <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
         {state === "failed" ? (
           <>
-            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15">
-              <MailX className="h-8 w-8 text-primary" />
+            <span className="bg-primary/15 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+              <MailX className="text-primary h-8 w-8" />
             </span>
-            <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+            <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
               Verification failed
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-2 text-sm">
               The link may be invalid or expired. Verify with a code below instead.
             </p>
           </>
         ) : (
           <>
-            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-accent/15">
-              <KeyRound className="h-8 w-8 text-accent" />
+            <span className="bg-accent/15 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+              <KeyRound className="text-accent h-8 w-8" />
             </span>
-            <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+            <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
               Verify your email
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-2 text-sm">
               We&apos;ll send a 6-digit code to your inbox. It expires in 5 minutes.
             </p>
           </>
@@ -162,20 +164,40 @@ export function VerifyEmailPageForm() {
                 required
               />
             </div>
-            <Button type="button" size="lg" className="w-full" onClick={verifyOtp} disabled={verifying}>
-              {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailCheck className="h-4 w-4" />}
+            <Button
+              type="button"
+              size="lg"
+              className="w-full"
+              onClick={verifyOtp}
+              disabled={verifying}
+            >
+              {verifying ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <MailCheck className="h-4 w-4" />
+              )}
               Verify Code
             </Button>
-            <Button type="button" variant="ghost" size="sm" className="w-full" onClick={sendCode} disabled={sending}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="w-full"
+              onClick={sendCode}
+              disabled={sending}
+            >
               Resend code
             </Button>
           </>
         )}
       </div>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-6 text-center text-sm">
         Already verified?{" "}
-        <Link href="/login" className="font-medium text-primary transition-colors hover:text-accent">
+        <Link
+          href="/login"
+          className="text-primary hover:text-accent font-medium transition-colors"
+        >
           Sign in
         </Link>
       </p>

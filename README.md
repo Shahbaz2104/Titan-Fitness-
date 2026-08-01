@@ -9,6 +9,7 @@ Titan Fitness covers the complete member journey — marketing site, authenticat
 ## ✨ Features
 
 ### Marketing site
+
 - Landing page with animated hero, stats counter, testimonials, transformation gallery, pricing, FAQ
 - Programs & trainers (dynamic SSG pages with seed data)
 - Blog (posts, comments, likes, bookmarks, categories), gallery, contact
@@ -16,17 +17,21 @@ Titan Fitness covers the complete member journey — marketing site, authenticat
 - PWA assets (manifest, icons, og-image)
 
 ### Auth (`better-auth`)
+
 - Email + password sign-up/sign-in, **email verification via 6-digit OTP** (hashed, 5-min expiry, 3 attempts)
 - Password reset two ways: **magic link (JWT)** or **OTP code**
 - Google OAuth (needs keys), session cookie cache, admin plugin (roles: `MEMBER` / `ADMIN` / `SUPER_ADMIN`)
 
 ### Member dashboard — 16 pages (`/dashboard/*`)
+
 Overview · Workouts (sessions, PRs, exercise library) · Nutrition (meals, water, macros) · Notifications · Classes (booking, waitlist) · Attendance (check-in) · Membership · Payments · Leaderboard · Challenges · Referrals · Profile · Progress (weight chart, measurements) · AI Chat · AI Workout Generator · AI Nutritionist
 
 ### Admin panel — 11 pages (`/admin/*`, role-guarded)
+
 Overview (stats) · Reports (revenue + attendance charts) · Members (search, edit) · Programs · Classes · Coupons · Tickets (reply/status) · Blog Posts · Challenges · Branches · Settings
 
 ### AI features (`/dashboard/ai/*`)
+
 - **AI Coach chat** — member profile injected into the prompt
 - **Workout Generator** — structured output picked from the real 44-exercise DB library, resolves names back to real IDs so plans can be saved
 - **AI Nutritionist** — 7-day meal plan with macros
@@ -35,46 +40,51 @@ Overview (stats) · Reports (revenue + attendance charts) · Members (search, ed
 - All usage logged to `AIUsage` (model, tokens, cost, duration, status)
 
 ### Payments
+
 - **Stripe Checkout** (real) with coupon discounts and webhook (`/api/payments/webhook`)
 - **Mock mode** — instant membership activation when Stripe keys are missing (app fully works without keys)
 - Coupons, payment history, referrals (points rewarded)
 
 ### Notifications
+
 - In-app notifications (created by workouts, badges, memberships, classes, challenges)
 - **Web push notifications** (Web Push API + VAPID): enable from the dashboard → notifications arrive even when the app is closed. Dead subscriptions auto-cleaned (404/410)
 
 ### Gamification
+
 Points (dashboard ring), badges (12+ achievements), streaks, check-in streaks, weekly leaderboard, challenges (joinable, progress bars)
 
 ---
 
 ## 🧱 Tech Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | Next.js 16.2.12 (App Router, Turbopack) |
-| UI | React 19, TypeScript, Tailwind CSS v4 |
-| Animations | framer-motion 12 |
-| Forms/validation | react-hook-form + zod |
-| Data | Prisma 6.16 + PostgreSQL 16 |
-| Auth | better-auth 1.6 (email+password, email OTP plugin, admin plugin) |
-| AI | AI SDK v7 + `@ai-sdk/openai` |
-| Payments | Stripe SDK 22 |
-| Web Push | `web-push` (VAPID) + service worker |
-| State | Zustand (scalar selectors only!) + TanStack Query |
-| Emails | Resend (REST) |
-| Testing | Vitest (18 tests), Playwright (manual UI checks) |
-| CI | GitHub Actions workflow included |
+| Layer            | Choice                                                           |
+| ---------------- | ---------------------------------------------------------------- |
+| Framework        | Next.js 16.2.12 (App Router, Turbopack)                          |
+| UI               | React 19, TypeScript, Tailwind CSS v4                            |
+| Animations       | framer-motion 12                                                 |
+| Forms/validation | react-hook-form + zod                                            |
+| Data             | Prisma 6.16 + PostgreSQL 16                                      |
+| Auth             | better-auth 1.6 (email+password, email OTP plugin, admin plugin) |
+| AI               | AI SDK v7 + `@ai-sdk/openai`                                     |
+| Payments         | Stripe SDK 22                                                    |
+| Web Push         | `web-push` (VAPID) + service worker                              |
+| State            | Zustand (scalar selectors only!) + TanStack Query                |
+| Emails           | Resend (REST)                                                    |
+| Testing          | Vitest (18 tests), Playwright (manual UI checks)                 |
+| CI               | GitHub Actions workflow included                                 |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 20+ and npm
 - PostgreSQL 16 running locally
 
 ### 1. Install & configure
+
 ```bash
 npm install
 cp .env.example .env    # fill in values (see below)
@@ -83,6 +93,7 @@ npm run db:seed         # seed data + test accounts
 ```
 
 ### 2. Environment variables (`.env`)
+
 ```env
 DATABASE_URL="postgresql://shahbaz:1234@localhost:5432/titan_fitness"
 BETTER_AUTH_SECRET="your-secret"
@@ -110,17 +121,19 @@ GOOGLE_CLIENT_SECRET=""
 ```
 
 ### 3. Run
+
 ```bash
 npm run dev          # http://localhost:3000
 npm run build && npm run start   # production
 ```
 
 ### Test accounts (seed, password `Titan@12345`)
-| Role | Email |
-|---|---|
-| Super Admin | `admin@titanfitness.com` |
-| Member | `member@titanfitness.com` |
-| Member | `marcus@titanfitness.com` |
+
+| Role        | Email                     |
+| ----------- | ------------------------- |
+| Super Admin | `admin@titanfitness.com`  |
+| Member      | `member@titanfitness.com` |
+| Member      | `marcus@titanfitness.com` |
 
 ---
 
@@ -171,16 +184,19 @@ prisma/
 ## 🔐 Key Flows
 
 ### OTP email verification
+
 1. Sign up → OTP email sent automatically (`sendOnSignUp` + plugin override)
 2. `/verify-email` — enter email → "Send Verification Code" → 6-digit box → verify
 3. `verifyEmail` returns a session token → user lands on dashboard
 4. Fallback: magic-link (`?token=`) still handled on the same page
 
 ### Password reset (two options)
+
 - **Link**: forgot-password → "Send Reset Link" (JWT magic link, 1h)
 - **OTP**: forgot-password → "Send Reset Code" → `/reset-password?email=…` → code + new password
 
 ### Stripe checkout
+
 1. Member clicks a plan → `POST /api/payments/checkout`
 2. Stripe mode: `{ mode: "stripe", url }` → redirect to Stripe Hosted Checkout
 3. Webhook `checkout.session.completed` → membership activated + payment marked SUCCEEDED (idempotent)
@@ -188,6 +204,7 @@ prisma/
 5. Mock mode (no keys): membership activates instantly, frontend never notices
 
 ### AI plan generation
+
 - Workout generator: LLM picks exercises **only from the DB library** (prompt-listed), names are re-resolved to real `exerciseId`s → "Save plan" always works
 - Everything logs to `AIUsage`; no key → rule-based output with identical shape
 
@@ -203,6 +220,7 @@ npm run build         # production build (128 static pages)
 ```
 
 Playwright is installed as a devDependency for browser UI sweeps:
+
 ```bash
 npx playwright install chromium
 ```
@@ -226,18 +244,18 @@ CI: `.github/workflows/ci.yml` (typecheck + lint + tests on push/PR).
 
 ## 📈 Roadmap / Status
 
-| Phase | Status |
-|---|---|
-| 0 — Foundation (env, DB, auth, seed, PWA, tests, CI) | ✅ `59e1236` |
-| 1 — Services + API routes (~95) | ✅ `0b9dbdd` |
-| 2 — User dashboard (16 pages) | ✅ `8234d9b` |
-| 3 — Admin panel (11 pages) | ✅ `629deb4` |
-| 4 — AI features (LLM + fallback) | ✅ `8e0399c` |
-| 5 — Stripe checkout + webhook, OTP auth | ✅ `267b5fb` |
-| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ (uncommitted) |
-| 6 — PWA/SEO/security audit | ⬜ |
-| 7 — Tests + CI expansion | ⬜ (CI present, 21 tests) |
-| 8 — Final audit, GitHub push | ⬜ (needs `gh` CLI) |
+| Phase                                                          | Status                    |
+| -------------------------------------------------------------- | ------------------------- |
+| 0 — Foundation (env, DB, auth, seed, PWA, tests, CI)           | ✅ `59e1236`              |
+| 1 — Services + API routes (~95)                                | ✅ `0b9dbdd`              |
+| 2 — User dashboard (16 pages)                                  | ✅ `8234d9b`              |
+| 3 — Admin panel (11 pages)                                     | ✅ `629deb4`              |
+| 4 — AI features (LLM + fallback)                               | ✅ `8e0399c`              |
+| 5 — Stripe checkout + webhook, OTP auth                        | ✅ `267b5fb`              |
+| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ (uncommitted)          |
+| 6 — PWA/SEO/security audit                                     | ⬜                        |
+| 7 — Tests + CI expansion                                       | ⬜ (CI present, 21 tests) |
+| 8 — Final audit, GitHub push                                   | ⬜ (needs `gh` CLI)       |
 
 Live status is tracked in [`PROGRESS.md`](./PROGRESS.md) — read the top section first; it always documents the current uncommitted state and the next step.
 

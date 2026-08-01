@@ -223,8 +223,7 @@ Train hard. Recover harder. The gains follow.`,
   {
     slug: "cardio-101-zone-training-explained",
     title: "Cardio 101: Heart Rate Zone Training Explained",
-    excerpt:
-      "Zone 2 isn't slow — it's smart. Here's how to build your aerobic engine properly.",
+    excerpt: "Zone 2 isn't slow — it's smart. Here's how to build your aerobic engine properly.",
     category: "Cardio",
     tags: ["cardio", "zones", "endurance"],
     author: "David Okoro",

@@ -1,10 +1,7 @@
 import { jsonError, jsonOk, requireUser } from "@/lib/api";
 import { cancelBooking } from "@/services/bookings";
 
-export async function POST(
-  _req: Request,
-  { params }: { params: Promise<{ bookingId: string }> }
-) {
+export async function POST(_req: Request, { params }: { params: Promise<{ bookingId: string }> }) {
   try {
     const user = await requireUser();
     const { bookingId } = await params;

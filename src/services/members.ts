@@ -51,22 +51,22 @@ export async function updateMemberProfile(userId: string, data: Record<string, u
   return user;
 }
 
-export async function addBodyMetric(userId: string, data: {
-  weightKg?: number;
-  bodyFatPct?: number;
-  muscleMassKg?: number;
-  waterLiters?: number;
-  waistCm?: number;
-  chestCm?: number;
-  armsCm?: number;
-  notes?: string;
-  date?: Date;
-}) {
-  const heightCm = data.weightKg
-    ? await getHeightForBmi(userId)
-    : undefined;
-  const bmi =
-    data.weightKg && heightCm ? calculateBMI(data.weightKg, heightCm) : undefined;
+export async function addBodyMetric(
+  userId: string,
+  data: {
+    weightKg?: number;
+    bodyFatPct?: number;
+    muscleMassKg?: number;
+    waterLiters?: number;
+    waistCm?: number;
+    chestCm?: number;
+    armsCm?: number;
+    notes?: string;
+    date?: Date;
+  }
+) {
+  const heightCm = data.weightKg ? await getHeightForBmi(userId) : undefined;
+  const bmi = data.weightKg && heightCm ? calculateBMI(data.weightKg, heightCm) : undefined;
 
   return prisma.bodyMetric.upsert({
     where: { userId_date: { userId, date: data.date ?? new Date() } },

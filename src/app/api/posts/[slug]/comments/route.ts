@@ -3,10 +3,7 @@ import { commentSchema } from "@/lib/validators";
 import { addComment, getComments } from "@/services/content";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
     const post = await prisma.blogPost.findUnique({
@@ -20,10 +17,7 @@ export async function GET(
   }
 }
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const user = await requireUser();
     await withRateLimit(user.id, 10, 60_000);

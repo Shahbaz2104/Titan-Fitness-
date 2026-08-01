@@ -58,11 +58,11 @@ export function ProgressRing({
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="font-display text-2xl font-bold text-foreground">
+        <span className="font-display text-foreground text-2xl font-bold">
           {displayValue ?? `${Math.round(clamped)}${suffix}`}
         </span>
         {label && (
-          <span className="mt-0.5 max-w-[80px] text-center text-[10px] uppercase tracking-widest text-muted-foreground">
+          <span className="text-muted-foreground mt-0.5 max-w-[80px] text-center text-[10px] tracking-widest uppercase">
             {label}
           </span>
         )}

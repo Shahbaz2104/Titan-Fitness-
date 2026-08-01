@@ -14,7 +14,7 @@ const AccordionItem = React.forwardRef<
   <AccordionPrimitive.Item
     ref={ref}
     className={cn(
-      "overflow-hidden rounded-2xl border border-border bg-surface/60 backdrop-blur-xl transition-colors hover:border-white/15",
+      "border-border bg-surface/60 overflow-hidden rounded-2xl border backdrop-blur-xl transition-colors hover:border-white/15",
       className
     )}
     {...props}
@@ -30,13 +30,13 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between px-6 py-4 text-left text-sm font-medium transition-all hover:text-primary [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>svg]:text-primary",
+        "hover:text-primary [&[data-state=open]>svg]:text-primary flex flex-1 items-center justify-between px-6 py-4 text-left text-sm font-medium transition-all [&[data-state=open]>svg]:rotate-180",
         className
       )}
       {...props}
     >
       {children}
-      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300" />
+      <ChevronDown className="text-muted-foreground h-4 w-4 shrink-0 transition-transform duration-300" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));
@@ -48,10 +48,10 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm transition-all"
     {...props}
   >
-    <div className={cn("px-6 pb-5 pt-0 text-muted-foreground", className)}>{children}</div>
+    <div className={cn("text-muted-foreground px-6 pt-0 pb-5", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;

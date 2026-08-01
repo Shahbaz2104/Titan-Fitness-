@@ -29,7 +29,7 @@ export function getAiModel(): LanguageModel | null {
 export function estimateCostUsd(model: string, tokensIn: number, tokensOut: number): number {
   const pricing = PRICING.find((p) => p.match.test(model));
   if (!pricing) return 0;
-  return ((tokensIn / 1_000_000) * pricing.input) + ((tokensOut / 1_000_000) * pricing.output);
+  return (tokensIn / 1_000_000) * pricing.input + (tokensOut / 1_000_000) * pricing.output;
 }
 
 export function aiEnabled(): boolean {

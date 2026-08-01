@@ -2,10 +2,7 @@ import { jsonError, jsonOk, parseBody, requireAdmin } from "@/lib/api";
 import { ticketMessageSchema } from "@/lib/validators";
 import { adminReplyTicket } from "@/services/admin";
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ ticketId: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ ticketId: string }> }) {
   try {
     const admin = await requireAdmin();
     const { ticketId } = await params;

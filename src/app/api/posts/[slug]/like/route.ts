@@ -2,10 +2,7 @@ import { ApiError, jsonError, jsonOk, requireUser, withRateLimit } from "@/lib/a
 import { toggleLike } from "@/services/content";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(
-  _req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function POST(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const user = await requireUser();
     await withRateLimit(user.id, 30, 60_000);

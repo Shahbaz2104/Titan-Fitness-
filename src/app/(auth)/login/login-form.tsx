@@ -15,8 +15,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { GoogleIcon } from "@/components/shared/google-icon";
 
-
-
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -66,14 +64,12 @@ export function LoginPageForm() {
   };
 
   return (
-    <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl shadow-card">
+    <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
-        <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-foreground">
+        <h1 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
           Welcome <span className="text-gradient">Back</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Log in to continue your training.
-        </p>
+        <p className="text-muted-foreground mt-2 text-sm">Log in to continue your training.</p>
       </div>
 
       <Button
@@ -94,7 +90,7 @@ export function LoginPageForm() {
 
       <div className="my-6 flex items-center gap-4">
         <Separator className="flex-1" />
-        <span className="text-xs uppercase tracking-widest text-muted-foreground">or</span>
+        <span className="text-muted-foreground text-xs tracking-widest uppercase">or</span>
         <Separator className="flex-1" />
       </div>
 
@@ -102,7 +98,7 @@ export function LoginPageForm() {
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Mail className="text-muted-foreground absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2" />
             <Input
               id="email"
               type="email"
@@ -113,7 +109,7 @@ export function LoginPageForm() {
               aria-invalid={!!errors.email}
             />
           </div>
-          {errors.email && <p className="text-xs text-primary">{errors.email.message}</p>}
+          {errors.email && <p className="text-primary text-xs">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -121,7 +117,7 @@ export function LoginPageForm() {
             <Label htmlFor="password">Password</Label>
             <Link
               href="/forgot-password"
-              className="text-xs text-primary transition-colors hover:text-accent"
+              className="text-primary hover:text-accent text-xs transition-colors"
             >
               Forgot password?
             </Link>
@@ -134,22 +130,21 @@ export function LoginPageForm() {
             {...register("password")}
             aria-invalid={!!errors.password}
           />
-          {errors.password && <p className="text-xs text-primary">{errors.password.message}</p>}
+          {errors.password && <p className="text-primary text-xs">{errors.password.message}</p>}
         </div>
 
         <Button type="submit" size="lg" className="w-full" disabled={loading}>
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <LogIn className="h-4 w-4" />
-          )}
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
           Sign In
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-6 text-center text-sm">
         New to Titan?{" "}
-        <Link href="/register" className="font-medium text-primary transition-colors hover:text-accent">
+        <Link
+          href="/register"
+          className="text-primary hover:text-accent font-medium transition-colors"
+        >
           Create an account
         </Link>
       </p>

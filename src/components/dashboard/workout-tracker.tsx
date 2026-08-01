@@ -3,15 +3,7 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import {
-  Activity,
-  CheckCircle2,
-  Clock,
-  Dumbbell,
-  Flame,
-  Play,
-  Trophy,
-} from "lucide-react";
+import { Activity, CheckCircle2, Clock, Dumbbell, Flame, Play, Trophy } from "lucide-react";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +20,13 @@ interface TodayWorkout {
     isCompleted: boolean;
     durationMinutes: number | null;
     caloriesBurned: number | null;
-    logs: { id: string; exercise: { name: string }; setsCompleted: number; reps: string | null; weightKg: number | null }[];
+    logs: {
+      id: string;
+      exercise: { name: string };
+      setsCompleted: number;
+      reps: string | null;
+      weightKg: number | null;
+    }[];
   }[];
   plan: {
     id: string;
@@ -37,7 +35,13 @@ interface TodayWorkout {
       id: string;
       dayNumber: number;
       title: string;
-      exercises: { id: string; exercise: { id: string; name: string; muscleGroup: string }; sets: number; reps: string; weightKg: number | null }[];
+      exercises: {
+        id: string;
+        exercise: { id: string; name: string; muscleGroup: string };
+        sets: number;
+        reps: string;
+        weightKg: number | null;
+      }[];
     }[];
   } | null;
   completed: boolean;
@@ -81,11 +85,18 @@ interface ActiveLog {
 
 export function WorkoutTracker() {
   const queryClient = useQueryClient();
-  const { data: today } = useApiQuery<TodayWorkout>([...QUERY_KEYS.workouts, "today"], "/api/workouts/today");
+  const { data: today } = useApiQuery<TodayWorkout>(
+    [...QUERY_KEYS.workouts, "today"],
+    "/api/workouts/today"
+  );
   const { data: stats } = useApiQuery<WorkoutStats>(QUERY_KEYS.dashboard, "/api/workouts/stats");
-  const { data: history } = useApiQuery<SessionRecord[]>([...QUERY_KEYS.workouts, "history"], "/api/workouts/sessions", {
-    limit: 30,
-  });
+  const { data: history } = useApiQuery<SessionRecord[]>(
+    [...QUERY_KEYS.workouts, "history"],
+    "/api/workouts/sessions",
+    {
+      limit: 30,
+    }
+  );
   const { data: prs } = useApiQuery<PersonalRecord[]>(QUERY_KEYS.workouts, "/api/workouts/prs");
 
   const [logs, setLogs] = React.useState<ActiveLog[]>([]);
@@ -170,41 +181,47 @@ export function WorkoutTracker() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Total workouts</p>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">
+              Total workouts
+            </p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {stats?.totalWorkouts ?? "–"}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Minutes trained</p>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">
+              Minutes trained
+            </p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {stats?.totalMinutes ?? "–"}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Calories burned</p>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">
+              Calories burned
+            </p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {(stats?.totalCalories ?? 0).toLocaleString()}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Avg session</p>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">Avg session</p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {stats?.avgDuration ?? "–"}
-              <span className="text-sm font-normal text-muted-foreground"> min</span>
+              <span className="text-muted-foreground text-sm font-normal"> min</span>
             </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Active session */}
-      <Card className="border-primary/25 bg-gradient-to-br from-primary/10 via-surface to-surface">
+      <Card className="border-primary/25 from-primary/10 via-surface to-surface bg-gradient-to-br">
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle className="text-base">
             {activeSession || sessionId ? "Active Session" : "Today's Plan"}
@@ -215,12 +232,12 @@ export function WorkoutTracker() {
           {today === undefined ? (
             <Skeleton className="h-40 w-full" />
           ) : today?.completed ? (
-            <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+            <p className="border-border text-muted-foreground rounded-2xl border border-dashed py-10 text-center text-sm">
               You crushed today&apos;s session. Rest up and come back stronger tomorrow! 💪
             </p>
           ) : !activeSession && !sessionId && planExercises.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-8 text-center">
-              <p className="max-w-sm text-sm text-muted-foreground">
+              <p className="text-muted-foreground max-w-sm text-sm">
                 No active plan. Generate a personalized one with the AI Workout Generator.
               </p>
               <Button asChild variant="outline" size="sm">
@@ -231,19 +248,22 @@ export function WorkoutTracker() {
             </div>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {today?.plan?.name ?? "Quick Session"}
                 {dayOne ? ` · ${dayOne.title}` : ""} — {planExercises.length} exercises
               </p>
               <div className="space-y-2.5">
-                {(logs.length > 0 ? logs : planExercises.map((ex) => ({
-                  exerciseId: ex.exercise.id,
-                  exerciseName: ex.exercise.name,
-                  sets: ex.sets,
-                  reps: ex.reps,
-                  weightKg: ex.weightKg ? String(ex.weightKg) : "",
-                  done: false,
-                }))).map((log, i) => (
+                {(logs.length > 0
+                  ? logs
+                  : planExercises.map((ex) => ({
+                      exerciseId: ex.exercise.id,
+                      exerciseName: ex.exercise.name,
+                      sets: ex.sets,
+                      reps: ex.reps,
+                      weightKg: ex.weightKg ? String(ex.weightKg) : "",
+                      done: false,
+                    }))
+                ).map((log, i) => (
                   <motion.div
                     key={`${log.exerciseName}-${i}`}
                     initial={{ opacity: 0, x: -12 }}
@@ -259,9 +279,17 @@ export function WorkoutTracker() {
                       onClick={() => toggleLog(i)}
                     >
                       <CheckCircle2
-                        className={cn("h-4 w-4 shrink-0", log.done ? "text-success" : "text-muted-foreground")}
+                        className={cn(
+                          "h-4 w-4 shrink-0",
+                          log.done ? "text-success" : "text-muted-foreground"
+                        )}
                       />
-                      <span className={cn("text-sm", log.done ? "text-muted-foreground line-through" : "text-foreground")}>
+                      <span
+                        className={cn(
+                          "text-sm",
+                          log.done ? "text-muted-foreground line-through" : "text-foreground"
+                        )}
+                      >
                         {log.exerciseName}
                       </span>
                     </button>
@@ -276,21 +304,25 @@ export function WorkoutTracker() {
                             className="w-16 text-xs"
                             onClick={(e) => e.stopPropagation()}
                           />
-                          <span className="text-xs text-muted-foreground">{log.sets}×{log.reps}</span>
+                          <span className="text-muted-foreground text-xs">
+                            {log.sets}×{log.reps}
+                          </span>
                         </>
                       ) : (
-                        <span className="text-xs text-muted-foreground">{log.sets}×{log.reps}</span>
+                        <span className="text-muted-foreground text-xs">
+                          {log.sets}×{log.reps}
+                        </span>
                       )}
                     </div>
                   </motion.div>
                 ))}
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
+              <div className="border-border flex flex-wrap items-center gap-3 border-t pt-4">
                 {activeSession || sessionId ? (
                   <>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <Clock className="text-muted-foreground h-4 w-4" />
                       <Input
                         type="number"
                         value={duration}
@@ -298,10 +330,10 @@ export function WorkoutTracker() {
                         className="w-20 text-xs"
                         aria-label="Duration minutes"
                       />
-                      <span className="text-xs text-muted-foreground">min</span>
+                      <span className="text-muted-foreground text-xs">min</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Flame className="h-4 w-4 text-warning" />
+                      <Flame className="text-warning h-4 w-4" />
                       <Input
                         type="number"
                         value={calories}
@@ -309,9 +341,14 @@ export function WorkoutTracker() {
                         className="w-20 text-xs"
                         aria-label="Calories burned"
                       />
-                      <span className="text-xs text-muted-foreground">kcal</span>
+                      <span className="text-muted-foreground text-xs">kcal</span>
                     </div>
-                    <Button className="ml-auto" size="sm" onClick={completeWorkout} disabled={completing}>
+                    <Button
+                      className="ml-auto"
+                      size="sm"
+                      onClick={completeWorkout}
+                      disabled={completing}
+                    >
                       <CheckCircle2 className="h-4 w-4" />
                       {completing ? "Completing…" : "Complete workout"}
                     </Button>
@@ -341,7 +378,7 @@ export function WorkoutTracker() {
                 <Skeleton className="h-14 w-full" />
               </>
             ) : history.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+              <p className="border-border text-muted-foreground rounded-2xl border border-dashed py-10 text-center text-sm">
                 No sessions yet. Start your first workout above!
               </p>
             ) : (
@@ -351,28 +388,29 @@ export function WorkoutTracker() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.04, 0.5) }}
-                  className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3"
+                  className="border-border bg-surface flex items-center justify-between rounded-xl border px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <span className="bg-primary/10 text-primary flex h-9 w-9 items-center justify-center rounded-xl">
                       <Activity className="h-4 w-4" />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-foreground">{session.title}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-foreground text-sm font-medium">{session.title}</p>
+                      <p className="text-muted-foreground text-xs">
                         {new Date(session.date).toLocaleDateString(undefined, {
                           month: "short",
                           day: "numeric",
                         })}
-                        {session.plan ? ` · ${session.plan.name}` : ""} · {session.logs.length} exercises
+                        {session.plan ? ` · ${session.plan.name}` : ""} · {session.logs.length}{" "}
+                        exercises
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-semibold text-foreground">
+                    <p className="text-foreground text-xs font-semibold">
                       {session.durationMinutes ?? "—"} min
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {session.caloriesBurned ? `${session.caloriesBurned} kcal` : "—"}
                     </p>
                   </div>
@@ -391,7 +429,7 @@ export function WorkoutTracker() {
             {prs === undefined ? (
               <Skeleton className="h-24 w-full" />
             ) : prs.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+              <p className="border-border text-muted-foreground rounded-2xl border border-dashed py-10 text-center text-sm">
                 No PRs yet. Log a heavy set to set your first record!
               </p>
             ) : (
@@ -401,20 +439,20 @@ export function WorkoutTracker() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.04, 0.5) }}
-                  className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3"
+                  className="border-border bg-surface flex items-center justify-between rounded-xl border px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/15 text-warning">
+                    <span className="bg-warning/15 text-warning flex h-9 w-9 items-center justify-center rounded-xl">
                       <Trophy className="h-4 w-4" />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-foreground">{pr.exercise.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-foreground text-sm font-medium">{pr.exercise.name}</p>
+                      <p className="text-muted-foreground text-xs">
                         {pr.exercise.muscleGroup} · {pr.sets}×{pr.reps}
                       </p>
                     </div>
                   </div>
-                  <span className="font-display text-lg font-bold text-primary">
+                  <span className="font-display text-primary text-lg font-bold">
                     {pr.weightKg ?? 0} kg
                   </span>
                 </motion.div>

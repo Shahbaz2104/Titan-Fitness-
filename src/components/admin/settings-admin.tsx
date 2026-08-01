@@ -17,10 +17,30 @@ type SettingsMap = Record<string, string | number>;
 
 const SETTING_FIELDS: { key: string; label: string; hint: string; numeric?: boolean }[] = [
   { key: "site_name", label: "Site name", hint: "Shown across the app", numeric: false },
-  { key: "support_email", label: "Support email", hint: "Where member questions go", numeric: false },
-  { key: "referral_reward_amount", label: "Referral reward ($)", hint: "Bonus for each successful referral", numeric: true },
-  { key: "workout_points_per_session", label: "Points per workout", hint: "Gamification points per completed session", numeric: true },
-  { key: "daily_water_goal_ml", label: "Daily water goal (ml)", hint: "Member hydration target", numeric: true },
+  {
+    key: "support_email",
+    label: "Support email",
+    hint: "Where member questions go",
+    numeric: false,
+  },
+  {
+    key: "referral_reward_amount",
+    label: "Referral reward ($)",
+    hint: "Bonus for each successful referral",
+    numeric: true,
+  },
+  {
+    key: "workout_points_per_session",
+    label: "Points per workout",
+    hint: "Gamification points per completed session",
+    numeric: true,
+  },
+  {
+    key: "daily_water_goal_ml",
+    label: "Daily water goal (ml)",
+    hint: "Member hydration target",
+    numeric: true,
+  },
 ];
 
 function SettingsForm({ settings, onSaved }: { settings: SettingsMap; onSaved: () => void }) {
@@ -64,7 +84,7 @@ function SettingsForm({ settings, onSaved }: { settings: SettingsMap; onSaved: (
                 value={values[field.key] ?? ""}
                 onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
               />
-              <p className="text-xs text-muted-foreground">{field.hint}</p>
+              <p className="text-muted-foreground text-xs">{field.hint}</p>
             </div>
           ))}
         </CardContent>
@@ -79,10 +99,10 @@ function SettingsForm({ settings, onSaved }: { settings: SettingsMap; onSaved: (
                 value={values[field.key] ?? ""}
                 onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
               />
-              <p className="text-xs text-muted-foreground">{field.hint}</p>
+              <p className="text-muted-foreground text-xs">{field.hint}</p>
             </div>
           ))}
-          <p className="rounded-xl border border-dashed border-border p-4 text-xs text-muted-foreground">
+          <p className="border-border text-muted-foreground rounded-xl border border-dashed p-4 text-xs">
             Missing keys are saved on first update. Values apply immediately across the platform.
           </p>
           <Button onClick={handleSave} disabled={saving} className="w-full">
@@ -97,7 +117,11 @@ function SettingsForm({ settings, onSaved }: { settings: SettingsMap; onSaved: (
 
 export function SettingsAdmin() {
   const queryClient = useQueryClient();
-  const { data: settings, isLoading, isError } = useApiQuery<SettingsMap>(QUERY_KEYS.adminSettings, "/api/admin/settings");
+  const {
+    data: settings,
+    isLoading,
+    isError,
+  } = useApiQuery<SettingsMap>(QUERY_KEYS.adminSettings, "/api/admin/settings");
   const [saveCount, setSaveCount] = React.useState(0);
 
   const refresh = async () => {
@@ -118,12 +142,16 @@ export function SettingsAdmin() {
       ) : isError || !settings ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <AlertTriangle className="h-8 w-8 text-warning" />
-            <p className="text-sm text-muted-foreground">Could not load settings.</p>
+            <AlertTriangle className="text-warning h-8 w-8" />
+            <p className="text-muted-foreground text-sm">Could not load settings.</p>
           </CardContent>
         </Card>
       ) : (
-        <SettingsForm key={`${saveCount}-${JSON.stringify(settings)}`} settings={settings} onSaved={refresh} />
+        <SettingsForm
+          key={`${saveCount}-${JSON.stringify(settings)}`}
+          settings={settings}
+          onSaved={refresh}
+        />
       )}
     </div>
   );

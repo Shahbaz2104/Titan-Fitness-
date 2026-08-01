@@ -286,11 +286,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-export default async function ProgramDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function ProgramDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const program = PROGRAMS.find((p) => p.slug === slug);
   if (!program) notFound();
@@ -299,12 +295,12 @@ export default async function ProgramDetailPage({
     <>
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40">
         <div
-          className={`pointer-events-none absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-gradient-to-br ${program.gradient} blur-3xl`}
+          className={`pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-gradient-to-br ${program.gradient} blur-3xl`}
         />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/programs"
-            className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
+            className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
           >
             <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
             All programs
@@ -312,35 +308,37 @@ export default async function ProgramDetailPage({
           <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
               <div className="flex items-center gap-3">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${program.gradient} border border-border`}>
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${program.gradient} border-border border`}
+                >
                   <program.icon className={`h-7 w-7 ${program.color}`} />
                 </div>
                 <Badge variant="secondary">{program.difficulty}</Badge>
                 <Badge variant="secondary">{program.duration}</Badge>
               </div>
-              <h1 className="mt-6 font-display text-5xl font-bold uppercase tracking-tight text-foreground sm:text-7xl">
+              <h1 className="font-display text-foreground mt-6 text-5xl font-bold tracking-tight uppercase sm:text-7xl">
                 {program.name}
               </h1>
-              <p className="mt-4 font-display text-lg uppercase tracking-wide text-primary">
+              <p className="font-display text-primary mt-4 text-lg tracking-wide uppercase">
                 {program.tagline}
               </p>
-              <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
+              <p className="text-muted-foreground mt-5 max-w-xl leading-relaxed">
                 {program.description}
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Award className="h-4 w-4 text-accent" />
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Award className="text-accent h-4 w-4" />
                   Coach: {program.trainer}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CalendarDays className="h-4 w-4 text-primary" />
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <CalendarDays className="text-primary h-4 w-4" />
                   Weekly schedule below
                 </div>
               </div>
               <div className="mt-8 flex items-center gap-5">
-                <p className="font-display text-4xl font-bold text-foreground">
+                <p className="font-display text-foreground text-4xl font-bold">
                   ${program.price}
-                  <span className="text-sm font-normal text-muted-foreground">/month</span>
+                  <span className="text-muted-foreground text-sm font-normal">/month</span>
                 </p>
                 <Button asChild size="lg" className="group">
                   <Link href="/register">
@@ -352,17 +350,19 @@ export default async function ProgramDetailPage({
             </div>
 
             <Reveal direction="left">
-              <div className={`relative aspect-square overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${program.gradient} to-transparent`}>
+              <div
+                className={`border-border relative aspect-square overflow-hidden rounded-3xl border bg-gradient-to-br ${program.gradient} to-transparent`}
+              >
                 <div className="bg-grid absolute inset-0 opacity-50" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <program.icon className={`h-40 w-40 ${program.color} opacity-30`} />
                 </div>
-                <div className="absolute bottom-5 left-5 right-5">
+                <div className="absolute right-5 bottom-5 left-5">
                   <div className="glass rounded-2xl p-5">
-                    <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                    <p className="text-muted-foreground text-xs tracking-widest uppercase">
                       This week
                     </p>
-                    <p className="mt-1 font-display text-lg font-semibold text-foreground">
+                    <p className="font-display text-foreground mt-1 text-lg font-semibold">
                       {program.schedule[0].day}: {program.schedule[0].focus}
                     </p>
                   </div>
@@ -377,20 +377,20 @@ export default async function ProgramDetailPage({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2">
             <div>
-              <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-foreground">
+              <h2 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
                 Weekly <span className="text-gradient">Schedule</span>
               </h2>
               <div className="mt-8 space-y-3">
                 {program.schedule.map((slot) => (
                   <div
                     key={slot.day}
-                    className="flex items-center justify-between rounded-xl border border-border bg-surface/60 px-5 py-4 transition-all duration-300 hover:border-primary/30"
+                    className="border-border bg-surface/60 hover:border-primary/30 flex items-center justify-between rounded-xl border px-5 py-4 transition-all duration-300"
                   >
-                    <span className="w-14 font-display text-sm font-bold uppercase tracking-widest text-primary">
+                    <span className="font-display text-primary w-14 text-sm font-bold tracking-widest uppercase">
                       {slot.day}
                     </span>
-                    <span className="flex items-center gap-2 text-sm text-foreground">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-foreground flex items-center gap-2 text-sm">
+                      <Clock className="text-muted-foreground h-4 w-4" />
                       {slot.focus}
                     </span>
                   </div>
@@ -398,22 +398,20 @@ export default async function ProgramDetailPage({
               </div>
             </div>
             <div>
-              <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-foreground">
+              <h2 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
                 What&apos;s <span className="text-gradient">Included</span>
               </h2>
               <ul className="mt-8 space-y-4">
                 {program.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success/15">
-                      <Check className="h-3 w-3 text-success" />
+                    <span className="bg-success/15 mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full">
+                      <Check className="text-success h-3 w-3" />
                     </span>
-                    <span className="text-sm leading-relaxed text-muted-foreground">
-                      {feature}
-                    </span>
+                    <span className="text-muted-foreground text-sm leading-relaxed">{feature}</span>
                   </li>
                 ))}
               </ul>
-              <Button asChild variant="outline" size="lg" className="mt-8 group">
+              <Button asChild variant="outline" size="lg" className="group mt-8">
                 <Link href="/trainers">
                   Meet your coach — {program.trainer}
                   <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />

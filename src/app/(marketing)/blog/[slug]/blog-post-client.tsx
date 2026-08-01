@@ -43,7 +43,9 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
   if (!post) return null;
 
-  const related = getPosts().filter((p) => p.slug !== slug).slice(0, 3);
+  const related = getPosts()
+    .filter((p) => p.slug !== slug)
+    .slice(0, 3);
 
   const submitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,11 +72,11 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
   return (
     <article className="relative overflow-hidden pt-32 pb-24 sm:pt-40">
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
+      <div className="bg-primary/8 pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full blur-3xl" />
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
         <Link
           href="/blog"
-          className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
+          className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
           Back to blog
@@ -89,16 +91,16 @@ export function BlogPostClient({ slug }: { slug: string }) {
               </Badge>
             ))}
           </div>
-          <h1 className="mt-6 font-display text-4xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-5xl">
+          <h1 className="font-display text-foreground mt-6 text-4xl leading-tight font-bold tracking-tight uppercase sm:text-5xl">
             {post.title}
           </h1>
-          <div className="mt-6 flex flex-wrap items-center gap-6 border-y border-border py-5 text-sm text-muted-foreground">
+          <div className="border-border text-muted-foreground mt-6 flex flex-wrap items-center gap-6 border-y py-5 text-sm">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
                 <AvatarFallback>{post.author.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-medium text-foreground">{post.author}</p>
+                <p className="text-foreground font-medium">{post.author}</p>
                 <p className="text-xs">{post.authorRole}</p>
               </div>
             </div>
@@ -145,17 +147,20 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
         {/* Comments */}
         <section className="mt-16">
-          <h2 className="flex items-center gap-2 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
-            <MessageCircle className="h-5 w-5 text-primary" />
+          <h2 className="font-display text-foreground flex items-center gap-2 text-2xl font-bold tracking-tight uppercase">
+            <MessageCircle className="text-primary h-5 w-5" />
             Comments ({comments.length})
           </h2>
 
-          <form onSubmit={submitComment} className="mt-6 space-y-4 rounded-2xl border border-border bg-surface/60 p-6 backdrop-blur-xl">
+          <form
+            onSubmit={submitComment}
+            className="border-border bg-surface/60 mt-6 space-y-4 rounded-2xl border p-6 backdrop-blur-xl"
+          >
             <input
               value={commentName}
               onChange={(e) => setCommentName(e.target.value)}
               placeholder="Your name"
-              className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+              className="border-border bg-surface text-foreground placeholder:text-muted-foreground/60 focus:border-primary/60 focus:ring-primary/20 h-11 w-full rounded-xl border px-4 text-sm focus:ring-2 focus:outline-none"
               aria-label="Your name"
               required
             />
@@ -164,7 +169,7 @@ export function BlogPostClient({ slug }: { slug: string }) {
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Share your thoughts…"
               rows={3}
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+              className="border-border bg-surface text-foreground placeholder:text-muted-foreground/60 focus:border-primary/60 focus:ring-primary/20 w-full rounded-xl border px-4 py-3 text-sm focus:ring-2 focus:outline-none"
               aria-label="Comment"
               required
             />
@@ -179,26 +184,26 @@ export function BlogPostClient({ slug }: { slug: string }) {
             {comments.map((comment) => (
               <div
                 key={comment.id}
-                className="rounded-2xl border border-border bg-surface/60 p-6 backdrop-blur-xl"
+                className="border-border bg-surface/60 rounded-2xl border p-6 backdrop-blur-xl"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
                       <AvatarFallback className="text-xs">{comment.initials}</AvatarFallback>
                     </Avatar>
-                    <p className="text-sm font-semibold text-foreground">{comment.name}</p>
+                    <p className="text-foreground text-sm font-semibold">{comment.name}</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {new Date(comment.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
                   {comment.content}
                 </p>
               </div>
             ))}
             {comments.length === 0 && (
-              <p className="py-6 text-center text-sm text-muted-foreground">
+              <p className="text-muted-foreground py-6 text-center text-sm">
                 Be the first to comment on this article.
               </p>
             )}
@@ -206,8 +211,8 @@ export function BlogPostClient({ slug }: { slug: string }) {
         </section>
 
         {/* Related */}
-        <section className="mt-16 border-t border-border pt-10">
-          <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+        <section className="border-border mt-16 border-t pt-10">
+          <h2 className="font-display text-foreground text-2xl font-bold tracking-tight uppercase">
             Keep <span className="text-gradient">Reading</span>
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -215,15 +220,15 @@ export function BlogPostClient({ slug }: { slug: string }) {
               <Link
                 key={p.slug}
                 href={`/blog/${p.slug}`}
-                className="group rounded-2xl border border-border bg-surface/60 p-5 backdrop-blur-xl transition-all duration-300 hover:border-primary/30"
+                className="group border-border bg-surface/60 hover:border-primary/30 rounded-2xl border p-5 backdrop-blur-xl transition-all duration-300"
               >
                 <Badge variant="secondary" className="mb-3">
                   {p.category}
                 </Badge>
-                <h3 className="font-display text-sm font-semibold leading-snug tracking-wide text-foreground transition-colors group-hover:text-primary">
+                <h3 className="font-display text-foreground group-hover:text-primary text-sm leading-snug font-semibold tracking-wide transition-colors">
                   {p.title}
                 </h3>
-                <p className="mt-2 text-xs text-muted-foreground">{p.readTime} min read</p>
+                <p className="text-muted-foreground mt-2 text-xs">{p.readTime} min read</p>
               </Link>
             ))}
           </div>

@@ -12,12 +12,8 @@ export async function listClasses(params: {
   const page = params.page ?? 1;
   const limit = params.limit ?? 20;
   const date = params.date ? new Date(params.date) : null;
-  const dayStart = date
-    ? new Date(date.getFullYear(), date.getMonth(), date.getDate())
-    : null;
-  const dayEnd = dayStart
-    ? new Date(dayStart.getTime() + 86_400_000)
-    : null;
+  const dayStart = date ? new Date(date.getFullYear(), date.getMonth(), date.getDate()) : null;
+  const dayEnd = dayStart ? new Date(dayStart.getTime() + 86_400_000) : null;
 
   const where = {
     isActive: true,
@@ -126,11 +122,7 @@ export async function cancelBooking(userId: string, bookingId: string) {
   });
 }
 
-export async function rescheduleBooking(
-  userId: string,
-  bookingId: string,
-  newClassId: string
-) {
+export async function rescheduleBooking(userId: string, bookingId: string, newClassId: string) {
   const booking = await prisma.booking.findFirst({
     where: { id: bookingId, userId },
   });

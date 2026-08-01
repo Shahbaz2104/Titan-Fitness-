@@ -67,16 +67,16 @@ export function ForgotPasswordPageForm() {
 
   if (sent) {
     return (
-      <div className="rounded-3xl border border-border bg-surface/60 p-10 text-center backdrop-blur-xl shadow-card">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-success/15">
-          <MailCheck className="h-8 w-8 text-success" />
+      <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-10 text-center backdrop-blur-xl">
+        <span className="bg-success/15 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+          <MailCheck className="text-success h-8 w-8" />
         </span>
-        <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+        <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
           Check your inbox
         </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          If an account exists for that email, we&apos;ve sent a password reset
-          link. It expires in 1 hour.
+        <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+          If an account exists for that email, we&apos;ve sent a password reset link. It expires in
+          1 hour.
         </p>
         <Button asChild variant="outline" className="mt-8">
           <Link href="/login">Back to sign in</Link>
@@ -86,15 +86,15 @@ export function ForgotPasswordPageForm() {
   }
 
   return (
-    <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl shadow-card">
+    <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15">
-          <KeyRound className="h-8 w-8 text-primary" />
+        <span className="bg-primary/15 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+          <KeyRound className="text-primary h-8 w-8" />
         </span>
-        <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+        <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
           Reset your <span className="text-gradient">password</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-sm">
           Enter your email, then choose how you want to reset it.
         </p>
       </div>
@@ -110,18 +110,22 @@ export function ForgotPasswordPageForm() {
             {...register("email")}
             aria-invalid={!!errors.email}
           />
-          {errors.email && <p className="text-xs text-primary">{errors.email.message}</p>}
+          {errors.email && <p className="text-primary text-xs">{errors.email.message}</p>}
         </div>
 
         <Button type="submit" size="lg" className="w-full" disabled={loading !== null}>
-          {loading === "link" ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailCheck className="h-4 w-4" />}
+          {loading === "link" ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <MailCheck className="h-4 w-4" />
+          )}
           Send Reset Link
         </Button>
 
         <div className="flex items-center gap-3">
-          <span className="h-px flex-1 bg-border" />
-          <span className="text-xs uppercase tracking-widest text-muted-foreground">or</span>
-          <span className="h-px flex-1 bg-border" />
+          <span className="bg-border h-px flex-1" />
+          <span className="text-muted-foreground text-xs tracking-widest uppercase">or</span>
+          <span className="bg-border h-px flex-1" />
         </div>
 
         <Button
@@ -132,14 +136,21 @@ export function ForgotPasswordPageForm() {
           onClick={sendOtp}
           disabled={loading !== null}
         >
-          {loading === "otp" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          {loading === "otp" ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Send className="h-4 w-4" />
+          )}
           Send Reset Code (OTP)
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-6 text-center text-sm">
         Remembered it?{" "}
-        <Link href="/login" className="font-medium text-primary transition-colors hover:text-accent">
+        <Link
+          href="/login"
+          className="text-primary hover:text-accent font-medium transition-colors"
+        >
           Sign in
         </Link>
       </p>

@@ -1,16 +1,15 @@
-
 export default function Loading() {
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-background">
+    <div className="bg-background fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6">
       <div className="relative">
-        <div className="absolute inset-0 rounded-full bg-primary/30 blur-2xl animate-pulse" />
-        <div className="relative h-16 w-16 animate-spin-slow rounded-full border-2 border-primary/20 border-t-primary" />
+        <div className="bg-primary/30 absolute inset-0 animate-pulse rounded-full blur-2xl" />
+        <div className="animate-spin-slow border-primary/20 border-t-primary relative h-16 w-16 rounded-full border-2" />
       </div>
       <div className="flex flex-col items-center gap-3">
-        <p className="font-display text-xl font-bold uppercase tracking-widest text-foreground">
+        <p className="font-display text-foreground text-xl font-bold tracking-widest uppercase">
           Titan<span className="text-primary">Fitness</span>
         </p>
-        <div className="h-1 w-40 overflow-hidden rounded-full bg-surface-2">
+        <div className="bg-surface-2 h-1 w-40 overflow-hidden rounded-full">
           <div className="shimmer-line h-full w-full" />
         </div>
       </div>

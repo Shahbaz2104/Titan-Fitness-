@@ -83,20 +83,24 @@ function ProfileForm({ profile }: { profile: Profile }) {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
           Full name
         </label>
         <Input value={name} onChange={(e) => setName(e.target.value)} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
             Phone
           </label>
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 000 0000" />
+          <Input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+1 555 000 0000"
+          />
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
             Fitness goal
           </label>
           <Select value={fitnessGoal ?? undefined} onValueChange={setFitnessGoal}>
@@ -115,19 +119,29 @@ function ProfileForm({ profile }: { profile: Profile }) {
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
             Height (cm)
           </label>
-          <Input type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)} placeholder="178" />
+          <Input
+            type="number"
+            value={heightCm}
+            onChange={(e) => setHeightCm(e.target.value)}
+            placeholder="178"
+          />
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
             Weight (kg)
           </label>
-          <Input type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} placeholder="82" />
+          <Input
+            type="number"
+            value={weightKg}
+            onChange={(e) => setWeightKg(e.target.value)}
+            placeholder="82"
+          />
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
             Experience
           </label>
           <Select value={experience ?? undefined} onValueChange={setExperience}>
@@ -153,9 +167,15 @@ function ProfileForm({ profile }: { profile: Profile }) {
 }
 
 export function ProfileDashboard() {
-  const { data: profile, isLoading } = useApiQuery<Profile>([...QUERY_KEYS.user, "profile"], "/api/me/profile");
+  const { data: profile, isLoading } = useApiQuery<Profile>(
+    [...QUERY_KEYS.user, "profile"],
+    "/api/me/profile"
+  );
   const { data: badges } = useApiQuery<Badge[]>(QUERY_KEYS.badges, "/api/me/badges");
-  const { data: points } = useApiQuery<PointsInfo>([...QUERY_KEYS.user, "points"], "/api/me/points");
+  const { data: points } = useApiQuery<PointsInfo>(
+    [...QUERY_KEYS.user, "points"],
+    "/api/me/points"
+  );
 
   if (isLoading) {
     return (
@@ -169,9 +189,10 @@ export function ProfileDashboard() {
 
   if (!profile) return null;
 
-  const bmi = profile.heightCm && profile.weightKg
-    ? (profile.weightKg / Math.pow(profile.heightCm / 100, 2)).toFixed(1)
-    : null;
+  const bmi =
+    profile.heightCm && profile.weightKg
+      ? (profile.weightKg / Math.pow(profile.heightCm / 100, 2)).toFixed(1)
+      : null;
 
   return (
     <div className="space-y-6">
@@ -192,15 +213,15 @@ export function ProfileDashboard() {
               className="h-20 w-20 rounded-3xl object-cover"
             />
           ) : (
-            <span className="flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/15 font-display text-2xl font-bold text-primary">
+            <span className="bg-primary/15 font-display text-primary flex h-20 w-20 items-center justify-center rounded-3xl text-2xl font-bold">
               {initials(profile.name)}
             </span>
           )}
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-2xl font-bold uppercase tracking-wide text-foreground">
+            <h3 className="font-display text-foreground text-2xl font-bold tracking-wide uppercase">
               {profile.name}
             </h3>
-            <p className="mt-1 text-sm text-muted-foreground">{profile.email}</p>
+            <p className="text-muted-foreground mt-1 text-sm">{profile.email}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {profile.fitnessGoal && (
                 <Badge variant="default">{profile.fitnessGoal.replaceAll("_", " ")}</Badge>
@@ -213,16 +234,18 @@ export function ProfileDashboard() {
           </div>
           <div className="flex gap-6">
             <div className="text-center">
-              <p className="font-display text-3xl font-bold text-primary">{points?.points ?? "–"}</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Points</p>
+              <p className="font-display text-primary text-3xl font-bold">
+                {points?.points ?? "–"}
+              </p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">Points</p>
             </div>
             <div className="text-center">
-              <p className="font-display text-3xl font-bold text-primary">#{points?.rank ?? "–"}</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Rank</p>
+              <p className="font-display text-primary text-3xl font-bold">#{points?.rank ?? "–"}</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">Rank</p>
             </div>
             <div className="text-center">
-              <p className="font-display text-3xl font-bold text-primary">{bmi ?? "–"}</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">BMI</p>
+              <p className="font-display text-primary text-3xl font-bold">{bmi ?? "–"}</p>
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">BMI</p>
             </div>
           </div>
         </div>
@@ -232,7 +255,7 @@ export function ProfileDashboard() {
         {/* Edit form */}
         <Card>
           <CardContent className="p-6">
-            <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+            <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
               Personal details
             </h3>
             <div className="mt-5">
@@ -245,13 +268,13 @@ export function ProfileDashboard() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+              <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                 Badges
               </h3>
-              <Dumbbell className="h-4 w-4 text-muted-foreground" />
+              <Dumbbell className="text-muted-foreground h-4 w-4" />
             </div>
             {!badges || badges.length === 0 ? (
-              <p className="mt-4 rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+              <p className="border-border text-muted-foreground mt-4 rounded-2xl border border-dashed py-10 text-center text-sm">
                 No badges yet. Keep training to unlock achievements!
               </p>
             ) : (
@@ -259,14 +282,14 @@ export function ProfileDashboard() {
                 {badges.map((b) => (
                   <div
                     key={b.id}
-                    className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-surface p-4 text-center"
+                    className="border-border bg-surface flex flex-col items-center gap-2 rounded-2xl border p-4 text-center"
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-warning/15 text-warning">
+                    <span className="bg-warning/15 text-warning flex h-12 w-12 items-center justify-center rounded-2xl">
                       <Award className="h-6 w-6" />
                     </span>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{b.badge.name}</p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">{b.badge.description}</p>
+                      <p className="text-foreground text-sm font-semibold">{b.badge.name}</p>
+                      <p className="text-muted-foreground mt-0.5 text-xs">{b.badge.description}</p>
                     </div>
                   </div>
                 ))}

@@ -1,14 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  Award,
-  CalendarCheck,
-  Check,
-  Clock,
-  MessageCircle,
-  Star,
-} from "lucide-react";
+import { ArrowLeft, Award, CalendarCheck, Check, Clock, MessageCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -154,11 +146,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-export default async function TrainerDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function TrainerDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const trainer = TRAINERS.find((t) => t.slug === slug);
   if (!trainer) notFound();
@@ -166,11 +154,11 @@ export default async function TrainerDetailPage({
   return (
     <>
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-primary/8 blur-3xl" />
+        <div className="bg-primary/8 pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/trainers"
-            className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary"
+            className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
           >
             <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
             All trainers
@@ -178,16 +166,16 @@ export default async function TrainerDetailPage({
 
           <div className="mt-10 grid gap-12 lg:grid-cols-5">
             <Reveal className="lg:col-span-2">
-              <div className="overflow-hidden rounded-3xl border border-border bg-surface/60">
+              <div className="border-border bg-surface/60 overflow-hidden rounded-3xl border">
                 <Avatar className="h-auto w-full rounded-none">
                   <AvatarImage src={`/images/trainers/${trainer.slug}.jpg`} alt={trainer.name} />
-                  <AvatarFallback className="rounded-none bg-gradient-to-br from-primary/40 to-accent/40 py-32 text-7xl">
+                  <AvatarFallback className="from-primary/40 to-accent/40 rounded-none bg-gradient-to-br py-32 text-7xl">
                     {trainer.initials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="p-6">
                   <div className="flex items-center gap-3">
-                    <span className="flex items-center gap-1 text-warning">
+                    <span className="text-warning flex items-center gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
@@ -197,7 +185,7 @@ export default async function TrainerDetailPage({
                         />
                       ))}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       {trainer.rating} · {trainer.reviews} reviews
                     </span>
                   </div>
@@ -207,17 +195,17 @@ export default async function TrainerDetailPage({
                       Book a Session — ${trainer.hourly}/hr
                     </Link>
                   </Button>
-                  <div className="mt-5 space-y-3 border-t border-border pt-5 text-sm text-muted-foreground">
+                  <div className="border-border text-muted-foreground mt-5 space-y-3 border-t pt-5 text-sm">
                     <p className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-primary" />
+                      <Clock className="text-primary h-4 w-4" />
                       Availability: {trainer.availability.join(" · ")}
                     </p>
                     <p className="flex items-center gap-2">
-                      <Award className="h-4 w-4 text-accent" />
+                      <Award className="text-accent h-4 w-4" />
                       {trainer.years} years experience
                     </p>
                     <p className="flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4 text-success" />
+                      <MessageCircle className="text-success h-4 w-4" />
                       Responds within 1 hour
                     </p>
                   </div>
@@ -230,16 +218,16 @@ export default async function TrainerDetailPage({
                 <Badge variant="accent" className="mb-4">
                   {trainer.specialty}
                 </Badge>
-                <h1 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground sm:text-6xl">
+                <h1 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-6xl">
                   {trainer.name}
                 </h1>
-                <p className="mt-6 whitespace-pre-line leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-6 leading-relaxed whitespace-pre-line">
                   {trainer.longBio}
                 </p>
               </Reveal>
 
               <Reveal delay={0.1} className="mt-8">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+                <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                   Certifications
                 </h2>
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -253,14 +241,14 @@ export default async function TrainerDetailPage({
               </Reveal>
 
               <Reveal delay={0.15} className="mt-10">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+                <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                   Member Reviews
                 </h2>
                 <div className="mt-5 space-y-4">
                   {trainer.reviews_list.map((review) => (
                     <div
                       key={review.name}
-                      className="rounded-2xl border border-border bg-surface/60 p-6 backdrop-blur-xl"
+                      className="border-border bg-surface/60 rounded-2xl border p-6 backdrop-blur-xl"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -268,7 +256,7 @@ export default async function TrainerDetailPage({
                             <AvatarFallback>{review.initials}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="text-sm font-semibold text-foreground">{review.name}</p>
+                            <p className="text-foreground text-sm font-semibold">{review.name}</p>
                             <div className="flex items-center gap-0.5">
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <Star
@@ -283,9 +271,9 @@ export default async function TrainerDetailPage({
                             </div>
                           </div>
                         </div>
-                        <span className="text-xs text-muted-foreground">Verified member</span>
+                        <span className="text-muted-foreground text-xs">Verified member</span>
                       </div>
-                      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                      <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
                         {review.text}
                       </p>
                     </div>

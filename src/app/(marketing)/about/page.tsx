@@ -77,32 +77,30 @@ export default function AboutPage() {
       <section className="relative py-12">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <Reveal>
-            <div className="group h-full rounded-2xl border border-border bg-surface/60 p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15">
-                <Target className="h-6 w-6 text-primary" />
+            <div className="group border-border bg-surface/60 hover:border-primary/30 h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500">
+              <div className="bg-primary/15 mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
+                <Target className="text-primary h-6 w-6" />
               </div>
-              <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-foreground">
+              <h2 className="font-display text-foreground text-2xl font-bold tracking-wide uppercase">
                 Our Mission
               </h2>
-              <p className="mt-3 leading-relaxed text-muted-foreground">
-                To make world-class coaching accessible to everyone by pairing
-                certified human trainers with AI intelligence — so that no member
-                ever wonders what to do next.
+              <p className="text-muted-foreground mt-3 leading-relaxed">
+                To make world-class coaching accessible to everyone by pairing certified human
+                trainers with AI intelligence — so that no member ever wonders what to do next.
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="group h-full rounded-2xl border border-border bg-surface/60 p-8 backdrop-blur-xl transition-all duration-500 hover:border-accent/30">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-                <Award className="h-6 w-6 text-accent" />
+            <div className="group border-border bg-surface/60 hover:border-accent/30 h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500">
+              <div className="bg-accent/15 mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
+                <Award className="text-accent h-6 w-6" />
               </div>
-              <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-foreground">
+              <h2 className="font-display text-foreground text-2xl font-bold tracking-wide uppercase">
                 Our Vision
               </h2>
-              <p className="mt-3 leading-relaxed text-muted-foreground">
-                A world where every person has a personal coach — where
-                technology and training merge so deeply that reaching your
-                goals becomes the default outcome.
+              <p className="text-muted-foreground mt-3 leading-relaxed">
+                A world where every person has a personal coach — where technology and training
+                merge so deeply that reaching your goals becomes the default outcome.
               </p>
             </div>
           </Reveal>
@@ -116,39 +114,37 @@ export default function AboutPage() {
             <Badge variant="default" className="mb-4">
               Our Journey
             </Badge>
-            <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground sm:text-5xl">
+            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
               The <span className="text-gradient">Timeline</span>
             </h2>
           </Reveal>
           <div className="relative mt-16">
-            <div className="absolute left-4 top-0 h-full w-px bg-gradient-to-b from-primary via-border to-transparent sm:left-1/2" />
+            <div className="from-primary via-border absolute top-0 left-4 h-full w-px bg-gradient-to-b to-transparent sm:left-1/2" />
             <div className="space-y-12">
               {TIMELINE.map((item, i) => (
                 <Reveal key={item.year} delay={i * 0.05}>
                   <div
                     className={`relative flex flex-col gap-3 pl-12 sm:w-1/2 sm:pl-0 ${
-                      i % 2 === 0
-                        ? "sm:pr-12 sm:text-right"
-                        : "sm:ml-auto sm:pl-12"
+                      i % 2 === 0 ? "sm:pr-12 sm:text-right" : "sm:ml-auto sm:pl-12"
                     }`}
                   >
                     <span
-                      className={`absolute left-4 top-1 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border border-primary/40 bg-surface shadow-glow sm:left-auto ${
+                      className={`border-primary/40 bg-surface shadow-glow absolute top-1 left-4 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border sm:left-auto ${
                         i % 2 === 0
                           ? "sm:-right-4 sm:translate-x-1/2"
                           : "sm:-left-4 sm:-translate-x-1/2"
                       }`}
                     >
-                      <Medal className="h-4 w-4 text-primary" />
+                      <Medal className="text-primary h-4 w-4" />
                     </span>
-                    <div className="rounded-2xl border border-border bg-surface/60 p-6 backdrop-blur-xl transition-all duration-500 hover:border-primary/30">
-                      <p className="font-display text-2xl font-bold text-gradient-red">
+                    <div className="border-border bg-surface/60 hover:border-primary/30 rounded-2xl border p-6 backdrop-blur-xl transition-all duration-500">
+                      <p className="font-display text-gradient-red text-2xl font-bold">
                         {item.year}
                       </p>
-                      <h3 className="mt-1 font-display text-lg font-semibold uppercase tracking-wide text-foreground">
+                      <h3 className="font-display text-foreground mt-1 text-lg font-semibold tracking-wide uppercase">
                         {item.title}
                       </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                         {item.description}
                       </p>
                     </div>
@@ -161,13 +157,13 @@ export default function AboutPage() {
       </section>
 
       {/* Awards & Certifications */}
-      <section className="relative border-y border-border bg-surface/30 py-16 sm:py-24">
+      <section className="border-border bg-surface/30 relative border-y py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center">
             <Badge variant="warning" className="mb-4">
               Awards &amp; Certifications
             </Badge>
-            <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground">
+            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase">
               Recognized <span className="text-gradient">Excellence</span>
             </h2>
           </Reveal>
@@ -195,14 +191,14 @@ export default function AboutPage() {
               },
             ].map((award, i) => (
               <Reveal key={award.title} delay={i * 0.08}>
-                <div className="group rounded-2xl border border-border bg-surface/60 p-7 text-center backdrop-blur-xl transition-all duration-500 hover:border-warning/40 hover:shadow-[0_0_40px_rgba(255,193,7,0.15)]">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
-                    <award.icon className="h-7 w-7 text-warning" />
+                <div className="group border-border bg-surface/60 hover:border-warning/40 rounded-2xl border p-7 text-center backdrop-blur-xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,193,7,0.15)]">
+                  <div className="bg-warning/10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                    <award.icon className="text-warning h-7 w-7" />
                   </div>
-                  <h3 className="font-display text-base font-semibold uppercase tracking-wide text-foreground">
+                  <h3 className="font-display text-foreground text-base font-semibold tracking-wide uppercase">
                     {award.title}
                   </h3>
-                  <p className="mt-1.5 text-xs text-muted-foreground">{award.org}</p>
+                  <p className="text-muted-foreground mt-1.5 text-xs">{award.org}</p>
                 </div>
               </Reveal>
             ))}
@@ -220,12 +216,12 @@ export default function AboutPage() {
             { value: 97, suffix: "%", label: "Renewal Rate" },
           ].map((stat, i) => (
             <Reveal key={stat.label} delay={i * 0.08}>
-              <p className="font-display text-4xl font-bold text-foreground sm:text-6xl">
+              <p className="font-display text-foreground text-4xl font-bold sm:text-6xl">
                 <span className="text-gradient-red">
                   <Counter to={stat.value} suffix={stat.suffix} />
                 </span>
               </p>
-              <p className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm tracking-widest uppercase">
                 {stat.label}
               </p>
             </Reveal>
@@ -239,14 +235,14 @@ export default function AboutPage() {
           <div className="grid gap-5 lg:grid-cols-3">
             {VALUES.map((value, i) => (
               <Reveal key={value.title} delay={i * 0.1}>
-                <div className="group h-full rounded-2xl border border-border bg-surface/60 p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/15">
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-surface-2 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
-                    <value.icon className="h-6 w-6 text-primary" />
+                <div className="group border-border bg-surface/60 h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/15">
+                  <div className="border-border bg-surface-2 mb-5 flex h-12 w-12 items-center justify-center rounded-xl border transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                    <value.icon className="text-primary h-6 w-6" />
                   </div>
-                  <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-foreground">
+                  <h3 className="font-display text-foreground text-lg font-semibold tracking-wide uppercase">
                     {value.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                     {value.description}
                   </p>
                 </div>

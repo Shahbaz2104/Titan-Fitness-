@@ -48,7 +48,10 @@ const GOAL_EMOJI: Record<string, string> = {
 
 export function ChallengesDashboard() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useApiQuery<ChallengesResponse>(QUERY_KEYS.challenges, "/api/me/challenges");
+  const { data, isLoading } = useApiQuery<ChallengesResponse>(
+    QUERY_KEYS.challenges,
+    "/api/me/challenges"
+  );
   const [joining, setJoining] = React.useState<string | null>(null);
 
   const joinedIds = new Set((data?.mine ?? []).map((m) => m.challenge.id));
@@ -89,7 +92,7 @@ export function ChallengesDashboard() {
       {/* My challenges */}
       {data && data.mine.length > 0 && (
         <div>
-          <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-widest text-foreground">
+          <h3 className="font-display text-foreground mb-3 text-sm font-bold tracking-widest uppercase">
             My challenges
           </h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -99,10 +102,10 @@ export function ChallengesDashboard() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="rounded-2xl border border-primary/25 bg-primary/5 p-5"
+                className="border-primary/25 bg-primary/5 rounded-2xl border p-5"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-display text-base font-bold uppercase tracking-wide text-foreground">
+                  <p className="font-display text-foreground text-base font-bold tracking-wide uppercase">
                     {GOAL_EMOJI[mine.challenge.goalType] ?? "🏆"} {mine.challenge.title}
                   </p>
                   {mine.completedAt ? (
@@ -111,9 +114,9 @@ export function ChallengesDashboard() {
                     <Badge variant="accent">In progress</Badge>
                   )}
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">{mine.challenge.description}</p>
+                <p className="text-muted-foreground mt-2 text-sm">{mine.challenge.description}</p>
                 <div className="mt-4">
-                  <div className="flex justify-between text-xs text-muted-foreground">
+                  <div className="text-muted-foreground flex justify-between text-xs">
                     <span>Progress</span>
                     <span>
                       {mine.progress}/{mine.challenge.goalValue}
@@ -124,8 +127,12 @@ export function ChallengesDashboard() {
                     className="mt-2"
                   />
                 </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Ends {new Date(mine.challenge.endDate).toLocaleDateString(undefined, { month: "long", day: "numeric" })}
+                <p className="text-muted-foreground mt-3 text-xs">
+                  Ends{" "}
+                  {new Date(mine.challenge.endDate).toLocaleDateString(undefined, {
+                    month: "long",
+                    day: "numeric",
+                  })}
                 </p>
               </motion.div>
             ))}
@@ -135,16 +142,16 @@ export function ChallengesDashboard() {
 
       {/* Active challenges */}
       <div>
-        <h3 className="mb-3 font-display text-sm font-bold uppercase tracking-widest text-foreground">
+        <h3 className="font-display text-foreground mb-3 text-sm font-bold tracking-widest uppercase">
           Open challenges
         </h3>
         {active.length === 0 ? (
           <Card className="flex flex-col items-center gap-3 p-12 text-center">
-            <Flag className="h-10 w-10 text-muted-foreground" />
-            <p className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+            <Flag className="text-muted-foreground h-10 w-10" />
+            <p className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
               No open challenges
             </p>
-            <p className="max-w-sm text-sm text-muted-foreground">
+            <p className="text-muted-foreground max-w-sm text-sm">
               New challenges drop regularly. Check back soon!
             </p>
           </Card>
@@ -158,24 +165,32 @@ export function ChallengesDashboard() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.05, 0.6) }}
-                  className="flex flex-col rounded-2xl border border-border bg-surface p-5 transition-all duration-300 hover:border-primary/30"
+                  className="border-border bg-surface hover:border-primary/30 flex flex-col rounded-2xl border p-5 transition-all duration-300"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <p className="font-display text-base font-bold uppercase tracking-wide text-foreground">
+                    <p className="font-display text-foreground text-base font-bold tracking-wide uppercase">
                       {GOAL_EMOJI[challenge.goalType] ?? "🏆"} {challenge.title}
                     </p>
                     <Badge variant="secondary">{challenge.goalType}</Badge>
                   </div>
-                  <p className="mt-2 flex-1 text-sm text-muted-foreground">{challenge.description}</p>
-                  <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+                  <p className="text-muted-foreground mt-2 flex-1 text-sm">
+                    {challenge.description}
+                  </p>
+                  <div className="text-muted-foreground mt-4 flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1.5">
                       <Medal className="h-3.5 w-3.5" />
                       Goal: {challenge.goalValue} {challenge.goalType.toLowerCase()}
                     </span>
                     <span>
-                      {new Date(challenge.startDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                      {new Date(challenge.startDate).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                      })}
                       {" – "}
-                      {new Date(challenge.endDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                      {new Date(challenge.endDate).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </span>
                   </div>
                   <Button

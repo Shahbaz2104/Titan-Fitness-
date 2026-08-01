@@ -112,31 +112,34 @@ export default function TrainersPage() {
               <TiltCard maxTilt={8} className="h-full">
                 <Link
                   href={`/trainers/${trainer.slug}`}
-                  className="group flex h-full flex-col rounded-2xl border border-border bg-surface/60 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:shadow-glow"
+                  className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow flex h-full flex-col rounded-2xl border backdrop-blur-xl transition-all duration-500"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Avatar className="h-full w-full rounded-none">
-                      <AvatarImage src={`/images/trainers/${trainer.slug}.jpg`} alt={trainer.name} />
-                      <AvatarFallback className="rounded-none bg-gradient-to-br from-primary/40 to-accent/40 text-4xl">
+                      <AvatarImage
+                        src={`/images/trainers/${trainer.slug}.jpg`}
+                        alt={trainer.name}
+                      />
+                      <AvatarFallback className="from-primary/40 to-accent/40 rounded-none bg-gradient-to-br text-4xl">
                         {trainer.initials}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
-                    <span className="glass absolute left-3 top-3 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-warning">
-                      <Star className="h-3 w-3 fill-warning" />
+                    <div className="from-surface absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
+                    <span className="glass text-warning absolute top-3 left-3 flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium">
+                      <Star className="fill-warning h-3 w-3" />
                       {trainer.rating}
                       <span className="text-muted-foreground">({trainer.reviews})</span>
                     </span>
                   </div>
                   <div className="flex flex-1 flex-col p-6">
-                    <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+                    <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                       {trainer.name}
                     </h2>
-                    <p className="mt-1 flex items-center gap-1.5 text-sm text-accent">
+                    <p className="text-accent mt-1 flex items-center gap-1.5 text-sm">
                       <Award className="h-4 w-4" />
                       {trainer.specialty}
                     </p>
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    <p className="text-muted-foreground mt-3 flex-1 text-sm leading-relaxed">
                       {trainer.bio}
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
@@ -146,14 +149,14 @@ export default function TrainersPage() {
                         </Badge>
                       ))}
                     </div>
-                    <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
-                      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <CalendarCheck className="h-4 w-4 text-success" />
+                    <div className="border-border mt-5 flex items-center justify-between border-t pt-4">
+                      <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                        <CalendarCheck className="text-success h-4 w-4" />
                         {trainer.availability.join(" · ")}
                       </span>
-                      <span className="font-display text-lg font-bold text-foreground">
+                      <span className="font-display text-foreground text-lg font-bold">
                         ${trainer.hourly}
-                        <span className="text-xs font-normal text-muted-foreground">/hr</span>
+                        <span className="text-muted-foreground text-xs font-normal">/hr</span>
                       </span>
                     </div>
                   </div>

@@ -2,10 +2,7 @@ import { jsonError, jsonOk, parseBody, requireUser } from "@/lib/api";
 import { rescheduleSchema } from "@/lib/validators";
 import { rescheduleBooking } from "@/services/bookings";
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ bookingId: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ bookingId: string }> }) {
   try {
     const user = await requireUser();
     const { bookingId } = await params;

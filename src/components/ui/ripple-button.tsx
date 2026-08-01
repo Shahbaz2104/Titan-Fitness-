@@ -34,16 +34,12 @@ export function RippleButton({ className, children, onClick, ...props }: RippleB
   };
 
   return (
-    <button
-      className={cn("relative overflow-hidden", className)}
-      onClick={spawnRipple}
-      {...props}
-    >
+    <button className={cn("relative overflow-hidden", className)} onClick={spawnRipple} {...props}>
       {children}
       {ripples.map((ripple) => (
         <span
           key={ripple.id}
-          className="pointer-events-none absolute rounded-full bg-white/25 animate-[ripple_0.7s_ease-out_forwards]"
+          className="pointer-events-none absolute animate-[ripple_0.7s_ease-out_forwards] rounded-full bg-white/25"
           style={{
             left: ripple.x,
             top: ripple.y,

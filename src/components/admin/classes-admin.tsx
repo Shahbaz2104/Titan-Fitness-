@@ -36,7 +36,11 @@ function formatTime(value: string) {
 }
 
 export function ClassesAdmin() {
-  const { data: classes, isLoading, isError } = useApiQuery<AdminClass[]>(QUERY_KEYS.adminClasses, "/api/admin/classes");
+  const {
+    data: classes,
+    isLoading,
+    isError,
+  } = useApiQuery<AdminClass[]>(QUERY_KEYS.adminClasses, "/api/admin/classes");
 
   const [now] = React.useState(() => Date.now());
   const upcoming = (classes ?? []).filter((c) => new Date(c.startTime).getTime() > now);
@@ -59,15 +63,15 @@ export function ClassesAdmin() {
       ) : isError || !classes ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <AlertTriangle className="h-8 w-8 text-warning" />
-            <p className="text-sm text-muted-foreground">Could not load classes.</p>
+            <AlertTriangle className="text-warning h-8 w-8" />
+            <p className="text-muted-foreground text-sm">Could not load classes.</p>
           </CardContent>
         </Card>
       ) : classes.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <CalendarDays className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No classes scheduled yet.</p>
+            <CalendarDays className="text-muted-foreground h-8 w-8" />
+            <p className="text-muted-foreground text-sm">No classes scheduled yet.</p>
           </CardContent>
         </Card>
       ) : (
@@ -78,33 +82,36 @@ export function ClassesAdmin() {
           ].map(({ label, list }) =>
             list.length === 0 ? null : (
               <div key={label}>
-                <h3 className="mb-3 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <h3 className="font-display text-muted-foreground mb-3 text-xs font-bold tracking-widest uppercase">
                   {label}
                 </h3>
                 <div className="space-y-3">
                   {list.map((cls, i) => {
-                    const fill = cls.capacity > 0 ? Math.round((cls._count.bookings / cls.capacity) * 100) : 0;
+                    const fill =
+                      cls.capacity > 0 ? Math.round((cls._count.bookings / cls.capacity) * 100) : 0;
                     return (
                       <motion.div
                         key={cls.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.03 }}
-                        className="flex flex-col gap-3 rounded-2xl border border-border bg-surface/60 p-4 transition-all hover:border-primary/30 sm:flex-row sm:items-center"
+                        className="border-border bg-surface/60 hover:border-primary/30 flex flex-col gap-3 rounded-2xl border p-4 transition-all sm:flex-row sm:items-center"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold text-foreground">{cls.title}</p>
+                            <p className="text-foreground font-semibold">{cls.title}</p>
                             <Badge variant="outline">{cls.type}</Badge>
                             {cls.program && <Badge variant="outline">{cls.program.name}</Badge>}
                           </div>
-                          <p className="mt-1 text-xs text-muted-foreground">{formatTime(cls.startTime)}</p>
+                          <p className="text-muted-foreground mt-1 text-xs">
+                            {formatTime(cls.startTime)}
+                          </p>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground sm:shrink-0">
+                        <div className="text-muted-foreground flex flex-wrap items-center gap-4 text-xs sm:shrink-0">
                           {cls.trainer && (
                             <span className="flex items-center gap-1.5">
-                              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-[10px] font-bold text-primary">
+                              <span className="bg-primary/15 text-primary flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold">
                                 {cls.trainer.user.name.slice(0, 2).toUpperCase()}
                               </span>
                               {cls.trainer.user.name}
@@ -118,7 +125,7 @@ export function ClassesAdmin() {
                             <Users className="h-3.5 w-3.5" />
                             {cls._count.bookings}/{cls.capacity}
                           </span>
-                          <div className="h-2 w-24 overflow-hidden rounded-full bg-border">
+                          <div className="bg-border h-2 w-24 overflow-hidden rounded-full">
                             <div
                               className={`h-full rounded-full ${fill >= 90 ? "bg-destructive" : fill >= 60 ? "bg-warning" : "bg-success"}`}
                               style={{ width: `${fill}%` }}

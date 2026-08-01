@@ -3,7 +3,16 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Activity, CalendarCheck, Flame, LineChart, Plus, Scale, Timer, Trophy } from "lucide-react";
+import {
+  Activity,
+  CalendarCheck,
+  Flame,
+  LineChart,
+  Plus,
+  Scale,
+  Timer,
+  Trophy,
+} from "lucide-react";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,7 +49,9 @@ interface BodyMetric {
 export function ProgressDashboard() {
   const queryClient = useQueryClient();
   const { data: stats } = useApiQuery<WorkoutStats>(QUERY_KEYS.dashboard, "/api/workouts/stats");
-  const { data: metrics } = useApiQuery<BodyMetric[]>(QUERY_KEYS.metrics, "/api/me/body-metrics", { limit: 60 });
+  const { data: metrics } = useApiQuery<BodyMetric[]>(QUERY_KEYS.metrics, "/api/me/body-metrics", {
+    limit: 60,
+  });
   const { data: prs } = useApiQuery<PersonalRecord[]>(QUERY_KEYS.workouts, "/api/workouts/prs");
 
   const [weight, setWeight] = React.useState("");
@@ -84,34 +95,44 @@ export function ProgressDashboard() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Total workouts</p>
-              <Activity className="h-4 w-4 text-primary" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Total workouts
+              </p>
+              <Activity className="text-primary h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {stats?.totalWorkouts ?? "–"}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">+{stats?.monthWorkouts ?? 0} this month</p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              +{stats?.monthWorkouts ?? 0} this month
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Minutes trained</p>
-              <Timer className="h-4 w-4 text-accent" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Minutes trained
+              </p>
+              <Timer className="text-accent h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {stats?.totalMinutes ?? "–"}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">avg {stats?.avgDuration ?? 0} min/session</p>
+            <p className="text-muted-foreground mt-1 text-xs">
+              avg {stats?.avgDuration ?? 0} min/session
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Calories burned</p>
-              <Flame className="h-4 w-4 text-warning" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Calories burned
+              </p>
+              <Flame className="text-warning h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
               {(stats?.totalCalories ?? 0).toLocaleString()}
             </p>
           </CardContent>
@@ -119,10 +140,14 @@ export function ProgressDashboard() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Personal records</p>
-              <Trophy className="h-4 w-4 text-success" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                Personal records
+              </p>
+              <Trophy className="text-success h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold text-foreground">{prs?.length ?? "–"}</p>
+            <p className="font-display text-foreground mt-2 text-3xl font-bold">
+              {prs?.length ?? "–"}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -132,15 +157,15 @@ export function ProgressDashboard() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+              <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                 Body weight
               </h3>
               {weightDelta !== null && (
                 <span
                   className={
                     weightDelta <= 0
-                      ? "rounded-full bg-success/15 px-3 py-1 text-xs font-semibold text-success"
-                      : "rounded-full bg-warning/15 px-3 py-1 text-xs font-semibold text-warning"
+                      ? "bg-success/15 text-success rounded-full px-3 py-1 text-xs font-semibold"
+                      : "bg-warning/15 text-warning rounded-full px-3 py-1 text-xs font-semibold"
                   }
                 >
                   {weightDelta > 0 ? "+" : ""}
@@ -149,9 +174,9 @@ export function ProgressDashboard() {
               )}
             </div>
             {weightHistory.length < 2 ? (
-              <div className="mt-6 flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border py-12 text-center">
-                <Scale className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
+              <div className="border-border mt-6 flex flex-col items-center gap-2 rounded-2xl border border-dashed py-12 text-center">
+                <Scale className="text-muted-foreground h-8 w-8" />
+                <p className="text-muted-foreground text-sm">
                   Log your weight twice to see your trend line.
                 </p>
               </div>
@@ -161,11 +186,13 @@ export function ProgressDashboard() {
                   <div key={m.id} className="group relative flex-1">
                     <motion.div
                       initial={{ height: 0 }}
-                      animate={{ height: `${((m.weightKg ?? 0) - minWeight + weightSpan * 0.1) / (weightSpan * 1.2) * 100}%` }}
+                      animate={{
+                        height: `${(((m.weightKg ?? 0) - minWeight + weightSpan * 0.1) / (weightSpan * 1.2)) * 100}%`,
+                      }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="rounded-t-lg bg-gradient-to-t from-primary/40 to-primary"
+                      className="from-primary/40 to-primary rounded-t-lg bg-gradient-to-t"
                     />
-                    <div className="mt-1 text-center text-[10px] text-muted-foreground">
+                    <div className="text-muted-foreground mt-1 text-center text-[10px]">
                       {new Date(m.date).getDate()}/{new Date(m.date).getMonth() + 1}
                     </div>
                   </div>
@@ -174,20 +201,34 @@ export function ProgressDashboard() {
             )}
 
             {/* Add metric */}
-            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-border pt-4">
+            <div className="border-border mt-6 grid grid-cols-2 gap-3 border-t pt-4">
               <div className="space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                   Weight (kg)
                 </label>
-                <Input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="82.5" />
+                <Input
+                  type="number"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  placeholder="82.5"
+                />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                   Body fat (%)
                 </label>
-                <Input type="number" value={bodyFat} onChange={(e) => setBodyFat(e.target.value)} placeholder="18" />
+                <Input
+                  type="number"
+                  value={bodyFat}
+                  onChange={(e) => setBodyFat(e.target.value)}
+                  placeholder="18"
+                />
               </div>
-              <Button className="col-span-2" onClick={addMetric} disabled={saving || (!weight && !bodyFat)}>
+              <Button
+                className="col-span-2"
+                onClick={addMetric}
+                disabled={saving || (!weight && !bodyFat)}
+              >
                 <Plus className="h-4 w-4" />
                 {saving ? "Saving…" : "Log measurement"}
               </Button>
@@ -198,15 +239,15 @@ export function ProgressDashboard() {
         {/* History table */}
         <Card>
           <CardContent className="p-6">
-            <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+            <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
               Measurement history
             </h3>
             {!metrics || metrics.length === 0 ? (
-              <p className="mt-6 rounded-2xl border border-dashed border-border py-12 text-center text-sm text-muted-foreground">
+              <p className="border-border text-muted-foreground mt-6 rounded-2xl border border-dashed py-12 text-center text-sm">
                 No measurements yet. Log your first one to start tracking!
               </p>
             ) : (
-              <div className="mt-4 divide-y divide-border">
+              <div className="divide-border mt-4 divide-y">
                 {metrics.slice(0, 10).map((m, i) => (
                   <motion.div
                     key={m.id}
@@ -216,10 +257,10 @@ export function ProgressDashboard() {
                     className="flex items-center justify-between py-3"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground">
+                      <span className="bg-surface-2 text-muted-foreground flex h-9 w-9 items-center justify-center rounded-xl">
                         <CalendarCheck className="h-4 w-4" />
                       </span>
-                      <p className="text-sm font-medium text-foreground">
+                      <p className="text-foreground text-sm font-medium">
                         {new Date(m.date).toLocaleDateString(undefined, {
                           month: "short",
                           day: "numeric",
@@ -227,7 +268,7 @@ export function ProgressDashboard() {
                         })}
                       </p>
                     </div>
-                    <div className="flex gap-4 text-xs text-muted-foreground">
+                    <div className="text-muted-foreground flex gap-4 text-xs">
                       {m.weightKg !== null && (
                         <span>
                           <b className="text-foreground">{m.weightKg} kg</b> weight
@@ -257,19 +298,21 @@ export function ProgressDashboard() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-warning" />
-              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+              <Trophy className="text-warning h-4 w-4" />
+              <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                 Personal records
               </h3>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {prs.map((pr) => (
-                <div key={pr.id} className="rounded-xl border border-border bg-surface px-4 py-3">
-                  <p className="truncate text-sm font-semibold text-foreground">{pr.exercise.name}</p>
-                  <p className="mt-1 font-display text-xl font-bold text-primary">
+                <div key={pr.id} className="border-border bg-surface rounded-xl border px-4 py-3">
+                  <p className="text-foreground truncate text-sm font-semibold">
+                    {pr.exercise.name}
+                  </p>
+                  <p className="font-display text-primary mt-1 text-xl font-bold">
                     {pr.weightKg ?? 0} kg
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {pr.sets}×{pr.reps} · {pr.exercise.muscleGroup}
                   </p>
                 </div>

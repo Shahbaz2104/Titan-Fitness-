@@ -26,8 +26,7 @@ export function jsonOk<T>(data: T, init?: { status?: number }) {
 export function parseBody<T>(schema: ZodType<T>, body: unknown): T {
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
-    const message =
-      parsed.error.issues[0]?.message ?? "Invalid input";
+    const message = parsed.error.issues[0]?.message ?? "Invalid input";
     throw new ApiError(message, 400, "VALIDATION_ERROR");
   }
   return parsed.data;
@@ -71,11 +70,7 @@ export async function requireAdmin() {
   return requireRole("SUPER_ADMIN", "ADMIN");
 }
 
-export async function withRateLimit(
-  userId: string,
-  limit = 60,
-  windowMs = 60_000
-) {
+export async function withRateLimit(userId: string, limit = 60, windowMs = 60_000) {
   const { success } = await rateLimitByUser(userId, limit, windowMs);
   if (!success) throw new ApiError("Too many requests", 429, "RATE_LIMITED");
 }

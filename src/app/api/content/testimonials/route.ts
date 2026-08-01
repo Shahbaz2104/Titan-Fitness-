@@ -18,10 +18,9 @@ export async function POST(req: Request) {
     await withRateLimit(user.id, 5, 60_000);
     const body = await req.json().catch(() => null);
     const data = parseBody(testimonialSchema, body);
-    return jsonOk(
-      await addTestimonial(user.id, { ...data, rating: data.rating ?? 5 }),
-      { status: 201 }
-    );
+    return jsonOk(await addTestimonial(user.id, { ...data, rating: data.rating ?? 5 }), {
+      status: 201,
+    });
   } catch (error) {
     return jsonError(error);
   }

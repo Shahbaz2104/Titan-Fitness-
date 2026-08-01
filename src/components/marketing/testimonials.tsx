@@ -73,14 +73,14 @@ export function Testimonials() {
   }, [emblaApi]);
 
   return (
-    <section className="relative overflow-hidden border-y border-border bg-surface/30 py-24 sm:py-32">
-      <div className="pointer-events-none absolute right-0 top-0 h-96 w-96 rounded-full bg-accent/5 blur-3xl" />
+    <section className="border-border bg-surface/30 relative overflow-hidden border-y py-24 sm:py-32">
+      <div className="bg-accent/5 pointer-events-none absolute top-0 right-0 h-96 w-96 rounded-full blur-3xl" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal className="mx-auto max-w-2xl text-center">
           <Badge variant="success" className="mb-4">
             Member Stories
           </Badge>
-          <h2 className="font-display text-4xl font-bold uppercase tracking-tight text-foreground sm:text-5xl">
+          <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
             Real People. <span className="text-gradient">Real Results.</span>
           </h2>
         </Reveal>
@@ -92,23 +92,23 @@ export function Testimonials() {
                 key={testimonial.name}
                 className="relative min-w-0 flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
               >
-                <div className="group h-full rounded-2xl border border-border bg-surface/60 p-8 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:shadow-glow">
-                  <Quote className="h-8 w-8 text-primary/40 transition-colors duration-300 group-hover:text-primary" />
-                  <p className="mt-5 text-sm leading-relaxed text-foreground/90">
+                <div className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500">
+                  <Quote className="text-primary/40 group-hover:text-primary h-8 w-8 transition-colors duration-300" />
+                  <p className="text-foreground/90 mt-5 text-sm leading-relaxed">
                     &ldquo;{testimonial.quote}&rdquo;
                   </p>
                   <div className="mt-6 flex items-center gap-1">
                     {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-warning text-warning" />
+                      <Star key={i} className="fill-warning text-warning h-3.5 w-3.5" />
                     ))}
                   </div>
-                  <div className="mt-5 flex items-center gap-3 border-t border-border pt-5">
+                  <div className="border-border mt-5 flex items-center gap-3 border-t pt-5">
                     <Avatar>
                       <AvatarFallback>{testimonial.initials}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{testimonial.name}</p>
-                      <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                      <p className="text-foreground text-sm font-semibold">{testimonial.name}</p>
+                      <p className="text-muted-foreground text-xs">{testimonial.role}</p>
                     </div>
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export function Testimonials() {
               aria-label={`Go to testimonial ${i + 1}`}
               className={cn(
                 "h-2 rounded-full transition-all duration-300",
-                selected === i ? "w-8 bg-primary" : "w-2 bg-surface-2 hover:bg-muted"
+                selected === i ? "bg-primary w-8" : "bg-surface-2 hover:bg-muted w-2"
               )}
             />
           ))}

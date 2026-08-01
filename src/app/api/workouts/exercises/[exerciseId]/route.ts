@@ -1,10 +1,7 @@
 import { ApiError, jsonError, jsonOk, requireUser } from "@/lib/api";
 import { getExerciseById } from "@/services/workouts";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ exerciseId: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ exerciseId: string }> }) {
   try {
     await requireUser();
     const { exerciseId } = await params;

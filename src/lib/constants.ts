@@ -27,7 +27,17 @@ export const PROGRAM_CATEGORIES = [
   { label: "Calisthenics", value: "CALISTHENICS", icon: "person-standing" },
 ] as const;
 
-export const CLASS_TYPES = ["YOGA", "CROSSFIT", "HIIT", "ZUMBA", "SPINNING", "BOXING", "PILATES", "STRENGTH", "CARDIO"] as const;
+export const CLASS_TYPES = [
+  "YOGA",
+  "CROSSFIT",
+  "HIIT",
+  "ZUMBA",
+  "SPINNING",
+  "BOXING",
+  "PILATES",
+  "STRENGTH",
+  "CARDIO",
+] as const;
 
 export const FITNESS_GOALS = [
   { label: "Weight Loss", value: "WEIGHT_LOSS" },

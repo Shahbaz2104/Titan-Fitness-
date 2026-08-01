@@ -14,9 +14,7 @@ export function formatCurrency(amount: number, currency = "USD"): string {
 }
 
 export function formatDate(date: Date | string, opts?: Intl.DateTimeFormatOptions): string {
-  return new Intl.DateTimeFormat("en-US", opts ?? { dateStyle: "medium" }).format(
-    new Date(date)
-  );
+  return new Intl.DateTimeFormat("en-US", opts ?? { dateStyle: "medium" }).format(new Date(date));
 }
 
 export function formatDateTime(date: Date | string): string {
@@ -108,9 +106,7 @@ export function isDateInPast(date: Date | string): boolean {
 }
 
 export function dateRange(start: Date | string, end: Date | string): number {
-  return Math.ceil(
-    (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
-  );
+  return Math.ceil((new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24));
 }
 
 export function maskEmail(email: string): string {

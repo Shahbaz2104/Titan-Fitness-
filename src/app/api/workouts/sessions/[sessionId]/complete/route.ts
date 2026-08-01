@@ -10,10 +10,7 @@ const completionSchema = z.object({
   logs: z.array(workoutLogSchema).optional(),
 });
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ sessionId: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ sessionId: string }> }) {
   try {
     const user = await requireUser();
     const { sessionId } = await params;

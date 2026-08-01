@@ -4,10 +4,7 @@ import { adminDeleteProgram, adminUpdateProgram } from "@/services/admin";
 
 const programUpdateSchema = programSchema.partial();
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ programId: string }> }
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ programId: string }> }) {
   try {
     await requireAdmin();
     const { programId } = await params;

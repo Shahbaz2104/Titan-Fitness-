@@ -82,19 +82,20 @@ function PushCard({
 }: {
   pushState: "idle" | "denied" | "supported" | "subscribed";
   pushBusy: boolean;
-  pushStatus: { enabled: boolean; vapidPublicKey: string | null; subscriptions: string[] } | undefined;
+  pushStatus:
+    { enabled: boolean; vapidPublicKey: string | null; subscriptions: string[] } | undefined;
   onEnable: () => void;
   onDisable: () => void;
 }) {
   if (!pushStatus || !pushStatus.enabled) {
     return (
       <Card className="flex items-center gap-4 border-dashed px-5 py-4">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface text-muted-foreground">
+        <span className="bg-surface text-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
           <Smartphone className="h-5 w-5" />
         </span>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">Browser push notifications</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-foreground text-sm font-semibold">Browser push notifications</p>
+          <p className="text-muted-foreground text-xs">
             Push is not configured yet — add VAPID keys to enable alerts outside the app.
           </p>
         </div>
@@ -104,13 +105,13 @@ function PushCard({
 
   if (pushState === "subscribed") {
     return (
-      <Card className="flex items-center gap-4 border-primary/25 bg-primary/5 px-5 py-4">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <Card className="border-primary/25 bg-primary/5 flex items-center gap-4 px-5 py-4">
+        <span className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
           <BellRing className="h-5 w-5" />
         </span>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-foreground">Push notifications enabled</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-foreground text-sm font-semibold">Push notifications enabled</p>
+          <p className="text-muted-foreground text-xs">
             Alerts appear here and on your device even when the app is closed.
           </p>
         </div>
@@ -123,18 +124,23 @@ function PushCard({
 
   return (
     <Card className="flex items-center gap-4 border-dashed px-5 py-4">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface text-muted-foreground">
+      <span className="bg-surface text-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
         <Smartphone className="h-5 w-5" />
       </span>
       <div className="flex-1">
-        <p className="text-sm font-semibold text-foreground">Browser push notifications</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-foreground text-sm font-semibold">Browser push notifications</p>
+        <p className="text-muted-foreground text-xs">
           {pushState === "denied"
             ? "Permission was blocked in your browser — allow notifications in site settings to enable push."
             : "Get notified in your browser when a workout, badge, or membership update arrives."}
         </p>
       </div>
-      <Button variant="outline" size="sm" onClick={onEnable} disabled={pushBusy || pushState === "denied"}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onEnable}
+        disabled={pushBusy || pushState === "denied"}
+      >
         {pushBusy ? "Setting up…" : "Enable"}
       </Button>
     </Card>
@@ -262,15 +268,15 @@ export function NotificationsDashboard() {
 
       {notifications.length === 0 ? (
         <Card className="flex flex-col items-center justify-center gap-3 p-14 text-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-3xl bg-surface text-muted-foreground">
+          <span className="bg-surface text-muted-foreground flex h-16 w-16 items-center justify-center rounded-3xl">
             <Bell className="h-8 w-8" />
           </span>
-          <p className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+          <p className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
             All caught up
           </p>
-          <p className="max-w-sm text-sm text-muted-foreground">
-            You have no notifications. Completing workouts, earning badges, and booking classes
-            will show up here.
+          <p className="text-muted-foreground max-w-sm text-sm">
+            You have no notifications. Completing workouts, earning badges, and booking classes will
+            show up here.
           </p>
         </Card>
       ) : (
@@ -293,7 +299,7 @@ export function NotificationsDashboard() {
               >
                 <span
                   className={cn(
-                    "mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface",
+                    "bg-surface mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                     TYPE_COLORS[notification.type] ?? "text-muted-foreground"
                   )}
                 >
@@ -301,12 +307,12 @@ export function NotificationsDashboard() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-foreground">{notification.title}</p>
-                    <span className="shrink-0 text-xs text-muted-foreground">
+                    <p className="text-foreground text-sm font-semibold">{notification.title}</p>
+                    <span className="text-muted-foreground shrink-0 text-xs">
                       {timeAgo(notification.createdAt)}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">{notification.body}</p>
+                  <p className="text-muted-foreground mt-1 text-sm">{notification.body}</p>
                 </div>
                 {!notification.readAt && (
                   <Badge className="mt-1 shrink-0" variant="default">

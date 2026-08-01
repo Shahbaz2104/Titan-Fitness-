@@ -105,7 +105,7 @@ export default function PricingPage() {
                   className={cn(
                     "relative flex h-full flex-col rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500",
                     plan.popular
-                      ? "border-primary/40 bg-gradient-to-b from-primary/10 to-surface/60 shadow-glow"
+                      ? "border-primary/40 from-primary/10 to-surface/60 shadow-glow bg-gradient-to-b"
                       : "border-border bg-surface/60 hover:border-white/15"
                   )}
                 >
@@ -114,10 +114,10 @@ export default function PricingPage() {
                       <Sparkles className="h-3 w-3" /> Most Popular
                     </Badge>
                   )}
-                  <h2 className="font-display text-xl font-bold uppercase tracking-widest text-foreground">
+                  <h2 className="font-display text-foreground text-xl font-bold tracking-widest uppercase">
                     {plan.name}
                   </h2>
-                  <p className="mt-1.5 text-sm text-muted-foreground">{plan.tagline}</p>
+                  <p className="text-muted-foreground mt-1.5 text-sm">{plan.tagline}</p>
                   <div className="mt-6 flex items-end gap-1">
                     <span
                       className={cn(
@@ -127,13 +127,13 @@ export default function PricingPage() {
                     >
                       ${plan.price}
                     </span>
-                    <span className="pb-1.5 text-sm text-muted-foreground">{plan.period}</span>
+                    <span className="text-muted-foreground pb-1.5 text-sm">{plan.period}</span>
                   </div>
                   <ul className="mt-7 flex-1 space-y-3.5">
                     {plan.features.map((feature) => (
                       <li
                         key={feature}
-                        className="flex items-start gap-3 text-sm text-muted-foreground"
+                        className="text-muted-foreground flex items-start gap-3 text-sm"
                       >
                         <span
                           className={cn(
@@ -141,7 +141,12 @@ export default function PricingPage() {
                             plan.popular ? "bg-primary/20" : "bg-success/15"
                           )}
                         >
-                          <Check className={cn("h-3 w-3", plan.popular ? "text-primary" : "text-success")} />
+                          <Check
+                            className={cn(
+                              "h-3 w-3",
+                              plan.popular ? "text-primary" : "text-success"
+                            )}
+                          />
                         </span>
                         {feature}
                       </li>
@@ -168,34 +173,37 @@ export default function PricingPage() {
       <section className="pb-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center">
-            <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-foreground sm:text-4xl">
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase sm:text-4xl">
               Compare <span className="text-gradient">Plans</span>
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="mt-10 overflow-x-auto rounded-2xl border border-border bg-surface/60 backdrop-blur-xl">
+            <div className="border-border bg-surface/60 mt-10 overflow-x-auto rounded-2xl border backdrop-blur-xl">
               <table className="w-full min-w-[600px] text-left text-sm">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="px-6 py-4 font-medium text-muted-foreground">Feature</th>
-                    <th className="px-6 py-4 text-center font-display font-bold uppercase tracking-wide text-foreground">
+                  <tr className="border-border border-b">
+                    <th className="text-muted-foreground px-6 py-4 font-medium">Feature</th>
+                    <th className="font-display text-foreground px-6 py-4 text-center font-bold tracking-wide uppercase">
                       Essential
                     </th>
-                    <th className="px-6 py-4 text-center font-display font-bold uppercase tracking-wide text-primary">
+                    <th className="font-display text-primary px-6 py-4 text-center font-bold tracking-wide uppercase">
                       Pro
                     </th>
-                    <th className="px-6 py-4 text-center font-display font-bold uppercase tracking-wide text-accent">
+                    <th className="font-display text-accent px-6 py-4 text-center font-bold tracking-wide uppercase">
                       Elite
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {COMPARE.map((row) => (
-                    <tr key={row.feature} className="border-b border-border/50 transition-colors hover:bg-white/[0.02]">
-                      <td className="px-6 py-3.5 text-muted-foreground">{row.feature}</td>
+                    <tr
+                      key={row.feature}
+                      className="border-border/50 border-b transition-colors hover:bg-white/[0.02]"
+                    >
+                      <td className="text-muted-foreground px-6 py-3.5">{row.feature}</td>
                       <td className="px-6 py-3.5 text-center">
                         {row.essential === true ? (
-                          <Check className="mx-auto h-4 w-4 text-success" />
+                          <Check className="text-success mx-auto h-4 w-4" />
                         ) : row.essential === false ? (
                           <span className="text-surface-2">—</span>
                         ) : (
@@ -204,7 +212,7 @@ export default function PricingPage() {
                       </td>
                       <td className="px-6 py-3.5 text-center">
                         {row.pro === true ? (
-                          <Check className="mx-auto h-4 w-4 text-success" />
+                          <Check className="text-success mx-auto h-4 w-4" />
                         ) : row.pro === false ? (
                           <span className="text-surface-2">—</span>
                         ) : (
@@ -213,7 +221,7 @@ export default function PricingPage() {
                       </td>
                       <td className="px-6 py-3.5 text-center">
                         {row.elite === true ? (
-                          <Check className="mx-auto h-4 w-4 text-success" />
+                          <Check className="text-success mx-auto h-4 w-4" />
                         ) : row.elite === false ? (
                           <span className="text-surface-2">—</span>
                         ) : (

@@ -3,7 +3,8 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Terms of Service",
-  description: "The terms and conditions governing your use of the Titan Fitness platform and facilities.",
+  description:
+    "The terms and conditions governing your use of the Titan Fitness platform and facilities.",
   path: "/terms",
 });
 
@@ -58,7 +59,9 @@ const data = {
     },
     {
       heading: "7. Contact",
-      body: ["Questions about these terms? Email support@titanfitness.com or visit the Contact page."],
+      body: [
+        "Questions about these terms? Email support@titanfitness.com or visit the Contact page.",
+      ],
     },
   ],
 };

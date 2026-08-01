@@ -6,41 +6,43 @@ import { Zap } from "lucide-react";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex min-h-screen bg-background">
+    <div className="bg-background relative flex min-h-screen">
       <div className="bg-grid pointer-events-none fixed inset-0" />
-      <AnimatedGradient className="left-0 top-0 h-96 w-96 opacity-60" />
+      <AnimatedGradient className="top-0 left-0 h-96 w-96 opacity-60" />
 
-      <aside className="relative hidden w-1/2 flex-col justify-between overflow-hidden border-r border-border bg-surface/40 p-12 lg:flex">
-        <Floating className="right-16 top-32" distance={20}>
-          <div className="glass rounded-2xl px-5 py-4 shadow-card">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Today&apos;s Workout</p>
-            <p className="mt-1 font-display text-xl font-bold text-foreground">Leg Day · 45 min</p>
+      <aside className="border-border bg-surface/40 relative hidden w-1/2 flex-col justify-between overflow-hidden border-r p-12 lg:flex">
+        <Floating className="top-32 right-16" distance={20}>
+          <div className="glass shadow-card rounded-2xl px-5 py-4">
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">
+              Today&apos;s Workout
+            </p>
+            <p className="font-display text-foreground mt-1 text-xl font-bold">Leg Day · 45 min</p>
           </div>
         </Floating>
         <Floating className="bottom-40 left-16" duration={7} delay={1} distance={16}>
-          <div className="glass flex items-center gap-3 rounded-2xl px-5 py-4 shadow-card">
-            <Zap className="h-5 w-5 text-accent" />
+          <div className="glass shadow-card flex items-center gap-3 rounded-2xl px-5 py-4">
+            <Zap className="text-accent h-5 w-5" />
             <div>
-              <p className="text-sm font-semibold text-foreground">AI Coach Online</p>
-              <p className="text-xs text-muted-foreground">Ready when you are</p>
+              <p className="text-foreground text-sm font-semibold">AI Coach Online</p>
+              <p className="text-muted-foreground text-xs">Ready when you are</p>
             </div>
           </div>
         </Floating>
         <div className="relative z-10">
           <Logo />
-          <h2 className="mt-8 max-w-md font-display text-4xl font-bold uppercase leading-tight tracking-tight text-foreground">
+          <h2 className="font-display text-foreground mt-8 max-w-md text-4xl leading-tight font-bold tracking-tight uppercase">
             Your transformation starts with <span className="text-gradient">one click</span>
           </h2>
-          <p className="mt-4 max-w-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-4 max-w-sm">
             Join 12,000+ members training smarter with AI-powered coaching.
           </p>
-          <div className="mt-8 flex items-center gap-6 text-xs uppercase tracking-widest text-muted-foreground">
+          <div className="text-muted-foreground mt-8 flex items-center gap-6 text-xs tracking-widest uppercase">
             <span>⚡ 85 Trainers</span>
             <span>🔥 240+ Classes</span>
             <span>🏆 12k Members</span>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           © {new Date().getFullYear()} Titan Fitness. All rights reserved.
         </p>
       </aside>
@@ -51,8 +53,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Logo />
           </div>
           {children}
-          <p className="mt-8 text-center text-xs text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-primary">
+          <p className="text-muted-foreground mt-8 text-center text-xs">
+            <Link href="/" className="hover:text-primary transition-colors">
               ← Back to homepage
             </Link>
           </p>

@@ -39,12 +39,12 @@ export default function BmiCalculatorPage() {
       <section className="pb-24">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           {/* Input panel */}
-          <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl">
+          <div className="border-border bg-surface/60 rounded-3xl border p-8 backdrop-blur-xl">
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15">
-                <Calculator className="h-5 w-5 text-primary" />
+              <span className="bg-primary/15 flex h-11 w-11 items-center justify-center rounded-2xl">
+                <Calculator className="text-primary h-5 w-5" />
               </span>
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+              <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                 Enter Your Details
               </h2>
             </div>
@@ -64,7 +64,7 @@ export default function BmiCalculatorPage() {
                   onValueChange={([v]) => setWeight(v ?? 80)}
                   className="py-1"
                 />
-                <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                <div className="text-muted-foreground flex justify-between text-[10px] tracking-widest uppercase">
                   <span>30 kg</span>
                   <span>165 kg</span>
                   <span>300 kg</span>
@@ -85,14 +85,14 @@ export default function BmiCalculatorPage() {
                   onValueChange={([v]) => setHeight(v ?? 178)}
                   className="py-1"
                 />
-                <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                <div className="text-muted-foreground flex justify-between text-[10px] tracking-widest uppercase">
                   <span>100 cm</span>
                   <span>175 cm</span>
                   <span>250 cm</span>
                 </div>
               </div>
 
-              <Button type="button" size="lg" className="w-full group">
+              <Button type="button" size="lg" className="group w-full">
                 BMI Updates Live
                 <Sparkles className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
               </Button>
@@ -100,12 +100,12 @@ export default function BmiCalculatorPage() {
           </div>
 
           {/* Result panel */}
-          <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl">
+          <div className="border-border bg-surface/60 rounded-3xl border p-8 backdrop-blur-xl">
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-success/15">
-                <Gauge className="h-5 w-5 text-success" />
+              <span className="bg-success/15 flex h-11 w-11 items-center justify-center rounded-2xl">
+                <Gauge className="text-success h-5 w-5" />
               </span>
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+              <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                 Your Result
               </h2>
             </div>
@@ -143,13 +143,13 @@ export default function BmiCalculatorPage() {
                   ))}
                 </div>
                 <motion.div
-                  className="absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background shadow-lg"
+                  className="border-background absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-lg"
                   style={{ backgroundColor: category.color, left: `${position * 100}%` }}
                   animate={{ left: `${position * 100}%` }}
                   transition={{ type: "spring", stiffness: 120, damping: 18 }}
                 />
               </div>
-              <div className="mt-2 flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+              <div className="text-muted-foreground mt-2 flex justify-between text-[10px] tracking-widest uppercase">
                 <span>10</span>
                 <span>18.5</span>
                 <span>25</span>
@@ -158,22 +158,22 @@ export default function BmiCalculatorPage() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-border bg-surface p-5">
-              <p className="text-sm leading-relaxed text-muted-foreground">{category.health}</p>
-              <div className="mt-4 grid grid-cols-2 gap-4 border-t border-border pt-4">
+            <div className="border-border bg-surface mt-6 rounded-2xl border p-5">
+              <p className="text-muted-foreground text-sm leading-relaxed">{category.health}</p>
+              <div className="border-border mt-4 grid grid-cols-2 gap-4 border-t pt-4">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <p className="text-muted-foreground text-[10px] tracking-widest uppercase">
                     Healthy weight range
                   </p>
-                  <p className="mt-1 font-display text-lg font-bold text-success">
+                  <p className="font-display text-success mt-1 text-lg font-bold">
                     {idealMin.toFixed(0)}–{idealMax.toFixed(0)} kg
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <p className="text-muted-foreground text-[10px] tracking-widest uppercase">
                     Distance to ideal
                   </p>
-                  <p className="mt-1 font-display text-lg font-bold text-foreground">
+                  <p className="font-display text-foreground mt-1 text-lg font-bold">
                     {weight > idealMax
                       ? `−${(weight - idealMax).toFixed(1)} kg`
                       : weight < idealMin
@@ -184,12 +184,7 @@ export default function BmiCalculatorPage() {
               </div>
             </div>
 
-            <Button
-              asChild
-              variant="accent"
-              size="lg"
-              className="mt-6 w-full group"
-            >
+            <Button asChild variant="accent" size="lg" className="group mt-6 w-full">
               <a href="/register">
                 <Sparkles className="h-4 w-4" />
                 Get AI-Powered Plan
@@ -201,10 +196,10 @@ export default function BmiCalculatorPage() {
 
         {/* Recommendations */}
         <div className="mx-auto mt-8 max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-surface to-accent/10 p-8 backdrop-blur-xl">
+          <div className="border-border from-primary/10 via-surface to-accent/10 rounded-3xl border bg-gradient-to-br p-8 backdrop-blur-xl">
             <div className="flex items-center gap-3">
-              <Sparkles className="h-5 w-5 text-accent" />
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+              <Sparkles className="text-accent h-5 w-5" />
+              <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                 AI Recommendations
               </h2>
             </div>
@@ -233,11 +228,11 @@ export default function BmiCalculatorPage() {
                   text: "Create a free account to generate your personalized AI workout and meal plan based on these numbers.",
                 },
               ].map((rec) => (
-                <div key={rec.title} className="rounded-2xl border border-border bg-surface/70 p-5">
-                  <p className="font-display text-sm font-bold uppercase tracking-widest text-primary">
+                <div key={rec.title} className="border-border bg-surface/70 rounded-2xl border p-5">
+                  <p className="font-display text-primary text-sm font-bold tracking-widest uppercase">
                     {rec.title}
                   </p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{rec.text}</p>
+                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{rec.text}</p>
                 </div>
               ))}
             </div>

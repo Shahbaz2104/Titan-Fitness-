@@ -16,16 +16,76 @@ const PHOTOS: { category: string; gradient: string; label: string }[] = [
 ];
 
 const TILES = [
-  { category: "strength", h: "row-span-2", gradient: "from-primary/30 to-accent/10", icon: "🏋️", caption: "Power Rack Zone" },
-  { category: "classes", h: "", gradient: "from-accent/30 to-warning/10", icon: "🔥", caption: "HIIT Studio" },
-  { category: "members", h: "", gradient: "from-success/30 to-primary/10", icon: "💪", caption: "Member of the Month" },
-  { category: "facility", h: "row-span-2", gradient: "from-warning/30 to-accent/10", icon: "🏟️", caption: "Main Floor" },
-  { category: "classes", h: "", gradient: "from-accent/30 to-warning/10", icon: "🧘", caption: "Yoga Room" },
-  { category: "members", h: "", gradient: "from-success/30 to-primary/10", icon: "🏆", caption: "Challenge Winners" },
-  { category: "strength", h: "", gradient: "from-primary/30 to-accent/10", icon: "🏋️‍♀️", caption: "Free Weights" },
-  { category: "facility", h: "", gradient: "from-warning/30 to-accent/10", icon: "🚿", caption: "Recovery Suite" },
-  { category: "classes", h: "row-span-2", gradient: "from-accent/30 to-warning/10", icon: "🥊", caption: "Boxing Corner" },
-  { category: "members", h: "", gradient: "from-success/30 to-primary/10", icon: "🤝", caption: "Community Night" },
+  {
+    category: "strength",
+    h: "row-span-2",
+    gradient: "from-primary/30 to-accent/10",
+    icon: "🏋️",
+    caption: "Power Rack Zone",
+  },
+  {
+    category: "classes",
+    h: "",
+    gradient: "from-accent/30 to-warning/10",
+    icon: "🔥",
+    caption: "HIIT Studio",
+  },
+  {
+    category: "members",
+    h: "",
+    gradient: "from-success/30 to-primary/10",
+    icon: "💪",
+    caption: "Member of the Month",
+  },
+  {
+    category: "facility",
+    h: "row-span-2",
+    gradient: "from-warning/30 to-accent/10",
+    icon: "🏟️",
+    caption: "Main Floor",
+  },
+  {
+    category: "classes",
+    h: "",
+    gradient: "from-accent/30 to-warning/10",
+    icon: "🧘",
+    caption: "Yoga Room",
+  },
+  {
+    category: "members",
+    h: "",
+    gradient: "from-success/30 to-primary/10",
+    icon: "🏆",
+    caption: "Challenge Winners",
+  },
+  {
+    category: "strength",
+    h: "",
+    gradient: "from-primary/30 to-accent/10",
+    icon: "🏋️‍♀️",
+    caption: "Free Weights",
+  },
+  {
+    category: "facility",
+    h: "",
+    gradient: "from-warning/30 to-accent/10",
+    icon: "🚿",
+    caption: "Recovery Suite",
+  },
+  {
+    category: "classes",
+    h: "row-span-2",
+    gradient: "from-accent/30 to-warning/10",
+    icon: "🥊",
+    caption: "Boxing Corner",
+  },
+  {
+    category: "members",
+    h: "",
+    gradient: "from-success/30 to-primary/10",
+    icon: "🤝",
+    caption: "Community Night",
+  },
 ];
 
 export default function GalleryPage() {
@@ -58,7 +118,7 @@ export default function GalleryPage() {
                   "rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300",
                   filter === photo.category
                     ? "border-primary bg-primary/10 text-primary shadow-glow"
-                    : "border-border bg-surface text-muted-foreground hover:border-white/20 hover:text-foreground"
+                    : "border-border bg-surface text-muted-foreground hover:text-foreground hover:border-white/20"
                 )}
               >
                 {photo.label}
@@ -78,7 +138,7 @@ export default function GalleryPage() {
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => setSelected(tile.index)}
                   className={cn(
-                    "group relative overflow-hidden rounded-2xl border border-border",
+                    "group border-border relative overflow-hidden rounded-2xl border",
                     tile.h
                   )}
                   aria-label={`View ${tile.caption}`}
@@ -94,9 +154,9 @@ export default function GalleryPage() {
                     </span>
                   </div>
                   <div className="bg-grid absolute inset-0 opacity-30" />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4">
-                    <p className="flex items-center gap-2 text-left text-sm font-medium text-foreground">
-                      <Eye className="h-3.5 w-3.5 text-primary opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="from-background/90 absolute inset-x-0 bottom-0 bg-gradient-to-t to-transparent p-4">
+                    <p className="text-foreground flex items-center gap-2 text-left text-sm font-medium">
+                      <Eye className="text-primary h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
                       {tile.caption}
                     </p>
                   </div>
@@ -120,7 +180,7 @@ export default function GalleryPage() {
                   initial={{ scale: 0.9, y: 20 }}
                   animate={{ scale: 1, y: 0 }}
                   exit={{ scale: 0.9, y: 20 }}
-                  className="relative w-full max-w-3xl overflow-hidden rounded-3xl border border-border"
+                  className="border-border relative w-full max-w-3xl overflow-hidden rounded-3xl border"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div
@@ -132,13 +192,14 @@ export default function GalleryPage() {
                     <span className="text-8xl">{selectedTile.icon}</span>
                     <div className="bg-grid absolute inset-0 opacity-40" />
                   </div>
-                  <div className="flex items-center justify-between bg-surface p-5">
+                  <div className="bg-surface flex items-center justify-between p-5">
                     <div>
-                      <p className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+                      <p className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
                         {selectedTile.caption}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {PHOTOS.find((p) => p.category === selectedTile.category)?.label} · Titan Fitness
+                      <p className="text-muted-foreground text-xs">
+                        {PHOTOS.find((p) => p.category === selectedTile.category)?.label} · Titan
+                        Fitness
                       </p>
                     </div>
                     <Badge variant="secondary">Titan</Badge>

@@ -36,7 +36,7 @@ export function BlogIndexClient() {
           {/* Search + categories */}
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-md">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="text-muted-foreground absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -54,7 +54,7 @@ export function BlogIndexClient() {
                     "rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300",
                     category === cat
                       ? "border-primary bg-primary/10 text-primary shadow-glow"
-                      : "border-border bg-surface text-muted-foreground hover:border-white/20 hover:text-foreground"
+                      : "border-border bg-surface text-muted-foreground hover:text-foreground hover:border-white/20"
                   )}
                 >
                   {cat}
@@ -67,23 +67,21 @@ export function BlogIndexClient() {
           {posts.filter((p) => p.featured).length > 0 && category === "All" && !query && (
             <Link
               href={`/blog/${posts.find((p) => p.featured)?.slug}`}
-              className="group relative mt-10 block overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-surface to-accent/10 p-10 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:shadow-glow sm:p-14"
+              className="group border-border from-primary/15 via-surface to-accent/10 hover:border-primary/30 hover:shadow-glow relative mt-10 block overflow-hidden rounded-3xl border bg-gradient-to-br p-10 backdrop-blur-xl transition-all duration-500 sm:p-14"
             >
               <div className="bg-grid absolute inset-0 opacity-40" />
               <div className="relative max-w-2xl">
                 <div className="flex items-center gap-3">
                   <Badge variant="accent">Featured</Badge>
-                  <Badge variant="secondary">
-                    {posts.find((p) => p.featured)?.category}
-                  </Badge>
+                  <Badge variant="secondary">{posts.find((p) => p.featured)?.category}</Badge>
                 </div>
-                <h2 className="mt-5 font-display text-3xl font-bold uppercase leading-tight tracking-tight text-foreground transition-colors duration-300 group-hover:text-primary sm:text-4xl">
+                <h2 className="font-display text-foreground group-hover:text-primary mt-5 text-3xl leading-tight font-bold tracking-tight uppercase transition-colors duration-300 sm:text-4xl">
                   {posts.find((p) => p.featured)?.title}
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
                   {posts.find((p) => p.featured)?.excerpt}
                 </p>
-                <div className="mt-5 flex items-center gap-5 text-xs text-muted-foreground">
+                <div className="text-muted-foreground mt-5 flex items-center gap-5 text-xs">
                   <span className="flex items-center gap-1.5">
                     <Clock className="h-3.5 w-3.5" />
                     {posts.find((p) => p.featured)?.readTime} min read
@@ -105,7 +103,7 @@ export function BlogIndexClient() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="group relative flex h-full flex-col rounded-2xl border border-border bg-surface/60 p-7 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:shadow-glow"
+                className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow relative flex h-full flex-col rounded-2xl border p-7 backdrop-blur-xl transition-all duration-500"
               >
                 <div className="mb-5 flex items-center justify-between">
                   <Badge variant="secondary">{post.category}</Badge>
@@ -131,26 +129,26 @@ export function BlogIndexClient() {
                     </button>
                     <button
                       aria-label="Like article"
-                      className="rounded-full p-1.5 text-muted-foreground transition-all duration-300 hover:text-primary active:scale-125"
+                      className="text-muted-foreground hover:text-primary rounded-full p-1.5 transition-all duration-300 active:scale-125"
                     >
                       <Heart className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
                 <Link href={`/blog/${post.slug}`} className="flex flex-1 flex-col">
-                  <h2 className="font-display text-lg font-semibold leading-snug tracking-wide text-foreground transition-colors duration-300 group-hover:text-primary">
+                  <h2 className="font-display text-foreground group-hover:text-primary text-lg leading-snug font-semibold tracking-wide transition-colors duration-300">
                     {post.title}
                   </h2>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-muted-foreground mt-3 flex-1 text-sm leading-relaxed">
                     {post.excerpt}
                   </p>
-                  <div className="mt-6 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
+                  <div className="border-border text-muted-foreground mt-6 flex items-center justify-between border-t pt-4 text-xs">
                     <span className="flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5" />
                       {post.readTime} min read
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <Heart className="h-3.5 w-3.5 text-primary" />
+                      <Heart className="text-primary h-3.5 w-3.5" />
                       {post.likes}
                     </span>
                     <span>
@@ -167,10 +165,10 @@ export function BlogIndexClient() {
 
           {posts.length === 0 && (
             <div className="mt-16 text-center">
-              <p className="font-display text-xl font-semibold text-foreground">
+              <p className="font-display text-foreground text-xl font-semibold">
                 No articles found
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm">
                 Try a different search term or category.
               </p>
             </div>

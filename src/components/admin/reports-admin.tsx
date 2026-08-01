@@ -35,7 +35,11 @@ interface AttendanceReport {
 }
 
 function formatMoney(value: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
 }
 
 function BarChart({
@@ -59,9 +63,9 @@ function BarChart({
               initial={{ height: 0 }}
               animate={{ height: `${(v / max) * 100}%` }}
               transition={{ duration: 0.6, delay: i * 0.004, ease: "easeOut" }}
-              className="w-full rounded-t-md bg-gradient-to-t from-primary/40 to-primary transition-all group-hover:from-accent/60 group-hover:to-accent"
+              className="from-primary/40 to-primary group-hover:from-accent/60 group-hover:to-accent w-full rounded-t-md bg-gradient-to-t transition-all"
             />
-            <div className="pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-lg border border-border bg-surface px-2 py-1 text-[10px] font-semibold text-foreground opacity-0 shadow-card transition-opacity group-hover:opacity-100">
+            <div className="border-border bg-surface text-foreground shadow-card pointer-events-none absolute -top-9 left-1/2 z-10 -translate-x-1/2 rounded-lg border px-2 py-1 text-[10px] font-semibold whitespace-nowrap opacity-0 transition-opacity group-hover:opacity-100">
               {formatValue(v)}
             </div>
           </div>
@@ -96,7 +100,7 @@ export function ReportsAdmin() {
         description="Revenue and attendance analytics"
         icon={<TrendingUp className="h-5 w-5" />}
         actions={
-          <div className="flex rounded-xl border border-border bg-surface p-1">
+          <div className="border-border bg-surface flex rounded-xl border p-1">
             {DAY_RANGES.map((d) => (
               <button
                 key={d}
@@ -139,8 +143,8 @@ export function ReportsAdmin() {
       ) : isError ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <AlertTriangle className="h-8 w-8 text-warning" />
-            <p className="text-sm text-muted-foreground">Could not load report data.</p>
+            <AlertTriangle className="text-warning h-8 w-8" />
+            <p className="text-muted-foreground text-sm">Could not load report data.</p>
           </CardContent>
         </Card>
       ) : selected === "revenue" && revenue.data ? (
@@ -148,17 +152,18 @@ export function ReportsAdmin() {
           <Card className="xl:col-span-2">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+                <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                   Revenue — last {days} days
                 </h3>
-                <p className="font-display text-2xl font-bold text-foreground">
+                <p className="font-display text-foreground text-2xl font-bold">
                   {formatMoney(revenue.data.total)}
                 </p>
               </div>
               <BarChart data={revenue.data.series} valueKey="revenue" formatValue={formatMoney} />
-              <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-                <p className="text-xs text-muted-foreground">
-                  {revenue.data.series[0]?.date} → {revenue.data.series[revenue.data.series.length - 1]?.date}
+              <div className="border-border mt-4 flex items-center justify-between border-t pt-4">
+                <p className="text-muted-foreground text-xs">
+                  {revenue.data.series[0]?.date} →{" "}
+                  {revenue.data.series[revenue.data.series.length - 1]?.date}
                 </p>
                 <Badge variant="success">SUCCEEDED payments only</Badge>
               </div>
@@ -167,20 +172,27 @@ export function ReportsAdmin() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+              <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                 Revenue by type
               </h3>
               <div className="mt-4 space-y-3">
                 {Object.entries(revenue.data.byType)
                   .sort((a, b) => b[1] - a[1])
                   .map(([type, amount]) => (
-                    <div key={type} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
-                      <span className="text-sm font-medium text-foreground">{type}</span>
-                      <span className="text-sm font-semibold text-primary">{formatMoney(amount)}</span>
+                    <div
+                      key={type}
+                      className="border-border bg-surface flex items-center justify-between rounded-xl border px-4 py-3"
+                    >
+                      <span className="text-foreground text-sm font-medium">{type}</span>
+                      <span className="text-primary text-sm font-semibold">
+                        {formatMoney(amount)}
+                      </span>
                     </div>
                   ))}
                 {Object.keys(revenue.data.byType).length === 0 && (
-                  <p className="py-6 text-center text-sm text-muted-foreground">No payments in this period.</p>
+                  <p className="text-muted-foreground py-6 text-center text-sm">
+                    No payments in this period.
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -191,17 +203,22 @@ export function ReportsAdmin() {
           <Card className="xl:col-span-2">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+                <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                   Attendance — last {days} days
                 </h3>
-                <p className="font-display text-2xl font-bold text-foreground">
+                <p className="font-display text-foreground text-2xl font-bold">
                   {attendance.data.total} check-ins
                 </p>
               </div>
-              <BarChart data={attendance.data.series} valueKey="count" formatValue={(v) => String(v)} />
-              <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-                <p className="text-xs text-muted-foreground">
-                  {attendance.data.series[0]?.date} → {attendance.data.series[attendance.data.series.length - 1]?.date}
+              <BarChart
+                data={attendance.data.series}
+                valueKey="count"
+                formatValue={(v) => String(v)}
+              />
+              <div className="border-border mt-4 flex items-center justify-between border-t pt-4">
+                <p className="text-muted-foreground text-xs">
+                  {attendance.data.series[0]?.date} →{" "}
+                  {attendance.data.series[attendance.data.series.length - 1]?.date}
                 </p>
                 <div className="flex gap-2">
                   <Badge variant="success">
@@ -219,7 +236,7 @@ export function ReportsAdmin() {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+              <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                 Summary
               </h3>
               <div className="mt-4 space-y-3">
@@ -229,14 +246,18 @@ export function ReportsAdmin() {
                   { label: "Late arrivals", value: attendance.data.late },
                   {
                     label: "Punctuality",
-                    value: attendance.data.total > 0
-                      ? `${Math.round((attendance.data.present / attendance.data.total) * 100)}%`
-                      : "–",
+                    value:
+                      attendance.data.total > 0
+                        ? `${Math.round((attendance.data.present / attendance.data.total) * 100)}%`
+                        : "–",
                   },
                 ].map((row) => (
-                  <div key={row.label} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
-                    <span className="text-sm font-medium text-foreground">{row.label}</span>
-                    <span className="text-sm font-semibold text-primary">{row.value}</span>
+                  <div
+                    key={row.label}
+                    className="border-border bg-surface flex items-center justify-between rounded-xl border px-4 py-3"
+                  >
+                    <span className="text-foreground text-sm font-medium">{row.label}</span>
+                    <span className="text-primary text-sm font-semibold">{row.value}</span>
                   </div>
                 ))}
               </div>

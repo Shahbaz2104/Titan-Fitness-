@@ -12,7 +12,9 @@ export async function getPosts(params: {
   const where = {
     status: "PUBLISHED" as const,
     deletedAt: null,
-    ...(params.category && params.category !== "ALL" ? { category: { slug: params.category } } : {}),
+    ...(params.category && params.category !== "ALL"
+      ? { category: { slug: params.category } }
+      : {}),
     ...(params.search
       ? {
           OR: [
@@ -59,7 +61,11 @@ export async function getPostBySlug(slug: string) {
   return post;
 }
 
-export async function getRelatedPosts(post: { id: string; categoryId: string | null; tags: unknown }) {
+export async function getRelatedPosts(post: {
+  id: string;
+  categoryId: string | null;
+  tags: unknown;
+}) {
   const tags = Array.isArray(post.tags) ? post.tags.slice(0, 4) : [];
   return prisma.blogPost.findMany({
     where: {
@@ -168,11 +174,14 @@ export async function getTestimonials(limit?: number) {
   });
 }
 
-export async function addTestimonial(userId: string, data: {
-  content: string;
-  rating: number;
-  programId?: string | null;
-}) {
+export async function addTestimonial(
+  userId: string,
+  data: {
+    content: string;
+    rating: number;
+    programId?: string | null;
+  }
+) {
   return prisma.testimonial.create({
     data: { userId, ...data },
   });

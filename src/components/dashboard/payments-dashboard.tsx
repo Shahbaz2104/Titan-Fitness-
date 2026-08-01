@@ -50,25 +50,25 @@ export function PaymentsDashboard() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Total paid</p>
-            <p className="mt-2 font-display text-2xl font-bold text-foreground">
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">Total paid</p>
+            <p className="font-display text-foreground mt-2 text-2xl font-bold">
               ${totalSpent.toFixed(2)}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Transactions</p>
-            <p className="mt-2 font-display text-2xl font-bold text-foreground">{history?.length ?? "–"}</p>
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">Transactions</p>
+            <p className="font-display text-foreground mt-2 text-2xl font-bold">
+              {history?.length ?? "–"}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Last payment</p>
-            <p className="mt-2 font-display text-2xl font-bold text-foreground">
-              {history?.[0]
-                ? `$${Number(history[0].amount).toFixed(2)}`
-                : "–"}
+            <p className="text-muted-foreground text-xs tracking-widest uppercase">Last payment</p>
+            <p className="font-display text-foreground mt-2 text-2xl font-bold">
+              {history?.[0] ? `$${Number(history[0].amount).toFixed(2)}` : "–"}
             </p>
           </CardContent>
         </Card>
@@ -76,7 +76,7 @@ export function PaymentsDashboard() {
 
       <Card>
         <CardContent className="p-5">
-          <h3 className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+          <h3 className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
             History
           </h3>
           {isLoading ? (
@@ -85,7 +85,7 @@ export function PaymentsDashboard() {
               <Skeleton className="h-14 w-full" />
             </div>
           ) : !history || history.length === 0 ? (
-            <p className="mt-4 rounded-2xl border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+            <p className="border-border text-muted-foreground mt-4 rounded-2xl border border-dashed py-10 text-center text-sm">
               No payments yet. Your membership purchases will appear here.
             </p>
           ) : (
@@ -96,23 +96,25 @@ export function PaymentsDashboard() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(i * 0.03, 0.5) }}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 py-3"
+                  className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <span
                       className={
                         payment.status === "SUCCEEDED"
-                          ? "flex h-9 w-9 items-center justify-center rounded-xl bg-success/15 text-success"
-                          : "flex h-9 w-9 items-center justify-center rounded-xl bg-surface-2 text-muted-foreground"
+                          ? "bg-success/15 text-success flex h-9 w-9 items-center justify-center rounded-xl"
+                          : "bg-surface-2 text-muted-foreground flex h-9 w-9 items-center justify-center rounded-xl"
                       }
                     >
                       <Receipt className="h-4 w-4" />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {payment.membership?.plan.name ?? payment.description ?? payment.type.replaceAll("_", " ")}
+                      <p className="text-foreground text-sm font-medium">
+                        {payment.membership?.plan.name ??
+                          payment.description ??
+                          payment.type.replaceAll("_", " ")}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         {new Date(payment.createdAt).toLocaleDateString(undefined, {
                           month: "short",
                           day: "numeric",
@@ -127,7 +129,7 @@ export function PaymentsDashboard() {
                     <Badge variant={STATUS_STYLES[payment.status] ?? "outline"}>
                       {payment.status.replaceAll("_", " ")}
                     </Badge>
-                    <span className="font-display text-base font-bold text-foreground">
+                    <span className="font-display text-foreground text-base font-bold">
                       ${Number(payment.amount).toFixed(2)}
                     </span>
                   </div>
@@ -138,7 +140,7 @@ export function PaymentsDashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-3 text-xs text-muted-foreground">
+      <div className="border-border bg-surface text-muted-foreground flex items-center gap-2 rounded-2xl border px-4 py-3 text-xs">
         <CreditCard className="h-4 w-4" />
         Payments are processed securely via our payment partner. Receipts are sent to your email.
       </div>

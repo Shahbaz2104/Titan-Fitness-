@@ -143,31 +143,33 @@ export default function ProgramsPage() {
             <Link
               key={program.slug}
               href={`/programs/${program.slug}`}
-              className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/60 backdrop-blur-xl transition-all duration-500 hover:border-primary/30 hover:shadow-glow"
+              className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow relative flex h-full flex-col overflow-hidden rounded-2xl border backdrop-blur-xl transition-all duration-500"
             >
-              <div className={`relative aspect-[16/9] overflow-hidden bg-gradient-to-br ${program.gradient} to-transparent`}>
+              <div
+                className={`relative aspect-[16/9] overflow-hidden bg-gradient-to-br ${program.gradient} to-transparent`}
+              >
                 <div className="bg-grid absolute inset-0 opacity-50" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <program.icon
                     className={`h-16 w-16 ${program.color} transition-all duration-500 group-hover:scale-125 group-hover:rotate-6`}
                   />
                 </div>
-                <span className="glass absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-medium text-foreground">
+                <span className="glass text-foreground absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-medium">
                   {program.difficulty}
                 </span>
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+                <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                   {program.name}
                 </h2>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground mt-2 flex-1 text-sm leading-relaxed">
                   {program.description}
                 </p>
-                <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
+                <div className="border-border text-muted-foreground mt-5 flex items-center justify-between border-t pt-4 text-xs">
                   <span>{program.duration}</span>
                   <span>Coach: {program.trainer}</span>
                 </div>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+                <span className="text-primary mt-4 inline-flex items-center gap-1.5 text-sm font-medium">
                   View Program
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>

@@ -1,11 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/services/notifications";
 
-export async function awardPoints(
-  userId: string,
-  points: number,
-  reason: string
-) {
+export async function awardPoints(userId: string, points: number, reason: string) {
   const updated = await prisma.userPoint.upsert({
     where: { userId },
     update: { points: { increment: points } },
@@ -37,14 +33,13 @@ export async function checkAndAwardBadges(userId: string) {
   });
   const earnedIds = new Set(earned.map((b) => b.badgeId));
 
-  const [workoutCount, attendanceCount, prCount, waterDays, referralCount] =
-    await Promise.all([
-      prisma.workoutSession.count({ where: { userId, isCompleted: true } }),
-      prisma.attendance.count({ where: { userId } }),
-      prisma.workoutLog.count({ where: { session: { userId }, personalRecord: true } }),
-      prisma.waterLog.count({ where: { userId } }),
-      prisma.referral.count({ where: { referredById: userId, status: "REWARDED" } }),
-    ]);
+  const [workoutCount, attendanceCount, prCount, waterDays, referralCount] = await Promise.all([
+    prisma.workoutSession.count({ where: { userId, isCompleted: true } }),
+    prisma.attendance.count({ where: { userId } }),
+    prisma.workoutLog.count({ where: { session: { userId }, personalRecord: true } }),
+    prisma.waterLog.count({ where: { userId } }),
+    prisma.referral.count({ where: { referredById: userId, status: "REWARDED" } }),
+  ]);
 
   const streak = await calculateStreak(userId);
 
@@ -82,9 +77,7 @@ export async function calculateStreak(userId: string): Promise<number> {
   });
   if (sessions.length === 0) return 0;
 
-  const days = new Set(
-    sessions.map((s) => s.date.toISOString().slice(0, 10))
-  );
+  const days = new Set(sessions.map((s) => s.date.toISOString().slice(0, 10)));
 
   let streak = 0;
   const cursor = new Date();
@@ -163,13 +156,13 @@ export async function getMyChallenges(userId: string) {
   });
 }
 
-export async function updateChallengeProgress(
-  userId: string,
-  goalType: string,
-  amount = 1
-) {
+export async function updateChallengeProgress(userId: string, goalType: string, amount = 1) {
   const challenges = await prisma.userChallenge.findMany({
-    where: { userId, completedAt: null, challenge: { isActive: true, goalType: goalType as never } },
+    where: {
+      userId,
+      completedAt: null,
+      challenge: { isActive: true, goalType: goalType as never },
+    },
     include: { challenge: true },
   });
 

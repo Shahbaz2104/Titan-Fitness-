@@ -3,7 +3,11 @@ import { jsonError, jsonOk, parseBody, requireUser } from "@/lib/api";
 import { validateCoupon } from "@/services/payments";
 
 const validateSchema = z.object({
-  code: z.string().min(3).max(30).transform((v) => v.toUpperCase()),
+  code: z
+    .string()
+    .min(3)
+    .max(30)
+    .transform((v) => v.toUpperCase()),
   amount: z.number().min(0),
 });
 

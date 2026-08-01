@@ -15,7 +15,14 @@ export const mealPlanSchema = z.object({
         dayNumber: z.number().int().min(1).max(30),
         meals: z.array(
           z.object({
-            mealType: z.enum(["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_WORKOUT", "POST_WORKOUT"]),
+            mealType: z.enum([
+              "BREAKFAST",
+              "LUNCH",
+              "DINNER",
+              "SNACK",
+              "PRE_WORKOUT",
+              "POST_WORKOUT",
+            ]),
             name: z.string().min(1).max(120),
             calories: z.number().int().min(0).max(3000),
             protein: z.number().min(0).max(300).optional(),

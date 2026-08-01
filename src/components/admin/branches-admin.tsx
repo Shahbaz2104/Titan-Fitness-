@@ -22,7 +22,11 @@ interface Branch {
 }
 
 export function BranchesAdmin() {
-  const { data: branches, isLoading, isError } = useApiQuery<Branch[]>(QUERY_KEYS.adminBranches, "/api/admin/branches");
+  const {
+    data: branches,
+    isLoading,
+    isError,
+  } = useApiQuery<Branch[]>(QUERY_KEYS.adminBranches, "/api/admin/branches");
 
   return (
     <div className="space-y-6">
@@ -41,15 +45,15 @@ export function BranchesAdmin() {
       ) : isError || !branches ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <AlertTriangle className="h-8 w-8 text-warning" />
-            <p className="text-sm text-muted-foreground">Could not load branches.</p>
+            <AlertTriangle className="text-warning h-8 w-8" />
+            <p className="text-muted-foreground text-sm">Could not load branches.</p>
           </CardContent>
         </Card>
       ) : branches.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <Building2 className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No branches configured.</p>
+            <Building2 className="text-muted-foreground h-8 w-8" />
+            <p className="text-muted-foreground text-sm">No branches configured.</p>
           </CardContent>
         </Card>
       ) : (
@@ -60,10 +64,10 @@ export function BranchesAdmin() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-2xl border border-border bg-surface/60 p-6 transition-all hover:border-primary/30 hover:shadow-glow"
+              className="border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow rounded-2xl border p-6 transition-all"
             >
               <div className="flex items-start justify-between">
-                <h3 className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+                <h3 className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
                   {branch.name}
                 </h3>
                 <Badge variant={branch.isActive ? "success" : "outline"}>
@@ -71,38 +75,38 @@ export function BranchesAdmin() {
                 </Badge>
               </div>
 
-              <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+              <div className="text-muted-foreground mt-4 space-y-2 text-sm">
                 <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 shrink-0 text-primary" />
+                  <MapPin className="text-primary h-4 w-4 shrink-0" />
                   {branch.address}, {branch.city}
                 </p>
                 {branch.phone && (
                   <p className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 shrink-0 text-primary" />
+                    <Phone className="text-primary h-4 w-4 shrink-0" />
                     {branch.phone}
                   </p>
                 )}
                 {branch.email && (
                   <p className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 shrink-0 text-primary" />
+                    <Mail className="text-primary h-4 w-4 shrink-0" />
                     {branch.email}
                   </p>
                 )}
               </div>
 
-              <div className="mt-5 grid grid-cols-2 gap-3 border-t border-border pt-4">
-                <div className="flex items-center gap-2 rounded-xl bg-surface p-3">
-                  <Users className="h-4 w-4 text-primary" />
+              <div className="border-border mt-5 grid grid-cols-2 gap-3 border-t pt-4">
+                <div className="bg-surface flex items-center gap-2 rounded-xl p-3">
+                  <Users className="text-primary h-4 w-4" />
                   <div>
-                    <p className="text-xs font-semibold text-foreground">{branch._count.users}</p>
-                    <p className="text-[10px] text-muted-foreground">Members</p>
+                    <p className="text-foreground text-xs font-semibold">{branch._count.users}</p>
+                    <p className="text-muted-foreground text-[10px]">Members</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 rounded-xl bg-surface p-3">
-                  <CalendarDays className="h-4 w-4 text-primary" />
+                <div className="bg-surface flex items-center gap-2 rounded-xl p-3">
+                  <CalendarDays className="text-primary h-4 w-4" />
                   <div>
-                    <p className="text-xs font-semibold text-foreground">{branch._count.classes}</p>
-                    <p className="text-[10px] text-muted-foreground">Classes</p>
+                    <p className="text-foreground text-xs font-semibold">{branch._count.classes}</p>
+                    <p className="text-muted-foreground text-[10px]">Classes</p>
                   </div>
                 </div>
               </div>

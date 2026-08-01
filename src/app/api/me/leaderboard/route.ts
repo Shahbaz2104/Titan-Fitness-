@@ -6,10 +6,7 @@ export async function GET(req: Request) {
     const user = await requireUser();
     const url = new URL(req.url);
     const limit = Math.min(Number(url.searchParams.get("limit") ?? 20) || 20, 100);
-    const [leaderboard, myRank] = await Promise.all([
-      getLeaderboard(limit),
-      getMyRank(user.id),
-    ]);
+    const [leaderboard, myRank] = await Promise.all([getLeaderboard(limit), getMyRank(user.id)]);
     return jsonOk({ leaderboard, myRank });
   } catch (error) {
     return jsonError(error);

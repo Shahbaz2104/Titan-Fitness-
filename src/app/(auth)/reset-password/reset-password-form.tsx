@@ -70,15 +70,19 @@ export function ResetPasswordPageForm() {
   };
 
   return (
-    <div className="rounded-3xl border border-border bg-surface/60 p-8 backdrop-blur-xl shadow-card">
+    <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15">
-          {isOtpMode ? <KeyRound className="h-8 w-8 text-primary" /> : <Lock className="h-8 w-8 text-primary" />}
+        <span className="bg-primary/15 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+          {isOtpMode ? (
+            <KeyRound className="text-primary h-8 w-8" />
+          ) : (
+            <Lock className="text-primary h-8 w-8" />
+          )}
         </span>
-        <h1 className="mt-6 font-display text-2xl font-bold uppercase tracking-tight text-foreground">
+        <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
           Choose a new <span className="text-gradient">password</span>
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-sm">
           {isOtpMode
             ? "Enter the 6-digit code from your email plus your new password."
             : "Make it strong — mix letters, numbers, and symbols."}
@@ -112,7 +116,7 @@ export function ResetPasswordPageForm() {
                 {...register("otp")}
                 aria-invalid={!!errors.otp}
               />
-              {errors.otp && <p className="text-xs text-primary">{errors.otp.message}</p>}
+              {errors.otp && <p className="text-primary text-xs">{errors.otp.message}</p>}
             </div>
           </>
         )}
@@ -132,13 +136,13 @@ export function ResetPasswordPageForm() {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
-          {errors.password && <p className="text-xs text-primary">{errors.password.message}</p>}
+          {errors.password && <p className="text-primary text-xs">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -151,17 +155,25 @@ export function ResetPasswordPageForm() {
             {...register("confirm")}
             aria-invalid={!!errors.confirm}
           />
-          {errors.confirm && <p className="text-xs text-primary">{errors.confirm.message}</p>}
+          {errors.confirm && <p className="text-primary text-xs">{errors.confirm.message}</p>}
         </div>
 
-        <Button type="submit" size="lg" className="w-full" disabled={loading || (!isOtpMode && !token)}>
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
+          disabled={loading || (!isOtpMode && !token)}
+        >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
           Update Password
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        <Link href="/login" className="font-medium text-primary transition-colors hover:text-accent">
+      <p className="text-muted-foreground mt-6 text-center text-sm">
+        <Link
+          href="/login"
+          className="text-primary hover:text-accent font-medium transition-colors"
+        >
           Back to sign in
         </Link>
       </p>

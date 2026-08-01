@@ -50,11 +50,7 @@ export async function sendOtpEmail(to: string, type: OtpTemplate, otp: string) {
   });
 }
 
-export async function sendNotificationEmail(
-  to: string,
-  subject: string,
-  body: string
-) {
+export async function sendNotificationEmail(to: string, subject: string, body: string) {
   if (!process.env.RESEND_API_KEY) {
     console.warn("[email] RESEND_API_KEY missing — email not sent:", { to, subject });
     return;
@@ -66,15 +62,7 @@ export async function sendNotificationEmail(
   });
 }
 
-async function sendViaResend({
-  to,
-  subject,
-  html,
-}: {
-  to: string;
-  subject: string;
-  html: string;
-}) {
+async function sendViaResend({ to, subject, html }: { to: string; subject: string; html: string }) {
   const res = await fetch(RESEND_API_URL, {
     method: "POST",
     headers: {
@@ -89,10 +77,7 @@ async function sendViaResend({
   }
 }
 
-function renderEmail(
-  template: EmailTemplate,
-  data: { url: string; name: string; title?: string }
-) {
+function renderEmail(template: EmailTemplate, data: { url: string; name: string; title?: string }) {
   const isVerify = template === "verify-email";
   const isReset = template === "reset-password";
   const buttonText = isVerify ? "Verify Email" : isReset ? "Reset Password" : "View";

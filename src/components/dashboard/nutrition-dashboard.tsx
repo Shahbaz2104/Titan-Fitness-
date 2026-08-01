@@ -3,15 +3,7 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Droplets,
-  Flame,
-  Plus,
-  Salad,
-  Trash2,
-  UtensilsCrossed,
-  X,
-} from "lucide-react";
+import { Droplets, Flame, Plus, Salad, Trash2, UtensilsCrossed, X } from "lucide-react";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -51,7 +43,15 @@ interface CalorieLog {
 interface MealDay {
   id: string;
   dayNumber: number;
-  meals: { id: string; mealType: string; name: string; calories: number; protein: number; carbs: number; fat: number }[];
+  meals: {
+    id: string;
+    mealType: string;
+    name: string;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  }[];
 }
 
 interface MealPlan {
@@ -197,14 +197,20 @@ export function NutritionDashboard() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Calories</p>
-              <Flame className="h-4 w-4 text-primary" />
+              <p className="text-muted-foreground text-xs tracking-widest uppercase">Calories</p>
+              <Flame className="text-primary h-4 w-4" />
             </div>
-            <p className="mt-2 font-display text-2xl font-bold text-foreground">
+            <p className="font-display text-foreground mt-2 text-2xl font-bold">
               {today.totals.calories.toLocaleString()}
-              <span className="text-sm font-normal text-muted-foreground"> / {CALORIE_GOAL.toLocaleString()} kcal</span>
+              <span className="text-muted-foreground text-sm font-normal">
+                {" "}
+                / {CALORIE_GOAL.toLocaleString()} kcal
+              </span>
             </p>
-            <Progress value={Math.min(100, (today.totals.calories / CALORIE_GOAL) * 100)} className="mt-3" />
+            <Progress
+              value={Math.min(100, (today.totals.calories / CALORIE_GOAL) * 100)}
+              className="mt-3"
+            />
           </CardContent>
         </Card>
         {(["protein", "carbs", "fat"] as const).map((macro) => {
@@ -213,12 +219,12 @@ export function NutritionDashboard() {
           return (
             <Card key={macro}>
               <CardContent className="p-5">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                <p className="text-muted-foreground text-xs tracking-widest uppercase">
                   {macro} {macro === "protein" ? "🥩" : macro === "carbs" ? "🍚" : "🥑"}
                 </p>
-                <p className="mt-2 font-display text-2xl font-bold text-foreground">
+                <p className="font-display text-foreground mt-2 text-2xl font-bold">
                   {value}
-                  <span className="text-sm font-normal text-muted-foreground"> / {target}g</span>
+                  <span className="text-muted-foreground text-sm font-normal"> / {target}g</span>
                 </p>
                 <Progress value={Math.min(100, (value / target) * 100)} className="mt-3" />
               </CardContent>
@@ -236,9 +242,9 @@ export function NutritionDashboard() {
           </CardHeader>
           <CardContent className="space-y-2.5">
             {today.logs.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border py-10 text-center">
-                <UtensilsCrossed className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">No meals logged yet today.</p>
+              <div className="border-border flex flex-col items-center gap-2 rounded-2xl border border-dashed py-10 text-center">
+                <UtensilsCrossed className="text-muted-foreground h-8 w-8" />
+                <p className="text-muted-foreground text-sm">No meals logged yet today.</p>
                 <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
                   <Plus className="h-4 w-4" />
                   Add your first meal
@@ -252,24 +258,24 @@ export function NutritionDashboard() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: 20 }}
-                    className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3"
+                    className="border-border bg-surface flex items-center justify-between rounded-xl border px-4 py-3"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-xl">{MEAL_EMOJI[log.mealType] ?? "🍽️"}</span>
                       <div>
-                        <p className="text-sm font-medium text-foreground">{log.foodName}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-foreground text-sm font-medium">{log.foodName}</p>
+                        <p className="text-muted-foreground text-xs">
                           {log.mealType.replaceAll("_", " ").toLowerCase()} · {log.calories} kcal
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="hidden text-xs text-muted-foreground sm:block">
+                      <span className="text-muted-foreground hidden text-xs sm:block">
                         P {log.protein ?? 0} · C {log.carbs ?? 0} · F {log.fat ?? 0}
                       </span>
                       <button
                         onClick={() => removeFood(log.id)}
-                        className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-full p-1.5 transition-colors"
                         aria-label={`Delete ${log.foodName}`}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -295,35 +301,48 @@ export function NutritionDashboard() {
                   style={{ transform: `rotate(${waterPct * 3.6}deg)` }}
                 />
                 <div className="text-center">
-                  <p className="font-display text-xl font-bold text-foreground">
+                  <p className="font-display text-foreground text-xl font-bold">
                     {(today.water / 1000).toFixed(1)}L
                   </p>
-                  <p className="text-[10px] uppercase text-muted-foreground">{waterPct}%</p>
+                  <p className="text-muted-foreground text-[10px] uppercase">{waterPct}%</p>
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-muted-foreground">
-                  Goal: <span className="font-semibold text-foreground">{today.waterGoal / 1000}L</span>
+                <p className="text-muted-foreground text-sm">
+                  Goal:{" "}
+                  <span className="text-foreground font-semibold">{today.waterGoal / 1000}L</span>
                 </p>
                 <div className="mt-3 flex flex-col gap-2">
-                  <Button size="sm" variant="outline" className="flex-1 justify-start" onClick={() => addWater(250)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 justify-start"
+                    onClick={() => addWater(250)}
+                  >
                     <Droplets className="h-4 w-4 text-blue-400" /> +250ml
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1 justify-start" onClick={() => addWater(500)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 justify-start"
+                    onClick={() => addWater(500)}
+                  >
                     <Droplets className="h-4 w-4 text-blue-400" /> +500ml
                   </Button>
                 </div>
               </div>
             </div>
             {stats && (
-              <div className="mt-5 grid grid-cols-2 gap-3 border-t border-border pt-4">
+              <div className="border-border mt-5 grid grid-cols-2 gap-3 border-t pt-4">
                 <div>
-                  <p className="text-xs text-muted-foreground">Days logged (month)</p>
-                  <p className="font-display text-lg font-bold text-foreground">{stats.monthDaysLogged ?? 0}</p>
+                  <p className="text-muted-foreground text-xs">Days logged (month)</p>
+                  <p className="font-display text-foreground text-lg font-bold">
+                    {stats.monthDaysLogged ?? 0}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Avg daily intake</p>
-                  <p className="font-display text-lg font-bold text-foreground">
+                  <p className="text-muted-foreground text-xs">Avg daily intake</p>
+                  <p className="font-display text-foreground text-lg font-bold">
                     {stats.avgCalories ?? 0} <span className="text-xs font-normal">kcal</span>
                   </p>
                 </div>
@@ -354,8 +373,10 @@ export function NutritionDashboard() {
         </CardHeader>
         <CardContent>
           {!plans || plans.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border py-10 text-center">
-              <p className="text-sm text-muted-foreground">No meal plans yet. Generate one with the AI nutritionist!</p>
+            <div className="border-border flex flex-col items-center gap-2 rounded-2xl border border-dashed py-10 text-center">
+              <p className="text-muted-foreground text-sm">
+                No meal plans yet. Generate one with the AI nutritionist!
+              </p>
               <Button asChild size="sm" variant="outline">
                 <a href="/dashboard/ai/nutritionist">
                   <Flame className="h-4 w-4" /> AI Nutritionist
@@ -365,7 +386,7 @@ export function NutritionDashboard() {
           ) : selectedPlan ? (
             <div>
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+                <h3 className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
                   {selectedPlan.name}
                 </h3>
                 {selectedPlan.isAiGenerated && <Badge variant="accent">AI Generated</Badge>}
@@ -376,15 +397,15 @@ export function NutritionDashboard() {
               </div>
               <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {selectedPlan.days.map((day) => (
-                  <div key={day.id} className="rounded-xl border border-border bg-surface p-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-primary">
+                  <div key={day.id} className="border-border bg-surface rounded-xl border p-4">
+                    <p className="text-primary text-xs font-bold tracking-widest uppercase">
                       Day {day.dayNumber}
                     </p>
                     <div className="mt-3 space-y-2">
                       {day.meals.map((meal) => (
-                        <div key={meal.id} className="rounded-lg bg-surface-2 px-3 py-2">
-                          <p className="text-sm font-medium text-foreground">{meal.name}</p>
-                          <p className="text-xs text-muted-foreground">
+                        <div key={meal.id} className="bg-surface-2 rounded-lg px-3 py-2">
+                          <p className="text-foreground text-sm font-medium">{meal.name}</p>
+                          <p className="text-muted-foreground text-xs">
                             {meal.calories} kcal · P{meal.protein}
                           </p>
                         </div>
@@ -402,13 +423,13 @@ export function NutritionDashboard() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display uppercase tracking-wide">Log Food</DialogTitle>
+            <DialogTitle className="font-display tracking-wide uppercase">Log Food</DialogTitle>
             <DialogDescription>Add a meal to today&apos;s nutrition log.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                   Food name
                 </label>
                 <Input
@@ -418,7 +439,7 @@ export function NutritionDashboard() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                   Meal type
                 </label>
                 <Select value={mealType} onValueChange={setMealType}>
@@ -443,7 +464,7 @@ export function NutritionDashboard() {
                 { label: "Fat", value: fat, set: setFat, placeholder: "12g" },
               ].map((field) => (
                 <div key={field.label} className="space-y-2">
-                  <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                     {field.label}
                   </label>
                   <Input
@@ -456,11 +477,20 @@ export function NutritionDashboard() {
               ))}
             </div>
             <div className="flex gap-3 pt-2">
-              <Button className="flex-1" onClick={addFood} disabled={saving || !foodName || !calories}>
+              <Button
+                className="flex-1"
+                onClick={addFood}
+                disabled={saving || !foodName || !calories}
+              >
                 <Plus className="h-4 w-4" />
                 {saving ? "Adding…" : "Add meal"}
               </Button>
-              <Button variant="outline" size="icon" onClick={() => setDialogOpen(false)} aria-label="Close">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setDialogOpen(false)}
+                aria-label="Close"
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>

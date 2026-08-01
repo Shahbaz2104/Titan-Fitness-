@@ -35,9 +35,13 @@ function initials(name: string) {
 }
 
 export function LeaderboardDashboard() {
-  const { data, isLoading } = useApiQuery<LeaderboardResponse>(QUERY_KEYS.leaderboard, "/api/me/leaderboard", {
-    limit: 50,
-  });
+  const { data, isLoading } = useApiQuery<LeaderboardResponse>(
+    QUERY_KEYS.leaderboard,
+    "/api/me/leaderboard",
+    {
+      limit: 50,
+    }
+  );
 
   return (
     <div className="space-y-6">
@@ -54,27 +58,27 @@ export function LeaderboardDashboard() {
         </div>
       ) : !data || data.leaderboard.length === 0 ? (
         <Card className="flex flex-col items-center justify-center gap-3 p-14 text-center">
-          <Users className="h-10 w-10 text-muted-foreground" />
-          <p className="font-display text-lg font-bold uppercase tracking-wide text-foreground">
+          <Users className="text-muted-foreground h-10 w-10" />
+          <p className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
             No rankings yet
           </p>
-          <p className="max-w-sm text-sm text-muted-foreground">
+          <p className="text-muted-foreground max-w-sm text-sm">
             Earn points by completing workouts, checking in, and joining challenges.
           </p>
         </Card>
       ) : (
         <>
           {/* My rank banner */}
-          <div className="flex items-center justify-between rounded-2xl border border-primary/25 bg-primary/5 px-6 py-4">
+          <div className="border-primary/25 bg-primary/5 flex items-center justify-between rounded-2xl border px-6 py-4">
             <div className="flex items-center gap-3">
-              <Crown className="h-6 w-6 text-warning" />
-              <p className="font-display text-sm font-bold uppercase tracking-widest text-foreground">
+              <Crown className="text-warning h-6 w-6" />
+              <p className="font-display text-foreground text-sm font-bold tracking-widest uppercase">
                 Your rank
               </p>
             </div>
-            <p className="font-display text-xl font-bold text-foreground">
+            <p className="font-display text-foreground text-xl font-bold">
               #{data.myRank.rank}
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
+              <span className="text-muted-foreground ml-2 text-sm font-normal">
                 · {data.myRank.points} pts
               </span>
             </p>
@@ -96,8 +100,10 @@ export function LeaderboardDashboard() {
               >
                 <span className="font-display text-3xl font-bold">#{i + 1}</span>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-foreground">{entry.user.name}</p>
-                  <p className="text-xs text-muted-foreground">{entry.points} points</p>
+                  <p className="text-foreground truncate text-sm font-semibold">
+                    {entry.user.name}
+                  </p>
+                  <p className="text-muted-foreground text-xs">{entry.points} points</p>
                 </div>
               </motion.div>
             ))}
@@ -105,7 +111,7 @@ export function LeaderboardDashboard() {
 
           {/* Full list */}
           <Card className="overflow-hidden">
-            <div className="divide-y divide-border">
+            <div className="divide-border divide-y">
               {data.leaderboard.map((entry, i) => (
                 <motion.div
                   key={entry.user.id}
@@ -117,7 +123,7 @@ export function LeaderboardDashboard() {
                   <div className="flex items-center gap-3">
                     <span
                       className={cn(
-                        "w-8 text-center font-display text-sm font-bold",
+                        "font-display w-8 text-center text-sm font-bold",
                         i < 3 ? "text-primary" : "text-muted-foreground"
                       )}
                     >
@@ -131,17 +137,19 @@ export function LeaderboardDashboard() {
                         className="h-9 w-9 rounded-full object-cover"
                       />
                     ) : (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-2 font-display text-xs font-bold text-muted-foreground">
+                      <span className="bg-surface-2 font-display text-muted-foreground flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold">
                         {initials(entry.user.name)}
                       </span>
                     )}
                     <div>
-                      <p className="text-sm font-medium text-foreground">{entry.user.name}</p>
+                      <p className="text-foreground text-sm font-medium">{entry.user.name}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {i === 0 && <Medal className="h-4 w-4 text-warning" />}
-                    <span className="text-sm font-semibold text-muted-foreground">{entry.points} pts</span>
+                    {i === 0 && <Medal className="text-warning h-4 w-4" />}
+                    <span className="text-muted-foreground text-sm font-semibold">
+                      {entry.points} pts
+                    </span>
                   </div>
                 </motion.div>
               ))}

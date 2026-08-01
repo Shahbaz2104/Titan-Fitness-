@@ -113,7 +113,7 @@ export function AiWorkoutGeneratorDashboard() {
         <CardContent className="p-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Goal
               </label>
               <Select value={goal} onValueChange={setGoal}>
@@ -130,7 +130,7 @@ export function AiWorkoutGeneratorDashboard() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Days per week
               </label>
               <Select value={daysPerWeek} onValueChange={setDaysPerWeek}>
@@ -147,7 +147,7 @@ export function AiWorkoutGeneratorDashboard() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Session length
               </label>
               <Select value={sessionMinutes} onValueChange={setSessionMinutes}>
@@ -164,7 +164,7 @@ export function AiWorkoutGeneratorDashboard() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Experience
               </label>
               <Select value={experience} onValueChange={setExperience}>
@@ -181,7 +181,7 @@ export function AiWorkoutGeneratorDashboard() {
               </Select>
             </div>
             <div className="space-y-2 sm:col-span-2 lg:col-span-4">
-              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              <label className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 Equipment (optional)
               </label>
               <Input
@@ -192,17 +192,25 @@ export function AiWorkoutGeneratorDashboard() {
             </div>
           </div>
           <Button className="mt-5 w-full sm:w-auto" onClick={generate} disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Dumbbell className="h-4 w-4" />}
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Dumbbell className="h-4 w-4" />
+            )}
             {loading ? "Generating…" : "Generate my plan"}
           </Button>
         </CardContent>
       </Card>
 
       {plan && (
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <h3 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">
+              <h3 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
                 {plan.title}
               </h3>
               <Badge variant="accent">AI Generated</Badge>
@@ -220,10 +228,10 @@ export function AiWorkoutGeneratorDashboard() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="rounded-2xl border border-border bg-surface p-5"
+                className="border-border bg-surface rounded-2xl border p-5"
               >
                 <div className="flex items-center justify-between">
-                  <h4 className="font-display text-sm font-bold uppercase tracking-widest text-primary">
+                  <h4 className="font-display text-primary text-sm font-bold tracking-widest uppercase">
                     Day {day.dayNumber}
                   </h4>
                   <Badge variant="secondary">{day.title}</Badge>
@@ -232,13 +240,13 @@ export function AiWorkoutGeneratorDashboard() {
                   {day.exercises.map((ex) => (
                     <div
                       key={ex.exerciseId}
-                      className="flex items-center justify-between rounded-lg bg-surface-2 px-3 py-2"
+                      className="bg-surface-2 flex items-center justify-between rounded-lg px-3 py-2"
                     >
                       <div>
-                        <p className="text-sm font-medium text-foreground">{ex.name}</p>
-                        <p className="text-xs text-muted-foreground">{ex.muscleGroup}</p>
+                        <p className="text-foreground text-sm font-medium">{ex.name}</p>
+                        <p className="text-muted-foreground text-xs">{ex.muscleGroup}</p>
                       </div>
-                      <span className="text-xs font-semibold text-muted-foreground">
+                      <span className="text-muted-foreground text-xs font-semibold">
                         {ex.sets}×{ex.reps} · {ex.restSeconds}s
                       </span>
                     </div>

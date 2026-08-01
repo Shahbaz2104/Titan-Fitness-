@@ -2,10 +2,7 @@
 
 import * as React from "react";
 
-export function useClickOutside<T extends HTMLElement>(
-  handler: () => void,
-  enabled = true
-) {
+export function useClickOutside<T extends HTMLElement>(handler: () => void, enabled = true) {
   const ref = React.useRef<T>(null);
 
   React.useEffect(() => {
