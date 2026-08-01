@@ -1,16 +1,16 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (night session — Phase 3 admin panel built, **NOT YET COMMITTED**)
+Updated: 2026-08-01 (night session — Phase 4 AI wiring complete, **NOT YET COMMITTED**)
 
 ## ⚠️ CRITICAL — CURRENT STATE (read this first)
 
-- **Phase 3 admin panel is COMPLETE but UNCOMMITTED.** Uncommitted work:
-  - `src/app/admin/` (11 pages + `layout.tsx`)
-  - `src/components/admin/` (12 components, ~2940 lines)
-  - `src/app/api/posts/categories/route.ts` (new public route)
-  - `src/lib/constants.ts` (modified — new admin QUERY_KEYS)
-- Do NOT lose this work — it is verified working (tsc ✓, eslint ✓, 18/18 tests ✓, build ✓, live API smoke ✓)
-- **Next step: commit Phase 3** (only commit if user asks)
+- **Phase 4 (AI real-LLM wiring) is COMPLETE but UNCOMMITTED.** New/changed files:
+  - `src/lib/ai.ts` (NEW) — OpenAI provider factory, `hasAiKey()`, `AI_MODEL_ID` (env `AI_MODEL`, default `gpt-4o-mini`), `estimateCostUsd()` pricing table, `aiEnabled()`
+  - `src/services/ai.ts` (NEW) — `aiChat()`, `generateWorkoutPlan()`, `generateMealPlan()` — LLM-first via `generateObject`/`generateText` (ai SDK v7), **auto-falls back to rule-based** if no key OR LLM errors; usage logged to `aIUsage` with real model/tokens/cost/durationMs
+  - `src/app/api/ai/{chat,workout-generator,nutritionist}/route.ts` (REWRITTEN) — thin routes: zod input + rate limit + service call. Response shapes UNCHANGED (frontend untouched)
+- **LLM activation**: paste a real `OPENAI_API_KEY` into `.env` — nothing else needed. Fallback used automatically while empty
+- Verified: tsc ✓, eslint ✓, 18/18 tests ✓, build ✓, live fallback smoke ✓, fake-key resilience smoke ✓
+- **Next step: commit Phase 4** (only commit if user asks), then Phase 5 (Stripe, gamification UI, notifications)
 
 ## Phase Status Overview
 
@@ -19,14 +19,32 @@ Updated: 2026-08-01 (night session — Phase 3 admin panel built, **NOT YET COMM
 | 0 | Foundation (git, env, DB, migration, seed, legal pages, PWA, tests, CI, auth fixes) | ✅ Done (commit `59e1236`) |
 | 1 | Services + API routes (82 routes) | ✅ Done (commit `0b9dbdd`) |
 | 2 | User dashboard (16 pages) | ✅ Done (commit `8234d9b`) |
-| 3 | Admin panel | ✅ Built — **UNCOMMITTED** |
-| 4 | AI features (real LLM wiring) | ⬜ (rule-based stubs live) |
+| 3 | Admin panel | ✅ Done (commit `629deb4`) |
+| 4 | AI features (real LLM wiring) | ✅ Built — **UNCOMMITTED** |
 | 5 | Stripe, gamification UI, notifications | ⬜ |
 | 6 | PWA, SEO, security | ⬜ |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
 | 8 | Final audit, README, GitHub push | ⬜ |
 
-## Phase 3 — Admin Panel (BUILT, NOT COMMITTED)
+## Phase 4 — AI Features (real LLM wiring, UNCOMMITTED)
+
+### How it works
+- `src/lib/ai.ts`: `getAiModel()` returns OpenAI model (via `@ai-sdk/openai` `createOpenAI`) only when `OPENAI_API_KEY` is set (≥10 chars, not placeholder); `AI_MODEL_ID` from `AI_MODEL` env (default `gpt-4o-mini`); cost per 1M tokens table (gpt-4o-mini $0.15/$0.60, gpt-4o $2.5/$10, gpt-4.1 $2/$8, gpt-4 $30/$60, o-series $2/$8)
+- `src/services/ai.ts`:
+  - `aiChat(userId, message)` — `generateText` with fitness-coach system prompt + member profile (height/weight/goal/experience) injected; rule-based keyword fallback (6 topics)
+  - `generateWorkoutPlan(userId, input)` — `generateObject` with zod schema; prompt includes the full 44-exercise DB library and instructs EXACT name matching; output names resolved back to real `exerciseId`s (DB name lookup, falls back to first library exercise) so plan SAVE to `/api/workouts/plans` always works (exerciseId is required there); rule-based day-split fallback
+  - `generateMealPlan(userId, input)` — `generateObject` 7-day schema (mealType BREAKFAST/LUNCH/DINNER/SNACK, macros); returns daily average calories/protein; rule-based template fallback
+  - All paths log `aIUsage` (feature CHATBOT/WORKOUT_GENERATOR/NUTRITIONIST, model id or "rule-based", tokensIn/Out, cost Decimal, durationMs, status SUCCESS/FAILED) — logging failures swallowed (never breaks requests)
+  - LLM errors caught → silently fall back to rule-based (verified with fake key)
+- Routes kept zod schemas + `withRateLimit` (chat 30/min, generators 10/min); response shapes unchanged → zero frontend changes
+
+### Verified (2026-08-01 night)
+- `npx tsc --noEmit` clean, eslint clean, 18/18 tests, `npm run build` clean
+- Live (dev server, member session, NO key): chat → rule reply, workout generator → 4-day plan with real exerciseIds, nutritionist → 7-day plan
+- Fake key `sk-fakekey…` via tsx script: all 3 services fall back to rule-based without crashing
+- Prisma AIUsage enums: `AIStatus` = SUCCESS/FAILED/RATE_LIMITED (no ERROR), `AIFeature` = WORKOUT_GENERATOR/NUTRITIONIST/CHATBOT/BMI/RECOVERY
+
+## Phase 3 — Admin Panel (committed `629deb4`)
 
 ### Structure
 - **Layout**: `src/app/admin/layout.tsx` (server, metadata noIndex) → `src/components/admin/admin-layout.tsx` (client, 367 lines)
@@ -180,14 +198,15 @@ Updated: 2026-08-01 (night session — Phase 3 admin panel built, **NOT YET COMM
 - Stripe / AI / Cloudinary keys still blank in `.env`
 
 ## Blockers
-- **Phase 3 uncommitted** — commit it next session (user confirmation required)
+- **Phase 4 uncommitted** — commit it next session (user confirmation required)
 - GitHub push: needs `gh` CLI or manual push
 - Marketing images: user supplies later (`public/images/programs/*.jpg` etc.)
 - Admin branches page is read-only (no create/edit branch form yet) — check `branches-admin.tsx` if user wants branch CRUD
 - Admin classes page has no create/update class form — only listing (check `classes-admin.tsx`)
+- Real AI requires user's `OPENAI_API_KEY` in `.env` (currently empty placeholder) — LLM path untested live until key added
 
-## Session Handoff (2026-08-01 night)
-1. Phase 3 admin panel fully built + verified, NOT committed → `git add src/app/admin src/components/admin src/app/api/posts/categories src/lib/constants.ts && git commit`
-2. Then Phase 4: AI features (real LLM wiring — keys blank in .env)
-3. Then Phase 5: Stripe, gamification UI, notifications
+## Session Handoff (2026-08-01 night, second session)
+1. Phase 4 AI wiring fully built + verified, NOT committed → `git add src/lib/ai.ts src/services/ai.ts src/app/api/ai PROGRESS.md && git commit -m "feat: Phase 4 — real LLM wiring with rule-based fallback"`
+2. Then Phase 5: Stripe (keys blank), gamification UI polish, notifications push
+3. Then Phase 6: PWA/SEO/security audit
 4. Final: Phase 8 README + GitHub push (gh CLI missing)
