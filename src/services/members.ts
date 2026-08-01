@@ -128,6 +128,12 @@ export async function getCalorieLogs(userId: string, limit = 30) {
   });
 }
 
+export async function deleteCalorieLog(userId: string, logId: string) {
+  return prisma.calorieLog.delete({
+    where: { id: logId, userId },
+  });
+}
+
 export async function addCalorieLog(
   userId: string,
   data: {

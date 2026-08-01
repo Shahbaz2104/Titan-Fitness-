@@ -14,6 +14,7 @@ export async function proxy(request: NextRequest) {
 
   const cache = await getCookieCache(request, {
     secret: process.env.BETTER_AUTH_SECRET,
+    isSecure: request.nextUrl.protocol === "https:",
   }).catch(() => null);
   const role = (cache?.user?.role as string | undefined) ?? null;
 
