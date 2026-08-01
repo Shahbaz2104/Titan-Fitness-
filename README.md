@@ -39,6 +39,10 @@ Overview (stats) · Reports (revenue + attendance charts) · Members (search, ed
 - **Mock mode** — instant membership activation when Stripe keys are missing (app fully works without keys)
 - Coupons, payment history, referrals (points rewarded)
 
+### Notifications
+- In-app notifications (created by workouts, badges, memberships, classes, challenges)
+- **Web push notifications** (Web Push API + VAPID): enable from the dashboard → notifications arrive even when the app is closed. Dead subscriptions auto-cleaned (404/410)
+
 ### Gamification
 Points (dashboard ring), badges (12+ achievements), streaks, check-in streaks, weekly leaderboard, challenges (joinable, progress bars)
 
@@ -56,6 +60,7 @@ Points (dashboard ring), badges (12+ achievements), streaks, check-in streaks, w
 | Auth | better-auth 1.6 (email+password, email OTP plugin, admin plugin) |
 | AI | AI SDK v7 + `@ai-sdk/openai` |
 | Payments | Stripe SDK 22 |
+| Web Push | `web-push` (VAPID) + service worker |
 | State | Zustand (scalar selectors only!) + TanStack Query |
 | Emails | Resend (REST) |
 | Testing | Vitest (18 tests), Playwright (manual UI checks) |
@@ -94,6 +99,10 @@ STRIPE_WEBHOOK_SECRET="whsec_..."   # from: stripe listen --forward-to localhost
 
 # Email (optional — OTP/link emails are skipped with a console warning)
 RESEND_API_KEY="re_..."
+
+# Web Push (optional — enables browser push notifications; generate with: npx web-push generate-vapid-keys)
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=""
+VAPID_PRIVATE_KEY=""
 
 # Optional: Google OAuth, Cloudinary
 GOOGLE_CLIENT_ID=""
@@ -224,10 +233,10 @@ CI: `.github/workflows/ci.yml` (typecheck + lint + tests on push/PR).
 | 2 — User dashboard (16 pages) | ✅ `8234d9b` |
 | 3 — Admin panel (11 pages) | ✅ `629deb4` |
 | 4 — AI features (LLM + fallback) | ✅ `8e0399c` |
-| 5 — Stripe checkout + webhook, OTP auth | ✅ (uncommitted) |
-| 5b — Web push notifications | ⬜ (next: VAPID + service worker + `PushSubscription` model) |
+| 5 — Stripe checkout + webhook, OTP auth | ✅ `267b5fb` |
+| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ (uncommitted) |
 | 6 — PWA/SEO/security audit | ⬜ |
-| 7 — Tests + CI expansion | ⬜ (CI present) |
+| 7 — Tests + CI expansion | ⬜ (CI present, 21 tests) |
 | 8 — Final audit, GitHub push | ⬜ (needs `gh` CLI) |
 
 Live status is tracked in [`PROGRESS.md`](./PROGRESS.md) — read the top section first; it always documents the current uncommitted state and the next step.

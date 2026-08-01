@@ -85,6 +85,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
   const [signingOut, setSigningOut] = React.useState(false);
 
+  React.useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
+
   const handleSignOut = async () => {
     setSigningOut(true);
     await authClient.signOut();

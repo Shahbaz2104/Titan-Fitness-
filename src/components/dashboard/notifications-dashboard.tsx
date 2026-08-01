@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Bell,
+  BellRing,
   CheckCheck,
   Dumbbell,
   Medal,
@@ -12,6 +13,7 @@ import {
   CalendarDays,
   Sparkles,
   Info,
+  Smartphone,
 } from "lucide-react";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { Button } from "@/components/ui/button";
@@ -62,12 +64,107 @@ function timeAgo(date: string) {
   return new Date(date).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+function urlBase64ToUint8Array(base64: string) {
+  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+  const base64Url = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = atob(base64Url);
+  const output = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) output[i] = rawData.charCodeAt(i);
+  return output;
+}
+
+function PushCard({
+  pushState,
+  pushBusy,
+  pushStatus,
+  onEnable,
+  onDisable,
+}: {
+  pushState: "idle" | "denied" | "supported" | "subscribed";
+  pushBusy: boolean;
+  pushStatus: { enabled: boolean; vapidPublicKey: string | null; subscriptions: string[] } | undefined;
+  onEnable: () => void;
+  onDisable: () => void;
+}) {
+  if (!pushStatus || !pushStatus.enabled) {
+    return (
+      <Card className="flex items-center gap-4 border-dashed px-5 py-4">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface text-muted-foreground">
+          <Smartphone className="h-5 w-5" />
+        </span>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">Browser push notifications</p>
+          <p className="text-xs text-muted-foreground">
+            Push is not configured yet — add VAPID keys to enable alerts outside the app.
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  if (pushState === "subscribed") {
+    return (
+      <Card className="flex items-center gap-4 border-primary/25 bg-primary/5 px-5 py-4">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <BellRing className="h-5 w-5" />
+        </span>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-foreground">Push notifications enabled</p>
+          <p className="text-xs text-muted-foreground">
+            Alerts appear here and on your device even when the app is closed.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={onDisable} disabled={pushBusy}>
+          Turn off
+        </Button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="flex items-center gap-4 border-dashed px-5 py-4">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface text-muted-foreground">
+        <Smartphone className="h-5 w-5" />
+      </span>
+      <div className="flex-1">
+        <p className="text-sm font-semibold text-foreground">Browser push notifications</p>
+        <p className="text-xs text-muted-foreground">
+          {pushState === "denied"
+            ? "Permission was blocked in your browser — allow notifications in site settings to enable push."
+            : "Get notified in your browser when a workout, badge, or membership update arrives."}
+        </p>
+      </div>
+      <Button variant="outline" size="sm" onClick={onEnable} disabled={pushBusy || pushState === "denied"}>
+        {pushBusy ? "Setting up…" : "Enable"}
+      </Button>
+    </Card>
+  );
+}
+
 export function NotificationsDashboard() {
   const queryClient = useQueryClient();
   const { data, isLoading } = useApiQuery<{
     notifications: NotificationItem[];
     unreadCount: number;
   }>(QUERY_KEYS.notifications, "/api/me/notifications", { limit: 100 });
+
+  const [localSubscribed, setLocalSubscribed] = React.useState(false);
+  const [pushBusy, setPushBusy] = React.useState(false);
+  const { data: pushStatus } = useApiQuery<{
+    enabled: boolean;
+    vapidPublicKey: string | null;
+    subscriptions: string[];
+  }>(["push-status"], "/api/me/push/status");
+
+  const pushState = React.useMemo(() => {
+    if (!pushStatus || !pushStatus.enabled) return "idle" as const;
+    if (localSubscribed || pushStatus.subscriptions.length > 0) return "subscribed" as const;
+    if (typeof Notification !== "undefined" && Notification.permission === "denied") {
+      return "denied" as const;
+    }
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) return "supported" as const;
+    return "idle" as const;
+  }, [pushStatus, localSubscribed]);
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.notifications });
 
@@ -79,6 +176,51 @@ export function NotificationsDashboard() {
   const markAllRead = async () => {
     await apiPost("/api/me/notifications/read-all");
     refresh();
+  };
+
+  const enablePush = async () => {
+    if (!pushStatus?.vapidPublicKey || !("serviceWorker" in navigator)) return;
+    try {
+      setPushBusy(true);
+      let permission = Notification.permission;
+      if (permission !== "granted") {
+        permission = await Notification.requestPermission();
+      }
+      if (permission !== "granted") {
+        setLocalSubscribed(false);
+        return;
+      }
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(pushStatus.vapidPublicKey),
+      });
+      await apiPost("/api/me/push/subscribe", {
+        endpoint: subscription.endpoint,
+        keys: subscription.toJSON().keys ?? { p256dh: "", auth: "" },
+      });
+      setLocalSubscribed(true);
+    } catch {
+      setLocalSubscribed(false);
+    } finally {
+      setPushBusy(false);
+    }
+  };
+
+  const disablePush = async () => {
+    if (!("serviceWorker" in navigator)) return;
+    try {
+      setPushBusy(true);
+      const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+      const subscription = await registration?.pushManager.getSubscription();
+      if (subscription) {
+        await apiPost("/api/me/push/unsubscribe", { endpoint: subscription.endpoint });
+        await subscription.unsubscribe();
+      }
+      setLocalSubscribed(false);
+    } finally {
+      setPushBusy(false);
+    }
   };
 
   if (isLoading) {
@@ -108,6 +250,14 @@ export function NotificationsDashboard() {
             </Button>
           ) : undefined
         }
+      />
+
+      <PushCard
+        pushState={pushState}
+        pushBusy={pushBusy}
+        pushStatus={pushStatus}
+        onEnable={enablePush}
+        onDisable={disablePush}
       />
 
       {notifications.length === 0 ? (

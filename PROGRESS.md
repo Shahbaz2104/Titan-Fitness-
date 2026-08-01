@@ -1,20 +1,21 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (night session 3 — Phase 5 Stripe + OTP auth + critical UI bug fix, **NOT YET COMMITTED**)
+Updated: 2026-08-01 (night session 4 — Phase 5 COMPLETE: Stripe + OTP auth + web push, **NOT YET COMMITTED**)
 
 ## ⚠️ CRITICAL — CURRENT STATE (read this first)
 
-- **Phase 5 work COMPLETE but UNCOMMITTED.** New/changed:
-  - `src/lib/stripe.ts` (NEW) — `getStripe()` factory (enabled only when `STRIPE_SECRET_KEY` starts with `sk_`), `stripeEnabled()`, `getStripeWebhookSecret()`, `APP_URL`
-  - `src/services/payments.ts` — `createCheckoutSession()` (Stripe Checkout Session + Payment row w/ `stripeSessionId`; **mock mode activates instantly** when Stripe disabled), `handleStripeWebhook()` (checkout.session.completed → activateMembership + payment SUCCEEDED; checkout.session.expired → FAILED, idempotent)
-  - `src/app/api/payments/webhook/route.ts` (NEW) — raw body + `constructEvent` signature verify, 503 if unconfigured
-  - `src/app/api/payments/checkout/route.ts` — now returns `{ mode: "stripe", url }` or `{ mode: "mock", payment, plan, membership }`
-  - `src/components/dashboard/membership-dashboard.tsx` — Stripe redirect when `url` present; success/cancelled banners via `?checkout=` query
-  - **OTP auth**: `src/lib/auth.ts` + `emailOTP` plugin (6-digit, 5 min, hashed storage, rotate, 3 attempts, overrides default verification); `src/lib/email.ts` + `sendOtpEmail()` (big code display template); `src/lib/auth-client.ts` + `emailOTPClient()`
-  - OTP pages: `verify-email-form.tsx` (send code → 6-digit → verify → redirect), `forgot-password-form.tsx` (link OR code option → `/reset-password?email=`), `reset-password-form.tsx` (OTP mode when `?email=`, token mode otherwise)
-  - **CRITICAL BUG FIX**: `src/components/layout/navbar.tsx` — zustand array selector `useUIStore((s) => [s.mobileNavOpen, s.setMobileNavOpen])` caused **"Maximum update depth exceeded" infinite re-render → ALL marketing pages showed "This page couldn't load"** (home, pricing, terms, blog, about, etc. — only auth/dashboard worked). Fixed with two scalar selectors. Also hardened `Reveal` (variants in `useMemo`) + `TiltCard` (multi-value `useTransform` callback in `useCallback`)
-- **Verified**: tsc ✓, eslint ✓, 18/18 tests ✓, build ✓, ALL pages render OK in browser (Playwright sweep), OTP endpoint E2E (send → hashed row in `Verification` table → wrong code rejected INVALID_OTP)
-- **Next step: commit Phase 5** (user requested commit + README this session)
+- **Phase 5 (Stripe + OTP + web push) COMPLETE, commits pending.** Commit `267b5fb` (Stripe + OTP + navbar fix) done; **web push is the latest uncommitted batch**:
+  - `prisma/schema.prisma` — `PushSubscription` model (endpoint unique, p256dh, auth, userAgent); migration `add_push_subscriptions` applied
+  - `src/lib/push.ts` (NEW) — `pushEnabled()`, `getVapidPublicKey()`, `getWebPush()` (web-push SDK, VAPID)
+  - `src/services/notifications.ts` — `createNotification` now ALSO sends browser push when VAPID configured (best-effort, never blocks); `subscribePush` (upsert by endpoint), `unsubscribePush`, `getPushSubscriptions`, `sendPushToUser` (per-sub, 404/410 → auto-delete dead subs)
+  - `src/app/api/me/push/{subscribe,unsubscribe,status}` (NEW) — zod-validated, requireUser
+  - `public/sw.js` (NEW) — push + notificationclick (opens url, focuses window)
+  - `src/components/dashboard/notifications-dashboard.tsx` — push enable card (permission → SW register → pushManager.subscribe w/ urlBase64ToUint8Array → POST subscribe; Turn off → unsubscribe both sides); derived state via useMemo (lint rule: no sync setState in effect)
+  - `src/components/dashboard/dashboard-layout.tsx` — silent `serviceWorker.register("/sw.js")` on mount
+  - `.env` + `.env.example` — `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` (REAL keys generated 2026-08-01, .env gitignored — safe)
+  - `tests/push.test.ts` — 3 tests (21 total)
+- **Verified**: tsc ✓, eslint ✓ (incl. react-hooks rule), 21/21 tests ✓, build ✓ (131 pages), live: status endpoint returns VAPID key, subscribe writes row, unsubscribe removes, `sw.js` served 200, login + notifications pages render OK
+- **Next step: commit web push** (`git add -A` then commit, message below), then Phase 6 (PWA/SEO/security audit)
 
 ## Phase Status Overview
 
@@ -25,7 +26,7 @@ Updated: 2026-08-01 (night session 3 — Phase 5 Stripe + OTP auth + critical UI
 | 2 | User dashboard (16 pages) | ✅ Done (commit `8234d9b`) |
 | 3 | Admin panel | ✅ Done (commit `629deb4`) |
 | 4 | AI features (real LLM wiring) | ✅ Done (commit `8e0399c`) |
-| 5 | Stripe, gamification UI, notifications | ✅ Built — **UNCOMMITTED** (Stripe + OTP auth done; web-push NOT started) |
+| 5 | Stripe, gamification UI, notifications | ✅ Stripe+OTP committed `267b5fb`; **web push UNCOMMITTED** |
 | 6 | PWA, SEO, security | ⬜ |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
 | 8 | Final audit, README, GitHub push | ⬜ (README not yet written) |
@@ -226,7 +227,7 @@ Updated: 2026-08-01 (night session 3 — Phase 5 Stripe + OTP auth + critical UI
 - Stripe / AI / Cloudinary keys still blank in `.env`
 
 ## Blockers
-- **Phase 5 uncommitted** — commit it (user requested commit + README)
+- **Web push uncommitted** — commit it (command in handoff below)
 - GitHub push: needs `gh` CLI or manual push
 - Marketing images: user supplies later (`public/images/programs/*.jpg` etc.)
 - Admin branches page is read-only (no create/edit branch form yet) — check `branches-admin.tsx` if user wants branch CRUD
@@ -234,12 +235,16 @@ Updated: 2026-08-01 (night session 3 — Phase 5 Stripe + OTP auth + critical UI
 - Real AI requires user's `OPENAI_API_KEY` in `.env` (currently empty placeholder) — LLM path untested live until key added
 - Real Stripe requires `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` in `.env` (empty placeholders) — checkout falls back to mock (instant activation). To test webhook locally: `stripe listen --forward-to localhost:3000/api/payments/webhook`
 - Email requires `RESEND_API_KEY` (empty) — OTP/link emails skipped with console warning; flows still work
-- Web push notifications NOT started (needs `web-push` package + VAPID keys + `PushSubscription` model + service worker) — remaining piece of Phase 5
+- Web push: VAPID keys ARE set (real, generated) — push works on localhost; browser-level `Notification` permission is user-controlled; real delivery needs a reachable HTTPS origin (localhost is fine for dev)
 - Playwright installed as devDep (`npm i -D playwright` + `npx playwright install chromium`) for UI checks
 
+## Session Handoff (2026-08-01 night, session 4)
+1. **Commit web push**: `git add -A && git commit -m "feat: Phase 5 — web push notifications (VAPID, PushSubscription model, sw.js, dashboard enable card)"`
+2. Then Phase 6: PWA/SEO/security audit
+3. Final: Phase 8 README polish + GitHub push (gh CLI missing)
+
 ## Session Handoff (2026-08-01 night, session 3)
-1. **Commit Phase 5**: `git add src/lib/stripe.ts src/lib/auth.ts src/lib/email.ts src/lib/auth-client.ts src/services/payments.ts src/app/api/payments src/app/(auth) src/components/layout/navbar.tsx src/components/ui/reveal.tsx src/components/ui/tilt-card.tsx src/components/dashboard/membership-dashboard.tsx PROGRESS.md package.json package-lock.json && git commit -m "feat: Phase 5 — Stripe checkout + webhook, OTP email verification & password reset, fix marketing navbar infinite-loop"`
-2. **Write README.md** (detailed project doc — user requested)
-3. Then finish Phase 5: web push notifications (VAPID + SW + PushSubscription)
-4. Then Phase 6: PWA/SEO/security audit
-5. Final: Phase 8 README polish + GitHub push (gh CLI missing)
+1. ✅ Commit Phase 5 Stripe+OTP (done: `267b5fb`) + README written
+2. ✅ Finish Phase 5: web push notifications (done, uncommitted)
+3. Then Phase 6: PWA/SEO/security audit
+4. Final: Phase 8 README polish + GitHub push (gh CLI missing)
