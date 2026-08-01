@@ -49,7 +49,15 @@ export function MembershipDashboard() {
   const activate = async (planId: string) => {
     setActivating(planId);
     try {
-      await apiPost("/api/payments/activate", { planId });
+      const result = await apiPost<{
+        mode?: "stripe" | "mock";
+        url?: string | null;
+        membership?: Membership;
+      }>("/api/payments/checkout", { planId });
+      if (result.mode === "stripe" && result.url) {
+        window.location.href = result.url;
+        return;
+      }
     } finally {
       setActivating(null);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.membership });
@@ -73,6 +81,9 @@ export function MembershipDashboard() {
   const planFeatures = (plan: Plan): string[] =>
     Array.isArray(plan.features) ? plan.features.map(String) : [];
 
+  const checkoutResult =
+    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("checkout");
+
   return (
     <div className="space-y-6">
       <DashboardPageHeader
@@ -80,6 +91,22 @@ export function MembershipDashboard() {
         description="Your plan, perks, and billing"
         icon={<Crown className="h-5 w-5" />}
       />
+
+      {checkoutResult === "success" && (
+        <Card className="border-success/40 bg-success/10 p-4">
+          <p className="flex items-center gap-2 text-sm font-semibold text-success">
+            <BadgeCheck className="h-4 w-4" />
+            Payment successful — your membership is active!
+          </p>
+        </Card>
+      )}
+      {checkoutResult === "cancelled" && (
+        <Card className="border-warning/40 bg-warning/10 p-4">
+          <p className="text-sm font-semibold text-warning">
+            Checkout cancelled — no charge was made. Pick a plan whenever you're ready.
+          </p>
+        </Card>
+      )}
 
       {/* Current membership */}
       {membership ? (

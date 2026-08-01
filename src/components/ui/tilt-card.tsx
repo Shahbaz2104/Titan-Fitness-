@@ -30,8 +30,9 @@ export function TiltCard({
   const glareY = useTransform(springY, [0, 1], ["0%", "100%"]);
   const glareBackground = useTransform(
     [glareX, glareY] as never,
-    ([gx, gy]: string[]) =>
-      `radial-gradient(circle at ${gx} ${gy}, rgba(255,255,255,0.12) 0%, transparent 60%)`
+    React.useCallback(([gx, gy]: string[]) => {
+      return `radial-gradient(circle at ${gx} ${gy}, rgba(255,255,255,0.12) 0%, transparent 60%)`;
+    }, [])
   );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

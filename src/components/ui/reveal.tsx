@@ -25,27 +25,29 @@ export function Reveal({
 }: RevealProps) {
   const reduceMotion = useReducedMotion();
 
-  const offset = direction === "none" ? 0 : y;
-  const xOffset = direction === "left" ? -offset : direction === "right" ? offset : 0;
-  const yOffset = direction === "up" ? offset : direction === "down" ? -offset : 0;
+  const variants: Variants = React.useMemo(() => {
+    const offset = direction === "none" ? 0 : y;
+    const xOffset = direction === "left" ? -offset : direction === "right" ? offset : 0;
+    const yOffset = direction === "up" ? offset : direction === "down" ? -offset : 0;
 
-  const variants: Variants = {
-    hidden: {
-      opacity: 0,
-      x: reduceMotion ? 0 : xOffset,
-      y: reduceMotion ? 0 : yOffset,
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: {
-        duration,
-        delay,
-        ease: [0.16, 1, 0.3, 1],
+    return {
+      hidden: {
+        opacity: 0,
+        x: reduceMotion ? 0 : xOffset,
+        y: reduceMotion ? 0 : yOffset,
       },
-    },
-  };
+      visible: {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        transition: {
+          duration,
+          delay,
+          ease: [0.16, 1, 0.3, 1],
+        },
+      },
+    };
+  }, [reduceMotion, direction, y, duration, delay]);
 
   return (
     <motion.div

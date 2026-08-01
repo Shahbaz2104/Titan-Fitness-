@@ -24,7 +24,8 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = React.useState(false);
-  const [mobileOpen, setMobileOpen] = useUIStore((s) => [s.mobileNavOpen, s.setMobileNavOpen]);
+  const mobileOpen = useUIStore((s) => s.mobileNavOpen);
+  const setMobileOpen = useUIStore((s) => s.setMobileNavOpen);
   const { data: user } = useUser();
 
   const { scrollY } = useScroll();

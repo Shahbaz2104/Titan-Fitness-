@@ -1,6 +1,20 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
+interface MeUser {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string | null;
+  role: string;
+  fitnessGoal: string | null;
+  heightCm: number | null;
+  weightKg: number | null;
+  experience: string | null;
+  referralCode: string | null;
+}
+
 export async function GET() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -10,18 +24,20 @@ export async function GET() {
     return NextResponse.json(null, { status: 401 });
   }
 
+  const user = session.user as unknown as MeUser;
+
   return NextResponse.json({
-    id: session.user.id,
-    name: session.user.name,
-    email: session.user.email,
-    emailVerified: session.user.emailVerified,
-    image: session.user.image,
-    role: session.user.role,
-    fitnessGoal: session.user.fitnessGoal,
-    heightCm: session.user.heightCm,
-    weightKg: session.user.weightKg,
-    experience: session.user.experience,
-    referralCode: session.user.referralCode,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    emailVerified: user.emailVerified,
+    image: user.image,
+    role: user.role,
+    fitnessGoal: user.fitnessGoal,
+    heightCm: user.heightCm,
+    weightKg: user.weightKg,
+    experience: user.experience,
+    referralCode: user.referralCode,
   });
 }
 

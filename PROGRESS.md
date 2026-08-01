@@ -1,16 +1,20 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (night session — Phase 4 AI wiring complete, **NOT YET COMMITTED**)
+Updated: 2026-08-01 (night session 3 — Phase 5 Stripe + OTP auth + critical UI bug fix, **NOT YET COMMITTED**)
 
 ## ⚠️ CRITICAL — CURRENT STATE (read this first)
 
-- **Phase 4 (AI real-LLM wiring) is COMPLETE but UNCOMMITTED.** New/changed files:
-  - `src/lib/ai.ts` (NEW) — OpenAI provider factory, `hasAiKey()`, `AI_MODEL_ID` (env `AI_MODEL`, default `gpt-4o-mini`), `estimateCostUsd()` pricing table, `aiEnabled()`
-  - `src/services/ai.ts` (NEW) — `aiChat()`, `generateWorkoutPlan()`, `generateMealPlan()` — LLM-first via `generateObject`/`generateText` (ai SDK v7), **auto-falls back to rule-based** if no key OR LLM errors; usage logged to `aIUsage` with real model/tokens/cost/durationMs
-  - `src/app/api/ai/{chat,workout-generator,nutritionist}/route.ts` (REWRITTEN) — thin routes: zod input + rate limit + service call. Response shapes UNCHANGED (frontend untouched)
-- **LLM activation**: paste a real `OPENAI_API_KEY` into `.env` — nothing else needed. Fallback used automatically while empty
-- Verified: tsc ✓, eslint ✓, 18/18 tests ✓, build ✓, live fallback smoke ✓, fake-key resilience smoke ✓
-- **Next step: commit Phase 4** (only commit if user asks), then Phase 5 (Stripe, gamification UI, notifications)
+- **Phase 5 work COMPLETE but UNCOMMITTED.** New/changed:
+  - `src/lib/stripe.ts` (NEW) — `getStripe()` factory (enabled only when `STRIPE_SECRET_KEY` starts with `sk_`), `stripeEnabled()`, `getStripeWebhookSecret()`, `APP_URL`
+  - `src/services/payments.ts` — `createCheckoutSession()` (Stripe Checkout Session + Payment row w/ `stripeSessionId`; **mock mode activates instantly** when Stripe disabled), `handleStripeWebhook()` (checkout.session.completed → activateMembership + payment SUCCEEDED; checkout.session.expired → FAILED, idempotent)
+  - `src/app/api/payments/webhook/route.ts` (NEW) — raw body + `constructEvent` signature verify, 503 if unconfigured
+  - `src/app/api/payments/checkout/route.ts` — now returns `{ mode: "stripe", url }` or `{ mode: "mock", payment, plan, membership }`
+  - `src/components/dashboard/membership-dashboard.tsx` — Stripe redirect when `url` present; success/cancelled banners via `?checkout=` query
+  - **OTP auth**: `src/lib/auth.ts` + `emailOTP` plugin (6-digit, 5 min, hashed storage, rotate, 3 attempts, overrides default verification); `src/lib/email.ts` + `sendOtpEmail()` (big code display template); `src/lib/auth-client.ts` + `emailOTPClient()`
+  - OTP pages: `verify-email-form.tsx` (send code → 6-digit → verify → redirect), `forgot-password-form.tsx` (link OR code option → `/reset-password?email=`), `reset-password-form.tsx` (OTP mode when `?email=`, token mode otherwise)
+  - **CRITICAL BUG FIX**: `src/components/layout/navbar.tsx` — zustand array selector `useUIStore((s) => [s.mobileNavOpen, s.setMobileNavOpen])` caused **"Maximum update depth exceeded" infinite re-render → ALL marketing pages showed "This page couldn't load"** (home, pricing, terms, blog, about, etc. — only auth/dashboard worked). Fixed with two scalar selectors. Also hardened `Reveal` (variants in `useMemo`) + `TiltCard` (multi-value `useTransform` callback in `useCallback`)
+- **Verified**: tsc ✓, eslint ✓, 18/18 tests ✓, build ✓, ALL pages render OK in browser (Playwright sweep), OTP endpoint E2E (send → hashed row in `Verification` table → wrong code rejected INVALID_OTP)
+- **Next step: commit Phase 5** (user requested commit + README this session)
 
 ## Phase Status Overview
 
@@ -20,13 +24,37 @@ Updated: 2026-08-01 (night session — Phase 4 AI wiring complete, **NOT YET COM
 | 1 | Services + API routes (82 routes) | ✅ Done (commit `0b9dbdd`) |
 | 2 | User dashboard (16 pages) | ✅ Done (commit `8234d9b`) |
 | 3 | Admin panel | ✅ Done (commit `629deb4`) |
-| 4 | AI features (real LLM wiring) | ✅ Built — **UNCOMMITTED** |
-| 5 | Stripe, gamification UI, notifications | ⬜ |
+| 4 | AI features (real LLM wiring) | ✅ Done (commit `8e0399c`) |
+| 5 | Stripe, gamification UI, notifications | ✅ Built — **UNCOMMITTED** (Stripe + OTP auth done; web-push NOT started) |
 | 6 | PWA, SEO, security | ⬜ |
 | 7 | Tests + CI | ⬜ (CI workflow already added) |
-| 8 | Final audit, README, GitHub push | ⬜ |
+| 8 | Final audit, README, GitHub push | ⬜ (README not yet written) |
 
-## Phase 4 — AI Features (real LLM wiring, UNCOMMITTED)
+## Phase 5 — Stripe + OTP Auth (UNCOMMITTED)
+
+### Stripe checkout (real, with mock fallback)
+- `createCheckoutSession(userId, { planId, branchId, couponCode })`:
+  - **Stripe mode** (`sk_…` key set): creates Stripe Checkout Session (line item from plan, on-the-fly `stripe.coupons.create` for discounts, `metadata` = userId/planId/branchId/couponId/originalAmount/finalAmount, success_url `/dashboard/membership?checkout=success&session_id=…`, cancel_url `/dashboard/membership?checkout=cancelled`), Payment row with `stripeSessionId`; returns `{ mode: "stripe", url, payment, plan, discount }`
+  - **Mock mode** (no key): creates Payment, calls `activateMembership` instantly (preserves old UX), returns `{ mode: "mock", …, membership }` — frontend redirects only in stripe mode
+- `handleStripeWebhook(event)`: `checkout.session.completed` (payment_status paid) → find payment by `stripeSessionId` (skip if already SUCCEEDED = idempotent) → `activateMembership(method: "CARD")` → upsert payment SUCCEEDED w/ `stripePaymentIntentId`, `receiptUrl`; `checkout.session.expired` → mark PENDING payments FAILED
+- Webhook route: raw `req.text()` + `constructEvent` (no `req.json()`!), 503 when Stripe/webhook secret missing, 400 bad signature
+- Stripe SDK v22 pinned its own API version (don't pass `apiVersion` — types break)
+- `PaymentMethod` enum has NO STRIPE value → use `"CARD"` + `stripeSessionId` fields (already in schema from Phase 0)
+
+### OTP email verification + password reset (better-auth emailOTP plugin v1.6.25)
+- Server: `emailOTP({ sendVerificationOTP → sendOtpEmail, otpLength: 6, expiresIn: 300, storeOTP: "hashed", sendVerificationOnSignUp: true, overrideDefaultEmailVerification: true, resendStrategy: "rotate", allowedAttempts: 3 })`
+- Routes (auto-mounted under `/api/auth/email-otp/*`): send-verification-otp, check-verification-otp, verify-email, sign-in/email-otp, request-password-reset, reset-password, forget-password/email-otp, change-email, request-email-change, get-verification-otp (dev tool)
+- **Client method naming gotcha**: paths lose the `email-otp/` prefix when camelCased → `authClient.emailOtp.sendVerificationOtp`, `.verifyEmail`, `.requestPasswordReset`, `.resetPassword`, `.checkVerificationOtp`, `.signInEmailOtp` (NOT `emailOTP.verifyEmailOTP` etc.)
+- OTP stored hashed in `Verification` table (identifier `email-verification-otp-<email>`), verified E2E: send → 200, wrong code → `INVALID_OTP`, no Resend key → console warn (email skipped, flow still works)
+- **Type gotcha**: adding the emailOTP plugin breaks better-auth's `session.user` additional-fields inference (fitnessGoal/heightCm/etc. vanish from the type) → `src/app/api/auth/me/route.ts` now casts to explicit `MeUser` interface (runtime unaffected)
+- UI: verify-email page now OTP-first (6-digit input, resend), forgot-password offers BOTH reset link and OTP code, reset-password auto-detects OTP mode via `?email=` param vs `?token=`
+
+### Critical bug found during UI check (pre-existing since Phase 0!)
+- **Zustand array selector** in `src/components/layout/navbar.tsx:27`: `useUIStore((s) => [s.mobileNavOpen, s.setMobileNavOpen])` returns a NEW array each render → `useSyncExternalStore` infinite re-render → React #185 "Maximum update depth exceeded" → **every marketing page rendered "This page couldn't load"** (home/pricing/terms/about/blog… — login/dashboard fine because they don't render Navbar). Fix: two scalar selectors. Rule: **never return new object/array from a zustand selector**.
+- Also hardened: `Reveal` variants → `useMemo`; `TiltCard` multi-input `useTransform` callback → `useCallback` (framer-motion v12 pitfalls)
+- Note: `(auth)/layout.tsx` shows a decorative "Today's Workout / Leg Day" card by design (not a bug)
+
+## Phase 4 — AI Features (committed `8e0399c`)
 
 ### How it works
 - `src/lib/ai.ts`: `getAiModel()` returns OpenAI model (via `@ai-sdk/openai` `createOpenAI`) only when `OPENAI_API_KEY` is set (≥10 chars, not placeholder); `AI_MODEL_ID` from `AI_MODEL` env (default `gpt-4o-mini`); cost per 1M tokens table (gpt-4o-mini $0.15/$0.60, gpt-4o $2.5/$10, gpt-4.1 $2/$8, gpt-4 $30/$60, o-series $2/$8)
@@ -198,15 +226,20 @@ Updated: 2026-08-01 (night session — Phase 4 AI wiring complete, **NOT YET COM
 - Stripe / AI / Cloudinary keys still blank in `.env`
 
 ## Blockers
-- **Phase 4 uncommitted** — commit it next session (user confirmation required)
+- **Phase 5 uncommitted** — commit it (user requested commit + README)
 - GitHub push: needs `gh` CLI or manual push
 - Marketing images: user supplies later (`public/images/programs/*.jpg` etc.)
 - Admin branches page is read-only (no create/edit branch form yet) — check `branches-admin.tsx` if user wants branch CRUD
 - Admin classes page has no create/update class form — only listing (check `classes-admin.tsx`)
 - Real AI requires user's `OPENAI_API_KEY` in `.env` (currently empty placeholder) — LLM path untested live until key added
+- Real Stripe requires `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` in `.env` (empty placeholders) — checkout falls back to mock (instant activation). To test webhook locally: `stripe listen --forward-to localhost:3000/api/payments/webhook`
+- Email requires `RESEND_API_KEY` (empty) — OTP/link emails skipped with console warning; flows still work
+- Web push notifications NOT started (needs `web-push` package + VAPID keys + `PushSubscription` model + service worker) — remaining piece of Phase 5
+- Playwright installed as devDep (`npm i -D playwright` + `npx playwright install chromium`) for UI checks
 
-## Session Handoff (2026-08-01 night, second session)
-1. Phase 4 AI wiring fully built + verified, NOT committed → `git add src/lib/ai.ts src/services/ai.ts src/app/api/ai PROGRESS.md && git commit -m "feat: Phase 4 — real LLM wiring with rule-based fallback"`
-2. Then Phase 5: Stripe (keys blank), gamification UI polish, notifications push
-3. Then Phase 6: PWA/SEO/security audit
-4. Final: Phase 8 README + GitHub push (gh CLI missing)
+## Session Handoff (2026-08-01 night, session 3)
+1. **Commit Phase 5**: `git add src/lib/stripe.ts src/lib/auth.ts src/lib/email.ts src/lib/auth-client.ts src/services/payments.ts src/app/api/payments src/app/(auth) src/components/layout/navbar.tsx src/components/ui/reveal.tsx src/components/ui/tilt-card.tsx src/components/dashboard/membership-dashboard.tsx PROGRESS.md package.json package-lock.json && git commit -m "feat: Phase 5 — Stripe checkout + webhook, OTP email verification & password reset, fix marketing navbar infinite-loop"`
+2. **Write README.md** (detailed project doc — user requested)
+3. Then finish Phase 5: web push notifications (VAPID + SW + PushSubscription)
+4. Then Phase 6: PWA/SEO/security audit
+5. Final: Phase 8 README polish + GitHub push (gh CLI missing)

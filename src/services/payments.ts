@@ -3,6 +3,7 @@ import { ApiError } from "@/lib/api";
 import { REFERRAL_REWARD } from "@/lib/constants";
 import { awardPoints, getOrCreatePoints } from "@/services/gamification";
 import { createNotification } from "@/services/notifications";
+import { APP_URL, getStripe } from "@/lib/stripe";
 
 export async function getMembershipPlans() {
   return prisma.membershipPlan.findMany({
@@ -110,6 +111,205 @@ export async function createMembershipOrder(userId: string, data: {
 
   return { payment, plan, discount };
 }
+
+export async function createCheckoutSession(
+  userId: string,
+  data: {
+    planId: string;
+    branchId?: string;
+    couponCode?: string;
+  }
+) {
+  const plan = await prisma.membershipPlan.findFirst({
+    where: { id: data.planId, isActive: true, deletedAt: null },
+  });
+  if (!plan) throw new ApiError("Plan not found", 404, "NOT_FOUND");
+
+  let couponId: string | null = null;
+  let discount = 0;
+  if (data.couponCode) {
+    const result = await validateCoupon(data.couponCode, Number(plan.price));
+    couponId = result.coupon.id;
+    discount = result.discount;
+  }
+
+  const stripe = getStripe();
+  const amount = Number(plan.price) - discount;
+
+  if (!stripe) {
+    const payment = await prisma.payment.create({
+      data: {
+        userId,
+        branchId: data.branchId,
+        amount,
+        type: "MEMBERSHIP",
+        description: `Membership: ${plan.name}`,
+        couponId,
+        metadata: { planId: plan.id, originalAmount: Number(plan.price) },
+      },
+    });
+
+    if (couponId) {
+      await prisma.coupon.update({
+        where: { id: couponId },
+        data: { usedCount: { increment: 1 } },
+      });
+    }
+
+    const { membership } = await activateMembership(userId, plan.id, {
+      branchId: data.branchId,
+      method: "CARD",
+    });
+
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: "SUCCEEDED", membershipId: membership.id },
+    });
+
+    return {
+      mode: "mock" as const,
+      payment,
+      plan,
+      discount,
+      membership,
+      url: null,
+    };
+  }
+
+  let stripeCouponId: string | null = null;
+  if (couponId) {
+    const coupon = await prisma.coupon.findUnique({ where: { id: couponId } });
+    if (coupon) {
+      const created = await stripe.coupons.create({
+        name: coupon.code,
+        duration: "once",
+        percent_off: coupon.type === "PERCENTAGE" ? Number(coupon.value) : undefined,
+        amount_off: coupon.type === "FIXED" ? Math.round(Number(coupon.value) * 100) : undefined,
+        currency: "usd",
+      });
+      stripeCouponId = created.id;
+    }
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer_email: (await prisma.user.findUnique({ where: { id: userId }, select: { email: true } }))
+      ?.email,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "usd",
+          unit_amount: Math.round(Number(plan.price) * 100),
+          product_data: {
+            name: `${plan.name} — ${plan.durationDays} days`,
+            description: plan.description ?? undefined,
+          },
+        },
+      },
+    ],
+    discounts: stripeCouponId ? [{ coupon: stripeCouponId }] : undefined,
+    metadata: {
+      userId,
+      planId: plan.id,
+      branchId: data.branchId ?? "",
+      couponId: couponId ?? "",
+      originalAmount: String(Number(plan.price)),
+      finalAmount: String(Math.max(0, amount)),
+    },
+    success_url: `${APP_URL}/dashboard/membership?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${APP_URL}/dashboard/membership?checkout=cancelled`,
+  });
+
+  const payment = await prisma.payment.create({
+    data: {
+      userId,
+      branchId: data.branchId,
+      amount,
+      type: "MEMBERSHIP",
+      description: `Membership: ${plan.name}`,
+      couponId,
+      stripeSessionId: session.id,
+      metadata: { planId: plan.id, originalAmount: Number(plan.price) },
+    },
+  });
+
+  if (couponId) {
+    await prisma.coupon.update({
+      where: { id: couponId },
+      data: { usedCount: { increment: 1 } },
+    });
+  }
+
+  return {
+    mode: "stripe" as const,
+    payment,
+    plan,
+    discount,
+    url: session.url,
+  };
+}
+
+export async function handleStripeWebhook(event: StripeEvent): Promise<void> {
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    if (session.payment_status !== "paid") return;
+
+    const userId = session.metadata?.userId;
+    const planId = session.metadata?.planId;
+    if (!userId || !planId) return;
+
+    const payment = await prisma.payment.findFirst({
+      where: { stripeSessionId: session.id },
+    });
+    if (payment && payment.status === "SUCCEEDED") return;
+
+    const { membership } = await activateMembership(userId, planId, {
+      branchId: session.metadata?.branchId || undefined,
+      method: "CARD",
+    });
+
+    await prisma.payment.upsert({
+      where: { stripeSessionId: session.id },
+      update: {
+        status: "SUCCEEDED",
+        method: "CARD",
+        amount: session.amount_total ? session.amount_total / 100 : undefined,
+        membershipId: membership.id,
+        stripePaymentIntentId:
+          typeof session.payment_intent === "string" ? session.payment_intent : undefined,
+        receiptUrl: session.invoice ? null : null,
+      },
+      create: {
+        userId,
+        branchId: session.metadata?.branchId || undefined,
+        amount: session.amount_total ? session.amount_total / 100 : 0,
+        type: "MEMBERSHIP",
+        description: "Membership (Stripe checkout)",
+        status: "SUCCEEDED",
+        method: "CARD",
+        membershipId: membership.id,
+        stripeSessionId: session.id,
+        stripePaymentIntentId:
+          typeof session.payment_intent === "string" ? session.payment_intent : undefined,
+        receiptUrl: session.invoice ? null : null,
+        metadata: { planId, originalAmount: session.metadata?.originalAmount },
+      },
+    });
+
+    return;
+  }
+
+  if (event.type === "checkout.session.expired") {
+    const session = event.data.object;
+    await prisma.payment.updateMany({
+      where: { stripeSessionId: session.id, status: "PENDING" },
+      data: { status: "FAILED" },
+    });
+  }
+}
+
+type StripeEvent = import("stripe").Stripe.Event;
 
 export async function activateMembership(
   userId: string,

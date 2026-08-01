@@ -1,8 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prisma } from "@/lib/prisma";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { admin } from "better-auth/plugins";
-import { sendAuthEmail } from "@/lib/email";
+import { admin, emailOTP } from "better-auth/plugins";
+import { sendAuthEmail, sendOtpEmail } from "@/lib/email";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -82,6 +82,18 @@ export const auth = betterAuth({
   plugins: [
     admin({
       defaultRole: "MEMBER",
+    }),
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp, type }) => {
+        await sendOtpEmail(email, type, otp);
+      },
+      otpLength: 6,
+      expiresIn: 300,
+      storeOTP: "hashed",
+      sendVerificationOnSignUp: true,
+      overrideDefaultEmailVerification: true,
+      resendStrategy: "rotate",
+      allowedAttempts: 3,
     }),
   ],
 });

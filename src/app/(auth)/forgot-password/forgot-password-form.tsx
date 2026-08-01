@@ -2,17 +2,16 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { KeyRound, Loader2, MailCheck } from "lucide-react";
+import { KeyRound, Loader2, MailCheck, Send } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-
 
 const forgotSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -21,22 +20,24 @@ const forgotSchema = z.object({
 type ForgotForm = z.infer<typeof forgotSchema>;
 
 export function ForgotPasswordPageForm() {
-  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
+  const [loading, setLoading] = React.useState<"link" | "otp" | null>(null);
   const [sent, setSent] = React.useState(false);
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<ForgotForm>({ resolver: zodResolver(forgotSchema) });
 
   const onSubmit = async (data: ForgotForm) => {
-    setLoading(true);
+    setLoading("link");
     const { error } = await authClient.requestPasswordReset({
       email: data.email,
       redirectTo: "/reset-password",
     });
-    setLoading(false);
+    setLoading(null);
     if (error) {
       toast.error("Couldn't send reset link", {
         description: error.message ?? "Please check the email address.",
@@ -44,6 +45,24 @@ export function ForgotPasswordPageForm() {
       return;
     }
     setSent(true);
+  };
+
+  const sendOtp = async () => {
+    const email = getValues("email");
+    if (!email) {
+      toast.error("Enter your email first");
+      return;
+    }
+    setLoading("otp");
+    const { error } = await authClient.emailOtp.requestPasswordReset({ email });
+    setLoading(null);
+    if (error) {
+      toast.error("Couldn't send reset code", {
+        description: error.message ?? "Please check the email address.",
+      });
+      return;
+    }
+    router.push(`/reset-password?email=${encodeURIComponent(email)}`);
   };
 
   if (sent) {
@@ -76,7 +95,7 @@ export function ForgotPasswordPageForm() {
           Reset your <span className="text-gradient">password</span>
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a reset link.
+          Enter your email, then choose how you want to reset it.
         </p>
       </div>
 
@@ -94,9 +113,27 @@ export function ForgotPasswordPageForm() {
           {errors.email && <p className="text-xs text-primary">{errors.email.message}</p>}
         </div>
 
-        <Button type="submit" size="lg" className="w-full" disabled={loading}>
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailCheck className="h-4 w-4" />}
+        <Button type="submit" size="lg" className="w-full" disabled={loading !== null}>
+          {loading === "link" ? <Loader2 className="h-4 w-4 animate-spin" /> : <MailCheck className="h-4 w-4" />}
           Send Reset Link
+        </Button>
+
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-xs uppercase tracking-widest text-muted-foreground">or</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="w-full"
+          onClick={sendOtp}
+          disabled={loading !== null}
+        >
+          {loading === "otp" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          Send Reset Code (OTP)
         </Button>
       </form>
 
