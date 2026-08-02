@@ -2,7 +2,7 @@
 
 Updated: 2026-08-02
 
-## Phase 9 — Marketing redesign ("Black Iron") + motion enhancement — UNCOMMITTED
+## Phase 9 — Marketing redesign ("Black Iron") + motion enhancement — committed `b59e714`
 
 Marketing-only UI/UX redesign (per user request, killing "AI slop"). Dashboard/admin untouched but share the primitives.
 
@@ -47,11 +47,13 @@ Marketing-only UI/UX redesign (per user request, killing "AI slop"). Dashboard/a
 ### Blocked / next
 
 - Missing real images (render icon fallback, nothing breaks): `public/images/gallery/*` (10), `public/images/transformations/*` (8). Trainers/programs/hero-poster still Unsplash placeholders — drop real files in place, no code changes needed
-- Next: Playwright screenshot sweep of all marketing pages → commit Phase 9
+- Next: Playwright screenshot sweep of all marketing pages
 
 ## Git history
 
 ```
+b59e714 feat: Phase 9 — Black Iron marketing redesign: anime.js text fx, Lenis smooth scroll, GSAP choreography, real blog/hero assets
+7586056 docs: project complete — all phases pushed to GitHub
 36a5841 feat: Phase 7 — 30 new tests (validators, AI pricing), fix CI format check, format whole repo
 aba5724 feat: Phase 6 — robots.txt, sitemap.xml, security headers, apple-icon
 78929d7 docs: mark Phase 5 complete in PROGRESS.md
@@ -73,7 +75,7 @@ fa71c1f feat: Phase 2 — notifications & nutrition dashboards, AI stubs, auth p
 - Replace Unsplash placeholders + add real marketing assets (`public/images/{gallery,transformations,trainers,programs}/`) — user supplies; icon fallbacks already in place (blog + hero video done)
 - Switch prod run to `node .next/standalone/server.js` (next start warns about standalone)
 
-> **Project status**: remote `https://github.com/Shahbaz2104/Titan-Fitness-.git` (origin/main), CI in `.github/workflows/ci.yml` (lint + typecheck + format + tests + build + docker). Phases 0–8 pushed; **Phase 9 redesign (Black Iron + anime.js + Lenis + GSAP choreography) is uncommitted in the working tree**.
+> **Project status**: remote `https://github.com/Shahbaz2104/Titan-Fitness-.git` (origin/main), CI in `.github/workflows/ci.yml` (lint + typecheck + format + tests + build + docker). Phases 0–9 pushed to GitHub (`origin/main`); Phase 9 = Black Iron redesign + anime.js + Lenis + GSAP choreography.
 
 ## Phase Status Overview
 
@@ -88,7 +90,7 @@ fa71c1f feat: Phase 2 — notifications & nutrition dashboards, AI stubs, auth p
 | 6     | PWA, SEO, security                                                                  | ✅ Done (commit `aba5724`)                         |
 | 7     | Tests + CI                                                                          | ✅ Done (commit `36a5841`, 51 tests)               |
 | 8     | Final audit, README, GitHub push                                                    | ✅ Done — pushed to GitHub (`origin/main`)         |
-| 9     | Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion) | 🔶 Done in working tree — **not committed yet** |
+| 9     | Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion) | ✅ Done (commit `b59e714`) |
 
 ## Phase 5 — Stripe + OTP Auth (UNCOMMITTED)
 
