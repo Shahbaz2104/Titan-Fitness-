@@ -1,8 +1,5 @@
-"use client";
-
 import Link from "next/link";
 import {
-  ArrowRight,
   Dumbbell,
   Flame,
   Heart,
@@ -12,10 +9,10 @@ import {
   Weight,
   Zap,
 } from "lucide-react";
-import { TiltCard } from "@/components/ui/tilt-card";
-import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { Reveal } from "@/components/ui/reveal";
-import { Badge } from "@/components/ui/badge";
+import { ImageReveal } from "@/components/ui/image-reveal";
+import { WordReveal } from "@/components/ui/word-reveal";
+import { AnimeText } from "@/components/ui/anime-text";
+import { GsapReveal } from "@/components/ui/gsap-reveal";
 
 const PROGRAMS = [
   {
@@ -23,8 +20,6 @@ const PROGRAMS = [
     name: "Weight Loss",
     description: "Science-backed fat loss with metabolic conditioning and nutrition coaching.",
     icon: Flame,
-    color: "text-accent",
-    bg: "from-accent/20 to-transparent",
     tag: "Most Popular",
   },
   {
@@ -32,8 +27,6 @@ const PROGRAMS = [
     name: "Bodybuilding",
     description: "Hypertrophy-focused splits designed to sculpt lean, dense muscle.",
     icon: Dumbbell,
-    color: "text-primary",
-    bg: "from-primary/20 to-transparent",
     tag: null,
   },
   {
@@ -41,8 +34,6 @@ const PROGRAMS = [
     name: "CrossFit",
     description: "High-intensity functional training for unmatched conditioning.",
     icon: Trophy,
-    color: "text-warning",
-    bg: "from-warning/20 to-transparent",
     tag: null,
   },
   {
@@ -50,8 +41,6 @@ const PROGRAMS = [
     name: "Yoga",
     description: "Flexibility, mobility, and mindfulness for body and mind balance.",
     icon: Sparkles,
-    color: "text-success",
-    bg: "from-success/20 to-transparent",
     tag: null,
   },
   {
@@ -59,8 +48,6 @@ const PROGRAMS = [
     name: "HIIT",
     description: "Maximum burn in minimum time. 20 minutes that transform you.",
     icon: Zap,
-    color: "text-primary-light",
-    bg: "from-primary/20 to-transparent",
     tag: null,
   },
   {
@@ -68,8 +55,6 @@ const PROGRAMS = [
     name: "Powerlifting",
     description: "Master the big three: squat, bench, and deadlift with elite coaches.",
     icon: Weight,
-    color: "text-accent",
-    bg: "from-accent/20 to-transparent",
     tag: null,
   },
   {
@@ -77,8 +62,6 @@ const PROGRAMS = [
     name: "Cardio",
     description: "Heart-pumping endurance training for stamina that never quits.",
     icon: Heart,
-    color: "text-success",
-    bg: "from-success/20 to-transparent",
     tag: null,
   },
   {
@@ -86,8 +69,6 @@ const PROGRAMS = [
     name: "Calisthenics",
     description: "Master your bodyweight — from first pull-up to planche.",
     icon: PersonStanding,
-    color: "text-warning",
-    bg: "from-warning/20 to-transparent",
     tag: null,
   },
 ];
@@ -96,53 +77,59 @@ export function ProgramsGrid() {
   return (
     <section className="relative py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <Reveal className="mx-auto max-w-2xl text-center">
-          <Badge variant="accent" className="mb-4">
-            Our Programs
-          </Badge>
-          <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
-            Train With <span className="text-gradient">Purpose</span>
-          </h2>
-          <p className="text-muted-foreground mt-4">
-            Every program is built by certified coaches and enhanced with AI personalization.
-          </p>
-        </Reveal>
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+          <div className="max-w-xl">
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+              <AnimeText text="Programs built for how you train" effect="rise" scroll />
+            </h2>
+            <p className="text-muted-foreground mt-4">
+              <WordReveal text="Every program is built by certified coaches and enhanced with AI personalization." />
+            </p>
+          </div>
+          <Link
+            href="/programs"
+            className="text-primary hover:text-primary-light text-sm font-medium underline-offset-4 hover:underline"
+          >
+            View all programs
+          </Link>
+        </div>
 
-        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {PROGRAMS.map((program, i) => (
-            <Reveal key={program.slug} delay={i * 0.06}>
-              <TiltCard maxTilt={8} className="h-full">
-                <SpotlightCard className="border-border bg-surface/60 h-full rounded-2xl border backdrop-blur-xl">
-                  <Link
-                    href={`/programs/${program.slug}`}
-                    className="group flex h-full flex-col p-6"
-                  >
-                    <div
-                      className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${program.bg} border-border border`}
-                    >
-                      <program.icon
-                        className={`h-7 w-7 ${program.color} transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6`}
-                      />
-                    </div>
-                    <h3 className="font-display text-foreground text-lg font-semibold tracking-wide uppercase">
-                      {program.name}
-                    </h3>
-                    <p className="text-muted-foreground mt-2 flex-1 text-sm leading-relaxed">
-                      {program.description}
-                    </p>
-                    <span className="text-primary mt-5 inline-flex items-center gap-1.5 text-sm font-medium opacity-0 transition-all duration-300 group-hover:opacity-100">
-                      Explore
-                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </span>
-                    {program.tag && (
-                      <Badge className="absolute top-4 right-4" variant="accent">
-                        {program.tag}
-                      </Badge>
-                    )}
-                  </Link>
-                </SpotlightCard>
-              </TiltCard>
-            </Reveal>
+            <GsapReveal key={program.slug} delay={(i % 4) * 0.07}>
+              <Link
+                href={`/programs/${program.slug}`}
+                className="group flex flex-col"
+              >
+              <div className="border-border relative aspect-[4/3] overflow-hidden rounded-xl border">
+                <ImageReveal
+                  src={`/images/programs/${program.slug}.jpg`}
+                  alt={program.name}
+                  className="h-full w-full"
+                  imgClassName="group-hover:scale-105"
+                  fallbackClassName="bg-surface-2 h-full w-full"
+                  fallback={
+                    <program.icon className="text-muted-foreground h-10 w-10 opacity-60" />
+                  }
+                />
+                {program.tag && (
+                  <span className="bg-primary text-primary-foreground absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-medium">
+                    {program.tag}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-start justify-between gap-4 px-1 pt-4">
+                <div>
+                  <h3 className="font-display text-foreground text-lg font-semibold tracking-[-0.01em]">
+                    {program.name}
+                  </h3>
+                  <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+                    {program.description}
+                  </p>
+                </div>
+              </div>
+            </Link>
+            </GsapReveal>
           ))}
         </div>
       </div>

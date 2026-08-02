@@ -72,18 +72,20 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
   return (
     <article className="relative overflow-hidden pt-32 pb-24 sm:pt-40">
-      <div className="bg-primary/8 pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full blur-3xl" />
       <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
         <Link
           href="/blog"
-          className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
+          className="text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+          <ArrowLeft className="h-4 w-4" />
           Back to blog
         </Link>
 
         <header className="mt-10">
-          <div className="flex flex-wrap items-center gap-3">
+          <h1 className="font-display text-foreground text-4xl leading-tight font-bold tracking-[-0.02em] sm:text-5xl">
+            {post.title}
+          </h1>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             <Badge variant="accent">{post.category}</Badge>
             {post.tags.map((tag) => (
               <Badge key={tag} variant="secondary">
@@ -91,9 +93,6 @@ export function BlogPostClient({ slug }: { slug: string }) {
               </Badge>
             ))}
           </div>
-          <h1 className="font-display text-foreground mt-6 text-4xl leading-tight font-bold tracking-tight uppercase sm:text-5xl">
-            {post.title}
-          </h1>
           <div className="border-border text-muted-foreground mt-6 flex flex-wrap items-center gap-6 border-y py-5 text-sm">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
@@ -147,14 +146,14 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
         {/* Comments */}
         <section className="mt-16">
-          <h2 className="font-display text-foreground flex items-center gap-2 text-2xl font-bold tracking-tight uppercase">
+          <h2 className="text-foreground flex items-center gap-2 text-2xl font-bold tracking-[-0.01em]">
             <MessageCircle className="text-primary h-5 w-5" />
             Comments ({comments.length})
           </h2>
 
           <form
             onSubmit={submitComment}
-            className="border-border bg-surface/60 mt-6 space-y-4 rounded-2xl border p-6 backdrop-blur-xl"
+            className="border-border bg-surface/60 mt-6 space-y-4 rounded-xl border p-6"
           >
             <input
               value={commentName}
@@ -175,7 +174,7 @@ export function BlogPostClient({ slug }: { slug: string }) {
             />
             <div className="flex justify-end">
               <Button type="submit" size="sm">
-                Post Comment
+                Post comment
               </Button>
             </div>
           </form>
@@ -184,7 +183,7 @@ export function BlogPostClient({ slug }: { slug: string }) {
             {comments.map((comment) => (
               <div
                 key={comment.id}
-                className="border-border bg-surface/60 rounded-2xl border p-6 backdrop-blur-xl"
+                className="border-border bg-surface/60 rounded-xl border p-6"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -212,20 +211,18 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
         {/* Related */}
         <section className="border-border mt-16 border-t pt-10">
-          <h2 className="font-display text-foreground text-2xl font-bold tracking-tight uppercase">
-            Keep <span className="text-gradient">Reading</span>
-          </h2>
+          <h2 className="text-foreground text-2xl font-bold tracking-[-0.01em]">Keep reading</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {related.map((p) => (
               <Link
                 key={p.slug}
                 href={`/blog/${p.slug}`}
-                className="group border-border bg-surface/60 hover:border-primary/30 rounded-2xl border p-5 backdrop-blur-xl transition-all duration-300"
+                className="group border-border bg-surface/60 hover:border-white/15 rounded-xl border p-5 transition-colors duration-300"
               >
                 <Badge variant="secondary" className="mb-3">
                   {p.category}
                 </Badge>
-                <h3 className="font-display text-foreground group-hover:text-primary text-sm leading-snug font-semibold tracking-wide transition-colors">
+                <h3 className="text-foreground group-hover:text-primary text-sm leading-snug font-semibold tracking-[-0.01em] transition-colors">
                   {p.title}
                 </h3>
                 <p className="text-muted-foreground mt-2 text-xs">{p.readTime} min read</p>

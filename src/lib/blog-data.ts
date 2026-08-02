@@ -11,6 +11,7 @@ export interface BlogPostData {
   likes: number;
   publishedAt: string;
   content: string;
+  image: string;
   featured?: boolean;
 }
 
@@ -37,6 +38,7 @@ const POSTS: BlogPostData[] = [
     readTime: 8,
     views: 12400,
     likes: 342,
+    image: "/images/blog/fat-loss.webp",
     publishedAt: "2026-07-20",
     featured: true,
     content: `# 10 Science-Backed Habits for Sustainable Fat Loss
@@ -101,6 +103,7 @@ Pick **two habits** from this list and master them for two weeks. Then add two m
     readTime: 12,
     views: 9800,
     likes: 415,
+    image: "/images/blog/barbell.jpeg",
     publishedAt: "2026-07-12",
     content: `# The Complete Beginner's Guide to Barbell Training
 
@@ -168,6 +171,7 @@ Remember: **technique is the foundation**. Lift light, film every set, and fix y
     readTime: 6,
     views: 15200,
     likes: 528,
+    image: "/images/blog/recovery.jpg",
     publishedAt: "2026-07-05",
     content: `# Why Rest Days Are Where Gains Are Made
 
@@ -231,6 +235,7 @@ Train hard. Recover harder. The gains follow.`,
     readTime: 7,
     views: 8900,
     likes: 267,
+    image: "/images/blog/cardio.jpg",
     publishedAt: "2026-06-28",
     content: `# Cardio 101: Heart Rate Zone Training Explained
 
@@ -288,6 +293,7 @@ Build the engine first. Speed comes free.`,
     readTime: 5,
     views: 11300,
     likes: 489,
+    image: "/images/blog/mindset.jpeg",
     publishedAt: "2026-06-15",
     content: `# The Mindset of Champions
 
@@ -343,6 +349,7 @@ Champions aren't born. They're built — one boring, consistent day at a time.`,
     readTime: 6,
     views: 14100,
     likes: 512,
+    image: "/images/blog/protein.jpeg",
     publishedAt: "2026-06-08",
     content: `# Protein 101: How Much and When It Actually Matters
 

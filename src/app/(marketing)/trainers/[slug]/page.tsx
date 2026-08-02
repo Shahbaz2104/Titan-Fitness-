@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Award, CalendarCheck, Check, Clock, MessageCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Reveal } from "@/components/ui/reveal";
+import { SmartImage } from "@/components/ui/smart-image";
+import { MaskReveal } from "@/components/ui/gsap-reveal";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";
@@ -154,25 +154,31 @@ export default async function TrainerDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40">
-        <div className="bg-primary/8 pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full blur-3xl" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/trainers"
-            className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
+            className="text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
           >
-            <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+            <ArrowLeft className="h-4 w-4" />
             All trainers
           </Link>
 
           <div className="mt-10 grid gap-12 lg:grid-cols-5">
-            <Reveal className="lg:col-span-2">
-              <div className="border-border bg-surface/60 overflow-hidden rounded-3xl border">
-                <Avatar className="h-auto w-full rounded-none">
-                  <AvatarImage src={`/images/trainers/${trainer.slug}.jpg`} alt={trainer.name} />
-                  <AvatarFallback className="from-primary/40 to-accent/40 rounded-none bg-gradient-to-br py-32 text-7xl">
-                    {trainer.initials}
-                  </AvatarFallback>
-                </Avatar>
+            <div className="lg:col-span-2">
+              <div className="border-border bg-surface/60 overflow-hidden rounded-2xl border">
+                <div className="relative aspect-[4/5]">
+                  <SmartImage
+                    src={`/images/trainers/${trainer.slug}.jpg`}
+                    alt={trainer.name}
+                    className="h-full w-full object-cover"
+                    fallbackClassName="bg-surface-2 h-full w-full"
+                    fallback={
+                      <span className="font-display text-foreground/20 text-7xl font-bold">
+                        {trainer.initials}
+                      </span>
+                    }
+                  />
+                </div>
                 <div className="p-6">
                   <div className="flex items-center gap-3">
                     <span className="text-warning flex items-center gap-1">
@@ -211,23 +217,19 @@ export default async function TrainerDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
               </div>
-            </Reveal>
+            </div>
 
             <div className="lg:col-span-3">
-              <Reveal>
-                <Badge variant="accent" className="mb-4">
-                  {trainer.specialty}
-                </Badge>
-                <h1 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-6xl">
-                  {trainer.name}
-                </h1>
-                <p className="text-muted-foreground mt-6 leading-relaxed whitespace-pre-line">
-                  {trainer.longBio}
-                </p>
-              </Reveal>
+              <h1 className="font-display text-foreground text-4xl font-bold tracking-[-0.02em] sm:text-6xl">
+                <MaskReveal as="span">{trainer.name}</MaskReveal>
+              </h1>
+              <p className="text-accent mt-3 text-sm font-medium">{trainer.specialty}</p>
+              <p className="text-muted-foreground mt-6 leading-relaxed whitespace-pre-line">
+                {trainer.longBio}
+              </p>
 
-              <Reveal delay={0.1} className="mt-8">
-                <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
+              <div className="mt-8">
+                <h2 className="text-foreground text-xl font-bold tracking-[-0.01em]">
                   Certifications
                 </h2>
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -238,23 +240,23 @@ export default async function TrainerDetailPage({ params }: { params: Promise<{ 
                     </Badge>
                   ))}
                 </div>
-              </Reveal>
+              </div>
 
-              <Reveal delay={0.15} className="mt-10">
-                <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
-                  Member Reviews
+              <div className="mt-10">
+                <h2 className="text-foreground text-xl font-bold tracking-[-0.01em]">
+                  Member reviews
                 </h2>
                 <div className="mt-5 space-y-4">
                   {trainer.reviews_list.map((review) => (
                     <div
                       key={review.name}
-                      className="border-border bg-surface/60 rounded-2xl border p-6 backdrop-blur-xl"
+                      className="border-border bg-surface/60 rounded-xl border p-6"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback>{review.initials}</AvatarFallback>
-                          </Avatar>
+                          <div className="bg-surface-2 border-border flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold text-muted-foreground">
+                            {review.initials}
+                          </div>
                           <div>
                             <p className="text-foreground text-sm font-semibold">{review.name}</p>
                             <div className="flex items-center gap-0.5">
@@ -279,7 +281,7 @@ export default async function TrainerDetailPage({ params }: { params: Promise<{ 
                     </div>
                   ))}
                 </div>
-              </Reveal>
+              </div>
             </div>
           </div>
         </div>

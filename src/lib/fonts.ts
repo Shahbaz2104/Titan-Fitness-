@@ -1,4 +1,4 @@
-import { Inter, Oswald } from "next/font/google";
+import { Archivo, Inter } from "next/font/google";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -6,9 +6,9 @@ export const inter = Inter({
   display: "swap",
 });
 
-export const oswald = Oswald({
+export const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-oswald",
+  variable: "--font-archivo",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  axes: ["wdth"],
 });

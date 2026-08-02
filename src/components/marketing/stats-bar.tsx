@@ -1,31 +1,30 @@
 "use client";
 
-import { Counter } from "@/components/ui/counter";
-import { Reveal } from "@/components/ui/reveal";
+import { GsapReveal } from "@/components/ui/gsap-reveal";
+import { CountUp } from "@/components/ui/count-up";
 
 const STATS = [
-  { value: 12000, suffix: "+", label: "Active Members", decimals: 0 },
-  { value: 85, suffix: "", label: "Expert Trainers", decimals: 0 },
-  { value: 240, suffix: "+", label: "Classes Weekly", decimals: 0 },
-  { value: 98, suffix: "%", label: "Member Satisfaction", decimals: 0 },
+  { to: 12000, suffix: "+", label: "Active members" },
+  { to: 85, suffix: "", label: "Expert trainers" },
+  { to: 240, suffix: "+", label: "Classes every week" },
+  { to: 98, suffix: "%", label: "Member satisfaction" },
 ];
 
 export function StatsBar() {
   return (
-    <section className="border-border bg-surface/40 relative border-y py-14">
-      <div className="via-accent/50 pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent" />
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
+    <section className="border-border bg-surface/30 border-y">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
         {STATS.map((stat, i) => (
-          <Reveal key={stat.label} delay={i * 0.1} className="text-center">
-            <p className="font-display text-foreground text-4xl font-bold sm:text-5xl">
-              <span className="text-gradient-red">
-                <Counter to={stat.value} suffix={stat.suffix} />
-              </span>
+          <GsapReveal
+            key={stat.label}
+            delay={i * 0.08}
+            className="flex flex-col items-center gap-1 border-border px-4 py-10 border-b odd:border-r sm:py-12 lg:border-b-0 lg:odd:border-r-0 lg:[&:not(:first-child)]:border-l"
+          >
+            <p className="font-display text-foreground text-4xl font-bold tracking-[-0.02em] sm:text-5xl">
+              <CountUp to={stat.to} suffix={stat.suffix} />
             </p>
-            <p className="text-muted-foreground mt-2 text-sm tracking-widest uppercase">
-              {stat.label}
-            </p>
-          </Reveal>
+            <p className="text-muted-foreground text-sm">{stat.label}</p>
+          </GsapReveal>
         ))}
       </div>
     </section>

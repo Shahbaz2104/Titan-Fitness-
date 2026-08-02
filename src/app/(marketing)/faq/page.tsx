@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/marketing/page-header";
-import { Reveal } from "@/components/ui/reveal";
+import { GsapReveal } from "@/components/ui/gsap-reveal";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -12,7 +12,6 @@ export const metadata = buildMetadata({
 const FAQ_GROUPS = [
   {
     category: "Membership & Billing",
-    icon: "💳",
     faqs: [
       {
         q: "How much does a membership cost?",
@@ -34,7 +33,6 @@ const FAQ_GROUPS = [
   },
   {
     category: "AI Features",
-    icon: "🤖",
     faqs: [
       {
         q: "How does the AI workout generator work?",
@@ -56,7 +54,6 @@ const FAQ_GROUPS = [
   },
   {
     category: "Training & Classes",
-    icon: "🏋️",
     faqs: [
       {
         q: "What classes do you offer?",
@@ -74,7 +71,6 @@ const FAQ_GROUPS = [
   },
   {
     category: "Plans & Results",
-    icon: "📈",
     faqs: [
       {
         q: "How fast will I see results?",
@@ -101,18 +97,15 @@ export default function FaqPage() {
       <section className="pb-24">
         <div className="mx-auto max-w-4xl space-y-12 px-4 sm:px-6">
           {FAQ_GROUPS.map((group, gi) => (
-            <Reveal key={group.category} delay={gi * 0.05}>
-              <div className="mb-6 flex items-center gap-3">
-                <span className="text-2xl">{group.icon}</span>
-                <h2 className="font-display text-foreground text-2xl font-bold tracking-tight uppercase">
-                  {group.category}
-                </h2>
-              </div>
+            <GsapReveal key={group.category} delay={gi * 0.05}>
+              <h2 className="text-foreground mb-6 text-2xl font-bold tracking-[-0.01em]">
+                {group.category}
+              </h2>
               <div className="space-y-3">
                 {group.faqs.map((faq) => (
                   <details
                     key={faq.q}
-                    className="group border-border bg-surface/60 open:border-primary/30 rounded-2xl border backdrop-blur-xl transition-colors hover:border-white/15"
+                    className="group border-border bg-surface/60 open:border-primary/30 rounded-xl border transition-colors hover:border-white/15"
                   >
                     <summary className="text-foreground flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-sm font-medium [&::-webkit-details-marker]:hidden">
                       {faq.q}
@@ -126,7 +119,7 @@ export default function FaqPage() {
                   </details>
                 ))}
               </div>
-            </Reveal>
+            </GsapReveal>
           ))}
         </div>
       </section>

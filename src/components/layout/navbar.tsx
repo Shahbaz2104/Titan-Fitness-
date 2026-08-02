@@ -24,25 +24,41 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = React.useState(false);
+  const [hidden, setHidden] = React.useState(false);
+  const lastY = React.useRef(0);
   const mobileOpen = useUIStore((s) => s.mobileNavOpen);
   const setMobileOpen = useUIStore((s) => s.setMobileNavOpen);
   const { data: user } = useUser();
 
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (latest) => {
+    const goingDown = latest > lastY.current;
+    lastY.current = latest;
     setScrolled(latest > 24);
+    if (mobileOpen || latest < 24) {
+      setHidden(false);
+      return;
+    }
+    setHidden(goingDown && latest > 140);
   });
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
-    <header
+    <motion.header
+      animate={{ y: hidden ? "-100%" : "0%" }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-500",
         scrolled ? "glass-strong shadow-card" : "bg-transparent"
       )}
     >
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
+      <nav
+        className={cn(
+          "mx-auto flex max-w-7xl items-center justify-between px-4 transition-[height] duration-300 sm:px-6 lg:px-8",
+          scrolled ? "h-14 sm:h-16" : "h-16 sm:h-20"
+        )}
+      >
         <Logo />
 
         <div className="hidden items-center gap-1 lg:flex">
@@ -74,7 +90,7 @@ export function Navbar() {
                 href="/dashboard/ai/chat"
                 className="group text-muted-foreground hover:text-accent flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors"
               >
-                <Sparkles className="text-accent h-4 w-4 transition-transform group-hover:rotate-12" />
+                <Sparkles className="text-accent h-4 w-4" />
                 AI Coach
               </Link>
               <Button asChild variant="default" size="sm">
@@ -148,6 +164,6 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

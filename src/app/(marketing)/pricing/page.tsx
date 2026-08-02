@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Check, Sparkles } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { PageHeader } from "@/components/marketing/page-header";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
-import { TiltCard } from "@/components/ui/tilt-card";
+import { GsapReveal, MaskReveal } from "@/components/ui/gsap-reveal";
 import { cn } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
 
@@ -99,99 +97,88 @@ export default function PricingPage() {
       <section className="pb-16">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
           {PLANS.map((plan, i) => (
-            <Reveal key={plan.slug} delay={i * 0.1}>
-              <TiltCard maxTilt={4} className="h-full">
-                <div
-                  className={cn(
-                    "relative flex h-full flex-col rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500",
-                    plan.popular
-                      ? "border-primary/40 from-primary/10 to-surface/60 shadow-glow bg-gradient-to-b"
-                      : "border-border bg-surface/60 hover:border-white/15"
-                  )}
-                >
-                  {plan.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2" variant="default">
-                      <Sparkles className="h-3 w-3" /> Most Popular
-                    </Badge>
-                  )}
-                  <h2 className="font-display text-foreground text-xl font-bold tracking-widest uppercase">
-                    {plan.name}
-                  </h2>
-                  <p className="text-muted-foreground mt-1.5 text-sm">{plan.tagline}</p>
-                  <div className="mt-6 flex items-end gap-1">
-                    <span
-                      className={cn(
-                        "font-display text-5xl font-bold",
-                        plan.popular ? "text-gradient" : "text-foreground"
-                      )}
-                    >
-                      ${plan.price}
-                    </span>
-                    <span className="text-muted-foreground pb-1.5 text-sm">{plan.period}</span>
-                  </div>
-                  <ul className="mt-7 flex-1 space-y-3.5">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="text-muted-foreground flex items-start gap-3 text-sm"
-                      >
-                        <span
-                          className={cn(
-                            "mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full",
-                            plan.popular ? "bg-primary/20" : "bg-success/15"
-                          )}
-                        >
-                          <Check
-                            className={cn(
-                              "h-3 w-3",
-                              plan.popular ? "text-primary" : "text-success"
-                            )}
-                          />
-                        </span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    asChild
-                    variant={plan.popular ? "default" : "outline"}
-                    className="group mt-8 w-full"
-                    size="lg"
-                  >
-                    <Link href="/register">
-                      {plan.cta}
-                      <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-                    </Link>
-                  </Button>
+            <GsapReveal key={plan.slug} delay={i * 0.1}>
+              <div
+                className={cn(
+                  "relative flex h-full flex-col rounded-2xl border p-8 transition-colors duration-300",
+                  plan.popular
+                    ? "border-primary/50 bg-surface"
+                    : "border-border bg-surface/60 hover:border-white/15"
+                )}
+              >
+                {plan.popular && (
+                  <span className="bg-primary text-primary-foreground absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-medium">
+                    Most Popular
+                  </span>
+                )}
+                <h2 className="font-display text-foreground text-xl font-bold tracking-[-0.01em]">
+                  {plan.name}
+                </h2>
+                <p className="text-muted-foreground mt-1.5 text-sm">{plan.tagline}</p>
+                <div className="mt-6 flex items-end gap-1">
+                  <span className="font-display text-foreground text-5xl font-bold">
+                    ${plan.price}
+                  </span>
+                  <span className="text-muted-foreground pb-1.5 text-sm">{plan.period}</span>
                 </div>
-              </TiltCard>
-            </Reveal>
+                <ul className="mt-7 flex-1 space-y-3.5">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="text-muted-foreground flex items-start gap-3 text-sm"
+                    >
+                      <span
+                        className={cn(
+                          "mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full",
+                          plan.popular ? "bg-primary/20" : "bg-success/15"
+                        )}
+                      >
+                        <Check
+                          className={cn(
+                            "h-3 w-3",
+                            plan.popular ? "text-primary" : "text-success"
+                          )}
+                        />
+                      </span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  variant={plan.popular ? "default" : "outline"}
+                  className="mt-8 w-full"
+                  size="lg"
+                >
+                  <Link href="/register">
+                    {plan.cta}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </GsapReveal>
           ))}
         </div>
       </section>
 
       <section className="pb-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <Reveal className="text-center">
-            <h2 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase sm:text-4xl">
-              Compare <span className="text-gradient">Plans</span>
+          <div className="text-center">
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+              <MaskReveal as="span">Compare plans</MaskReveal>
             </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="border-border bg-surface/60 mt-10 overflow-x-auto rounded-2xl border backdrop-blur-xl">
+          </div>
+          <GsapReveal delay={0.1}>
+            <div className="border-border bg-surface/60 mt-10 overflow-x-auto rounded-2xl border">
               <table className="w-full min-w-[600px] text-left text-sm">
                 <thead>
                   <tr className="border-border border-b">
                     <th className="text-muted-foreground px-6 py-4 font-medium">Feature</th>
-                    <th className="font-display text-foreground px-6 py-4 text-center font-bold tracking-wide uppercase">
+                    <th className="text-foreground px-6 py-4 text-center font-semibold">
                       Essential
                     </th>
-                    <th className="font-display text-primary px-6 py-4 text-center font-bold tracking-wide uppercase">
-                      Pro
-                    </th>
-                    <th className="font-display text-accent px-6 py-4 text-center font-bold tracking-wide uppercase">
-                      Elite
-                    </th>
+                    <th className="text-primary px-6 py-4 text-center font-semibold">Pro</th>
+                    <th className="text-accent px-6 py-4 text-center font-semibold">Elite</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -233,7 +220,7 @@ export default function PricingPage() {
                 </tbody>
               </table>
             </div>
-          </Reveal>
+          </GsapReveal>
         </div>
       </section>
     </>

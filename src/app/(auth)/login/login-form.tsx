@@ -67,7 +67,7 @@ export function LoginPageForm() {
     <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
         <h1 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
-          Welcome <span className="text-gradient">Back</span>
+          Welcome <span className="text-primary">Back</span>
         </h1>
         <p className="text-muted-foreground mt-2 text-sm">Log in to continue your training.</p>
       </div>

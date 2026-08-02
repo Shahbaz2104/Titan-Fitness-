@@ -1,15 +1,56 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-01 (final — **ALL PHASES COMPLETE & PUSHED TO GITHUB**)
+Updated: 2026-08-02
 
-## ✅ PROJECT COMPLETE
+## Phase 9 — Marketing redesign ("Black Iron") + motion enhancement — UNCOMMITTED
 
-- **Remote**: `https://github.com/Shahbaz2104/Titan-Fitness-.git` (origin/main)
-- **11 commits** pushed: phases 0–7 + fixes (see log below)
-- **Final state**: tsc ✓, eslint ✓, prettier ✓, 51/51 tests ✓, build ✓ (133 static pages), prod server verified on :3000, all sampled pages render OK
-- **CI**: `.github/workflows/ci.yml` — lint + typecheck + format + tests + build + docker on push/PR (will run on GitHub now that repo is live)
+Marketing-only UI/UX redesign (per user request, killing "AI slop"). Dashboard/admin untouched but share the primitives.
+
+### Direction
+
+- Dark near-monochrome ("Black Iron"): `#050505`/`#111` surfaces, crimson `#e63946` only as a functional signal
+- Display font: Oswald → **Archivo** (`src/lib/fonts.ts`, variable `--font-archivo`); fixed the self-referential `--font-display` token in `globals.css` that silently fell back to ui-sans-serif
+- Kill the gimmicks — deleted 8 now-unused files: `TiltCard`, `SpotlightCard`, `MagneticButton`, `Floating`, `AnimatedGradient`, `Counter`, `Reveal`, `RippleButton` (verified zero imports remain)
+- No gradient-text headlines, no `.bg-grid` overlays on marketing, headings `tracking-tight` (no forced `uppercase tracking-widest`)
+- Image-led cards with a graceful icon fallback so missing images never break the layout
+- Motion layer: **anime.js text effects + GSAP scroll choreography + Lenis smooth scroll**, all `prefers-reduced-motion` aware
+
+### New primitives
+
+- `src/components/ui/smart-image.tsx` — plain `<img>` (lazy/eager) + onError icon fallback; next/image would throw on missing files
+- `src/components/ui/gsap-reveal.tsx` — `GsapReveal` (ScrollTrigger fade/translate) + `MaskReveal` (line-mask headline)
+- `src/components/ui/anime-text.tsx` — `AnimeText`: per-char effects `rise` / `blur` / `flip`, stagger/delay/`scroll` (IntersectionObserver), reduced-motion aware
+- `src/components/ui/word-cycle.tsx` — `WordCycle`: rotating word swap via anime.js timeline; `{duration: 0, onComplete}` workaround (v4 `createTimer` returns `Timer`, not `TimerParams`); manual fallback when reduced motion or <2 words
+- `src/components/ui/scroll-progress.tsx` — top scroll progress bar (GSAP `scaleX` + ScrollTrigger scrub)
+- `src/components/ui/count-up.tsx` — scroll-triggered count-up (`tabular-nums`, prefix/suffix, reduced-motion fallback)
+- `src/components/ui/word-reveal.tsx` — word-by-word rise reveal
+- `src/components/ui/image-reveal.tsx` — clip-path inset + scale settling reveal on SmartImage
+- `src/components/ui/parallax.tsx` — scrub-based `yPercent` parallax wrapper
+- `src/components/ui/lenis-provider.tsx` — **Lenis** smooth scroll wired to GSAP ticker (`lenis.on("scroll", ScrollTrigger.update)` + `gsap.ticker.add(raf)`, `lagSmoothing(0)`), skipped under `prefers-reduced-motion`
+- `src/components/marketing/marquee.tsx` — pausable infinite text marquee with edge fade
+- `src/lib/gsap.ts` — gsap + ScrollTrigger client registration + `prefersReducedMotion()` helper
+- Deps added: `gsap@^3.15`, `@gsap/react@^2.1`, `animejs@^4.5` (ESM-only, v4 API), `lenis@^1.3`
+
+### Rewritten / enhanced (marketing surface)
+
+- **Home sections**: hero (full-bleed real video `public/videos/hero-bg.mp4` + layered poster fallback, GSAP line-mask headline, canvas-vhs depth parallax, `WordCycle` "knows your body./strength./progress./goals.", scroll-cue), stats-bar (`CountUp`), programs-grid, why-choose-us (now client — sticky left column + feature rows with ScrollTrigger `toggleClass` `is-active` highlight), trainer-showcase, testimonials (`AnimeText` heading + auto-advance carousel, pauses on hover), transformation-gallery (before/after slider), pricing-section (hover lift), faq-section, blog-preview (real thumbnails), cta-section
+- **Pages**: programs (list + detail), trainers (list + detail), pricing, about, gallery, blog (index + post), contact, faq, bmi, legal pages
+- **Shared**: page-header (`AnimeText` blur title + GSAP badge/description fade), navbar (hide-on-scroll-down + shrink + reveal-on-up via `useMotionValueEvent`), logo, footer, loading, auth layout + all auth forms (`text-gradient` → `text-primary`)
+- Real user assets wired in: `public/videos/hero-bg.mp4` (was `video.mp4`), `public/images/blog/{fat-loss.webp, barbell.jpeg, cardio.jpg, mindset.jpeg, protein.jpeg, recovery.jpg}`
+
+### Verification
+
+- `npm run typecheck` clean · `npm run lint` clean (0 errors, 3 intentional `<img>` warnings) · `npm test` 51/51 · `npm run build` clean (**133 static pages**)
+- Anime.js v4 type gotchas fixed: typed state maps as `Record<Effect, AnimationParams>` (an untyped `object` spread fails), and `createTimer()` → plain `{ duration: 0, onComplete }` timer-params object
+- Fixed pre-existing syntax errors found during the audit: `programs-grid.tsx` missing `</GsapReveal>`, `blog-data.ts` 6 missing commas after `image:`, `transformation-gallery.tsx` `react-hooks/set-state-in-effect` error
+
+### Blocked / next
+
+- Missing real images (render icon fallback, nothing breaks): `public/images/gallery/*` (10), `public/images/transformations/*` (8). Trainers/programs/hero-poster still Unsplash placeholders — drop real files in place, no code changes needed
+- Next: Playwright screenshot sweep of all marketing pages → commit Phase 9
 
 ## Git history
+
 ```
 36a5841 feat: Phase 7 — 30 new tests (validators, AI pricing), fix CI format check, format whole repo
 aba5724 feat: Phase 6 — robots.txt, sitemap.xml, security headers, apple-icon
@@ -25,25 +66,29 @@ fa71c1f feat: Phase 2 — notifications & nutrition dashboards, AI stubs, auth p
 ```
 
 ## Remaining (nice-to-have, NOT blockers)
+
 - Real API keys in `.env`: `OPENAI_API_KEY`, `STRIPE_SECRET_KEY`+`STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` (all fall back gracefully)
 - Strict CSP (needs nonce infra) — documented, skipped
 - Admin branches/classes CRUD forms (read-only lists today)
-- Marketing images (`public/images/programs/*.jpg` etc.) — user supplies
+- Replace Unsplash placeholders + add real marketing assets (`public/images/{gallery,transformations,trainers,programs}/`) — user supplies; icon fallbacks already in place (blog + hero video done)
 - Switch prod run to `node .next/standalone/server.js` (next start warns about standalone)
+
+> **Project status**: remote `https://github.com/Shahbaz2104/Titan-Fitness-.git` (origin/main), CI in `.github/workflows/ci.yml` (lint + typecheck + format + tests + build + docker). Phases 0–8 pushed; **Phase 9 redesign (Black Iron + anime.js + Lenis + GSAP choreography) is uncommitted in the working tree**.
 
 ## Phase Status Overview
 
-| Phase | Description                                                                         | Status                                                                     |
-| ----- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| 0     | Foundation (git, env, DB, migration, seed, legal pages, PWA, tests, CI, auth fixes) | ✅ Done (commit `59e1236`)                                                 |
-| 1     | Services + API routes (82 routes)                                                   | ✅ Done (commit `0b9dbdd`)                                                 |
-| 2     | User dashboard (16 pages)                                                           | ✅ Done (commit `8234d9b`)                                                 |
-| 3     | Admin panel                                                                         | ✅ Done (commit `629deb4`)                                                 |
-| 4     | AI features (real LLM wiring)                                                       | ✅ Done (commit `8e0399c`)                                                 |
-| 5     | Stripe, gamification UI, notifications                                              | ✅ Done (Stripe+OTP `267b5fb`, web push `223d3d6`)                         |
-| 6 | PWA, SEO, security | ✅ Done (commit `aba5724`) |
-| 7 | Tests + CI | ✅ Done (commit `36a5841`, 51 tests) |
-| 8     | Final audit, README, GitHub push                                                    | ✅ Done — pushed to GitHub (`origin/main`)                                |
+| Phase | Description                                                                         | Status                                             |
+| ----- | ----------------------------------------------------------------------------------- | -------------------------------------------------- |
+| 0     | Foundation (git, env, DB, migration, seed, legal pages, PWA, tests, CI, auth fixes) | ✅ Done (commit `59e1236`)                         |
+| 1     | Services + API routes (82 routes)                                                   | ✅ Done (commit `0b9dbdd`)                         |
+| 2     | User dashboard (16 pages)                                                           | ✅ Done (commit `8234d9b`)                         |
+| 3     | Admin panel                                                                         | ✅ Done (commit `629deb4`)                         |
+| 4     | AI features (real LLM wiring)                                                       | ✅ Done (commit `8e0399c`)                         |
+| 5     | Stripe, gamification UI, notifications                                              | ✅ Done (Stripe+OTP `267b5fb`, web push `223d3d6`) |
+| 6     | PWA, SEO, security                                                                  | ✅ Done (commit `aba5724`)                         |
+| 7     | Tests + CI                                                                          | ✅ Done (commit `36a5841`, 51 tests)               |
+| 8     | Final audit, README, GitHub push                                                    | ✅ Done — pushed to GitHub (`origin/main`)         |
+| 9     | Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion) | 🔶 Done in working tree — **not committed yet** |
 
 ## Phase 5 — Stripe + OTP Auth (UNCOMMITTED)
 
@@ -275,6 +320,7 @@ fa71c1f feat: Phase 2 — notifications & nutrition dashboards, AI stubs, auth p
 - Playwright installed as devDep (`npm i -D playwright` + `npx playwright install chromium`) for UI checks
 
 ## Session Handoff (2026-08-01 night, session 6)
+
 1. **Commit Phase 7**: `git add -A && git commit -m "feat: Phase 7 — 30 new tests (validators, AI pricing), fix CI format check, format whole repo"`
 2. Then Phase 8: final audit + GitHub push (gh CLI missing — may need manual `git remote add origin` + push)
 

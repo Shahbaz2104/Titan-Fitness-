@@ -11,6 +11,8 @@ import {
   Zap,
 } from "lucide-react";
 import { PageHeader } from "@/components/marketing/page-header";
+import { SmartImage } from "@/components/ui/smart-image";
+import { GsapReveal } from "@/components/ui/gsap-reveal";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -25,105 +27,89 @@ const PROGRAMS = [
     slug: "weight-loss",
     name: "Weight Loss",
     icon: Flame,
-    color: "text-accent",
     difficulty: "All Levels",
     duration: "8–12 weeks",
     trainer: "Emily Chen",
     description:
       "Metabolic conditioning, nutrition coaching, and AI meal plans engineered to burn fat while preserving muscle.",
     image: "/images/programs/weight-loss.jpg",
-    gradient: "from-accent/25",
   },
   {
     slug: "bodybuilding",
     name: "Bodybuilding",
     icon: Dumbbell,
-    color: "text-primary",
     difficulty: "Intermediate",
     duration: "12 weeks",
     trainer: "Marcus Cole",
     description:
       "Hypertrophy-focused splits, progressive overload tracking, and physique analytics for lean dense muscle.",
     image: "/images/programs/bodybuilding.jpg",
-    gradient: "from-primary/25",
   },
   {
     slug: "crossfit",
     name: "CrossFit",
     icon: Trophy,
-    color: "text-warning",
     difficulty: "All Levels",
     duration: "Ongoing",
     trainer: "David Okoro",
     description:
       "Constantly varied functional training — WODs, Olympic lifting, and conditioning for unmatched fitness.",
     image: "/images/programs/crossfit.jpg",
-    gradient: "from-warning/25",
   },
   {
     slug: "yoga",
     name: "Yoga",
     icon: Sparkles,
-    color: "text-success",
     difficulty: "All Levels",
     duration: "Ongoing",
     trainer: "Sara Khan",
     description:
       "Vinyasa, Hatha, and mobility flows that build flexibility, balance, and a calm, focused mind.",
     image: "/images/programs/yoga.jpg",
-    gradient: "from-success/25",
   },
   {
     slug: "cardio",
     name: "Cardio",
     icon: Heart,
-    color: "text-success",
     difficulty: "All Levels",
     duration: "8 weeks",
     trainer: "David Okoro",
     description:
       "Heart-rate zone training, intervals, and endurance building — from first mile to full marathon.",
     image: "/images/programs/cardio.jpg",
-    gradient: "from-success/25",
   },
   {
     slug: "hiit",
     name: "HIIT",
     icon: Zap,
-    color: "text-primary-light",
     difficulty: "Intermediate",
     duration: "6 weeks",
     trainer: "Emily Chen",
     description:
       "20-minute high-intensity sessions that torch calories and keep your metabolism elevated all day.",
     image: "/images/programs/hiit.jpg",
-    gradient: "from-primary/25",
   },
   {
     slug: "powerlifting",
     name: "Powerlifting",
     icon: Weight,
-    color: "text-accent",
     difficulty: "Advanced",
     duration: "16 weeks",
     trainer: "Marcus Cole",
     description:
       "Periodized programming for the squat, bench, and deadlift — with weekly PR testing and coaching.",
     image: "/images/programs/powerlifting.jpg",
-    gradient: "from-accent/25",
   },
   {
     slug: "calisthenics",
     name: "Calisthenics",
     icon: PersonStanding,
-    color: "text-warning",
     difficulty: "All Levels",
     duration: "12 weeks",
     trainer: "Sara Khan",
     description:
       "Master bodyweight strength — pull-ups, dips, handstands, and beyond. No weights, all control.",
     image: "/images/programs/calisthenics.jpg",
-    gradient: "from-warning/25",
   },
 ];
 
@@ -132,49 +118,49 @@ export default function ProgramsPage() {
     <>
       <PageHeader
         badge="Programs"
-        title="Choose Your"
-        highlight="Battle"
+        title="Choose your"
+        highlight="battle"
         description="Eight elite programs, each designed by certified coaches and supercharged with AI personalization."
       />
 
       <section className="pb-24">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:px-8">
-          {PROGRAMS.map((program) => (
-            <Link
-              key={program.slug}
-              href={`/programs/${program.slug}`}
-              className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow relative flex h-full flex-col overflow-hidden rounded-2xl border backdrop-blur-xl transition-all duration-500"
-            >
-              <div
-                className={`relative aspect-[16/9] overflow-hidden bg-gradient-to-br ${program.gradient} to-transparent`}
+          {PROGRAMS.map((program, i) => (
+            <GsapReveal key={program.slug} delay={(i % 3) * 0.07}>
+              <Link
+                href={`/programs/${program.slug}`}
+                className="group flex h-full flex-col"
               >
-                <div className="bg-grid absolute inset-0 opacity-50" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <program.icon
-                    className={`h-16 w-16 ${program.color} transition-all duration-500 group-hover:scale-125 group-hover:rotate-6`}
+                <div className="border-border relative aspect-[16/10] overflow-hidden rounded-xl border">
+                  <SmartImage
+                    src={program.image}
+                    alt={program.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    fallbackClassName="bg-surface-2 h-full w-full"
+                    fallback={<program.icon className="text-muted-foreground h-12 w-12 opacity-60" />}
                   />
+                  <span className="border-border bg-background/70 text-muted-foreground absolute top-3 right-3 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur-sm">
+                    {program.difficulty}
+                  </span>
                 </div>
-                <span className="glass text-foreground absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-medium">
-                  {program.difficulty}
-                </span>
-              </div>
-              <div className="flex flex-1 flex-col p-6">
-                <h2 className="font-display text-foreground text-xl font-bold tracking-wide uppercase">
-                  {program.name}
-                </h2>
-                <p className="text-muted-foreground mt-2 flex-1 text-sm leading-relaxed">
-                  {program.description}
-                </p>
-                <div className="border-border text-muted-foreground mt-5 flex items-center justify-between border-t pt-4 text-xs">
-                  <span>{program.duration}</span>
-                  <span>Coach: {program.trainer}</span>
+                <div className="flex flex-1 flex-col px-1 pt-5">
+                  <h2 className="font-display text-foreground text-xl font-bold tracking-[-0.01em]">
+                    {program.name}
+                  </h2>
+                  <p className="text-muted-foreground mt-2 flex-1 text-sm leading-relaxed">
+                    {program.description}
+                  </p>
+                  <div className="border-border text-muted-foreground mt-5 flex items-center justify-between border-t pt-4 text-xs">
+                    <span>{program.duration}</span>
+                    <span>Coach: {program.trainer}</span>
+                  </div>
+                  <span className="text-primary mt-4 inline-flex items-center gap-1.5 text-sm font-medium">
+                    View program
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
                 </div>
-                <span className="text-primary mt-4 inline-flex items-center gap-1.5 text-sm font-medium">
-                  View Program
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-              </div>
-            </Link>
+              </Link>
+            </GsapReveal>
           ))}
         </div>
       </section>

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AnalyticsProvider } from "@/providers/analytics-provider";
-import { inter, oswald } from "@/lib/fonts";
+import { inter, archivo } from "@/lib/fonts";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
 import "./globals.css";
 
@@ -56,7 +56,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${inter.variable} ${oswald.variable} font-sans`}>
+      <body className={`${inter.variable} ${archivo.variable} font-sans`}>
         <ThemeProvider>
           <AnalyticsProvider>
             <QueryProvider>{children}</QueryProvider>

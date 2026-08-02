@@ -1,4 +1,5 @@
 import { Hero } from "@/components/marketing/hero";
+import { Marquee } from "@/components/marketing/marquee";
 import { StatsBar } from "@/components/marketing/stats-bar";
 import { ProgramsGrid } from "@/components/marketing/programs-grid";
 import { WhyChooseUs } from "@/components/marketing/why-choose-us";
@@ -17,6 +18,17 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <Marquee
+        items={[
+          "Weight Loss",
+          "Bodybuilding",
+          "CrossFit",
+          "Yoga",
+          "HIIT",
+          "Powerlifting",
+          "Calisthenics",
+        ]}
+      />
       <StatsBar />
       <ProgramsGrid />
       <WhyChooseUs />

@@ -10,9 +10,15 @@ Titan Fitness covers the complete member journey — marketing site, authenticat
 
 ### Marketing site
 
-- Landing page with animated hero, stats counter, testimonials, transformation gallery, pricing, FAQ
-- Programs & trainers (dynamic SSG pages with seed data)
+- **"Black Iron" redesign** — dark near-monochrome surfaces, crimson `#e63946` only for functional signal, **Archivo** display font (replaces Oswald)
+- Landing page: full-bleed **real video hero** (`public/videos/hero-bg.mp4`, poster fallback), rotating word cycle ("knows your body./strength./progress./goals."), marquee strip, programs, why-us (sticky column + highlight-on-scroll), trainers, testimonials (auto-advancing), before/after transformation gallery, pricing, FAQ, blog preview, CTA
+- Programs & trainers (dynamic SSG pages with seed data), BMI calculator
 - Blog (posts, comments, likes, bookmarks, categories), gallery, contact
+- **Motion layer** — all `prefers-reduced-motion` aware:
+  - **Lenis** smooth scrolling wired into the GSAP ticker (`ScrollTrigger` stays in sync)
+  - **GSAP/ScrollTrigger** scroll choreography: line-mask headings, image clip-path reveals, parallax, count-ups, word-by-word reveals, top scroll-progress bar, navbar hide-on-scroll-down
+  - **anime.js** per-character text effects (`rise` / `blur` / `flip`) and the hero word-cycle
+- Image-led cards with graceful icon fallback (missing images never break the layout)
 - Legal pages: Terms, Privacy, Refund Policy
 - PWA assets (manifest, icons, og-image)
 
@@ -62,7 +68,7 @@ Points (dashboard ring), badges (12+ achievements), streaks, check-in streaks, w
 | ---------------- | ---------------------------------------------------------------- |
 | Framework        | Next.js 16.2.12 (App Router, Turbopack)                          |
 | UI               | React 19, TypeScript, Tailwind CSS v4                            |
-| Animations       | framer-motion 12                                                 |
+| Animations       | framer-motion 12 + GSAP (ScrollTrigger) + anime.js 4 + Lenis smooth scroll |
 | Forms/validation | react-hook-form + zod                                            |
 | Data             | Prisma 6.16 + PostgreSQL 16                                      |
 | Auth             | better-auth 1.6 (email+password, email OTP plugin, admin plugin) |
@@ -71,7 +77,7 @@ Points (dashboard ring), badges (12+ achievements), streaks, check-in streaks, w
 | Web Push         | `web-push` (VAPID) + service worker                              |
 | State            | Zustand (scalar selectors only!) + TanStack Query                |
 | Emails           | Resend (REST)                                                    |
-| Testing          | Vitest (18 tests), Playwright (manual UI checks)                 |
+| Testing          | Vitest (51 tests), Playwright (manual UI checks)                 |
 | CI               | GitHub Actions workflow included                                 |
 
 ---
@@ -215,8 +221,8 @@ prisma/
 ```bash
 npm run typecheck     # tsc --noEmit
 npm run lint          # eslint .
-npm test              # vitest (18 tests)
-npm run build         # production build (128 static pages)
+npm test              # vitest (51 tests)
+npm run build         # production build (133 static pages)
 ```
 
 Playwright is installed as a devDependency for browser UI sweeps:
@@ -239,23 +245,28 @@ CI: `.github/workflows/ci.yml` (typecheck + lint + tests on push/PR).
 - **AI route fallback**: never trust provider calls — every LLM path is wrapped in try/catch with rule-based fallback so the app never breaks without keys.
 - **Rate limiting** uses `rateLimitByUser(userId, limit, windowMs)` — 3 args.
 - **Prisma enums** differ from intuition: `AIStatus` = SUCCESS/FAILED/RATE_LIMITED; `PaymentMethod` has no STRIPE (use `CARD`); `TicketStatus` = OPEN/IN_PROGRESS/RESOLVED/CLOSED.
+- **anime.js v4** (ESM-only): timeline callbacks can't use `tl.add(createTimer())` (type mismatch) — pass a plain `{ duration: 0, onComplete }` object; type animated-state maps as `Record<Effect, AnimationParams>`, not `object`.
+- **Lenis + GSAP**: wire via `lenis.on("scroll", ScrollTrigger.update)` + `gsap.ticker.add((t) => lenis.raf(t * 1000))` + `lagSmoothing(0)`, and skip init entirely under `prefers-reduced-motion`.
 
 ---
 
 ## 📈 Roadmap / Status
 
-| Phase                                                          | Status                    |
-| -------------------------------------------------------------- | ------------------------- |
-| 0 — Foundation (env, DB, auth, seed, PWA, tests, CI)           | ✅ `59e1236`              |
-| 1 — Services + API routes (~95)                                | ✅ `0b9dbdd`              |
-| 2 — User dashboard (16 pages)                                  | ✅ `8234d9b`              |
-| 3 — Admin panel (11 pages)                                     | ✅ `629deb4`              |
-| 4 — AI features (LLM + fallback)                               | ✅ `8e0399c`              |
-| 5 — Stripe checkout + webhook, OTP auth | ✅ `267b5fb` |
-| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ `223d3d6` |
-| 6 — PWA/SEO/security audit (robots, sitemap, headers) | ✅ `aba5724` |
-| 7 — Tests + CI (51 tests, format fix) | ✅ `36a5841` |
-| 8 — Final audit, GitHub push | ✅ `origin/main` |
+| Phase                                                          | Status                        |
+| -------------------------------------------------------------- | ----------------------------- |
+| 0 — Foundation (env, DB, auth, seed, PWA, tests, CI)           | ✅ `59e1236`                  |
+| 1 — Services + API routes (~95)                                | ✅ `0b9dbdd`                  |
+| 2 — User dashboard (16 pages)                                  | ✅ `8234d9b`                  |
+| 3 — Admin panel (11 pages)                                     | ✅ `629deb4`                  |
+| 4 — AI features (LLM + fallback)                               | ✅ `8e0399c`                  |
+| 5 — Stripe checkout + webhook, OTP auth                        | ✅ `267b5fb`                  |
+| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ `223d3d6`                  |
+| 6 — PWA/SEO/security audit (robots, sitemap, headers)          | ✅ `aba5724`                  |
+| 7 — Tests + CI (51 tests, format fix)                          | ✅ `36a5841`                  |
+| 8 — Final audit, GitHub push                                   | ✅ `origin/main`              |
+| 9 — Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion) | 🔶 uncommitted (working tree) |
+
+> **Phase 9 note**: marketing pages reference `public/images/{trainers,programs,gallery,transformations,blog}/*` and `public/videos/hero-bg.mp4`. Blog images (6) and the hero video are real user assets. Unsplash placeholders cover trainers/programs/hero-poster; gallery/transformations render an icon fallback until real assets are added. No code changes needed to swap images — just drop files in place.
 
 Live status is tracked in [`PROGRESS.md`](./PROGRESS.md) — read the top section first; it always documents the current uncommitted state and the next step.
 

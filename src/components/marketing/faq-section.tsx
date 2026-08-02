@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Clock, ArrowRight, MessageCircle } from "lucide-react";
 import {
@@ -8,9 +6,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
+import { GsapReveal } from "@/components/ui/gsap-reveal";
+import { AnimeText } from "@/components/ui/anime-text";
 
 const FAQS = [
   {
@@ -43,13 +41,9 @@ export function FaqSection() {
   return (
     <section className="border-border bg-surface/30 relative border-y py-24 sm:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-5 lg:px-8">
-        <Reveal className="lg:col-span-2">
-          <Badge variant="warning" className="mb-4">
-            FAQs
-          </Badge>
-          <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase">
-            Questions? <br />
-            <span className="text-gradient">Answered.</span>
+        <GsapReveal className="lg:col-span-2">
+          <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+            <AnimeText text="Questions? Answered." effect="rise" scroll />
           </h2>
           <p className="text-muted-foreground mt-5 max-w-sm">
             Everything you need to know before you start your journey.
@@ -58,15 +52,15 @@ export function FaqSection() {
             <Clock className="text-primary h-4 w-4" />
             Average response time: under 2 hours
           </div>
-          <Button asChild variant="outline" className="group mt-5">
+          <Button asChild variant="outline" className="mt-5">
             <Link href="/faq">
               View all FAQs
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-        </Reveal>
+        </GsapReveal>
 
-        <Reveal delay={0.15} className="lg:col-span-3">
+        <GsapReveal delay={0.15} className="lg:col-span-3">
           <Accordion type="single" collapsible className="space-y-3">
             {FAQS.map((faq, i) => (
               <AccordionItem key={faq.q} value={`item-${i}`}>
@@ -82,7 +76,7 @@ export function FaqSection() {
               Chat with us
             </Link>
           </p>
-        </Reveal>
+        </GsapReveal>
       </div>
     </section>
   );

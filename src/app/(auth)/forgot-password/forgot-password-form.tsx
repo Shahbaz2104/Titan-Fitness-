@@ -92,7 +92,7 @@ export function ForgotPasswordPageForm() {
           <KeyRound className="text-primary h-8 w-8" />
         </span>
         <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
-          Reset your <span className="text-gradient">password</span>
+          Reset your <span className="text-primary">password</span>
         </h1>
         <p className="text-muted-foreground mt-2 text-sm">
           Enter your email, then choose how you want to reset it.

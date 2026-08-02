@@ -1,38 +1,125 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import * as React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
+import { AnimeText } from "@/components/ui/anime-text";
 import { cn } from "@/lib/utils";
 
 const GALLERY = [
-  { label: "Weight Loss", gradient: "from-primary/30 to-accent/10", emoji: "🔥" },
-  { label: "Muscle Gain", gradient: "from-accent/30 to-primary/10", emoji: "💪" },
-  { label: "Endurance", gradient: "from-success/30 to-primary/10", emoji: "🏃" },
-  { label: "Strength", gradient: "from-warning/30 to-accent/10", emoji: "🏋️" },
+  {
+    label: "Weight Loss",
+    before: "/images/transformations/weight-loss-before.jpg",
+    after: "/images/transformations/weight-loss-after.jpg",
+  },
+  {
+    label: "Muscle Gain",
+    before: "/images/transformations/muscle-gain-before.jpg",
+    after: "/images/transformations/muscle-gain-after.jpg",
+  },
+  {
+    label: "Endurance",
+    before: "/images/transformations/endurance-before.jpg",
+    after: "/images/transformations/endurance-after.jpg",
+  },
+  {
+    label: "Strength",
+    before: "/images/transformations/strength-before.jpg",
+    after: "/images/transformations/strength-after.jpg",
+  },
 ];
+
+function useImage(src?: string | null) {
+  const [state, setState] = React.useState<"loading" | "ready" | "failed">(() =>
+    src ? "loading" : "failed"
+  );
+
+  React.useEffect(() => {
+    if (!src) return;
+    const img = new Image();
+    img.onload = () => setState("ready");
+    img.onerror = () => setState("failed");
+    img.src = src;
+  }, [src]);
+
+  return state;
+}
+
+interface BeforeAfterProps {
+  before?: string | null;
+  after?: string | null;
+  label: string;
+}
+
+function BeforeAfter({ before, after, label }: BeforeAfterProps) {
+  const [value, setValue] = React.useState(50);
+  const beforeState = useImage(before);
+  const afterState = useImage(after);
+  const hasImages = beforeState !== "failed" && afterState !== "failed";
+
+  if (!hasImages) {
+    return (
+      <div className="border-border bg-surface-2 flex aspect-[4/3] items-end rounded-xl border p-8">
+        <div>
+          <p className="font-display text-foreground text-xl font-semibold">{label}</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Member success story · verified by Titan coaches
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-border relative aspect-[4/3] overflow-hidden rounded-xl border select-none">
+      {after && (
+        <img
+          src={after}
+          alt={`${label} after`}
+          className="absolute inset-0 h-full w-full object-cover"
+          draggable={false}
+        />
+      )}
+      {before && (
+        <img
+          src={before}
+          alt={`${label} before`}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ clipPath: `inset(0 0 0 ${value}%)` }}
+          draggable={false}
+        />
+      )}
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={value}
+        onChange={(e) => setValue(Number(e.target.value))}
+        aria-label={`Compare ${label} before and after`}
+        className="absolute inset-0 h-full w-full cursor-ew-resize appearance-none bg-transparent opacity-0"
+      />
+      <div
+        className="absolute top-0 bottom-0 w-px bg-white/90 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+        style={{ left: `${value}%` }}
+      />
+      <span className="bg-background/60 text-muted-foreground absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-wider backdrop-blur-sm">
+        Before
+      </span>
+      <span className="bg-background/60 text-success absolute top-3 right-3 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-wider backdrop-blur-sm">
+        After
+      </span>
+    </div>
+  );
+}
 
 export function TransformationGallery() {
   const [active, setActive] = React.useState(0);
-
-  React.useEffect(() => {
-    const interval = window.setInterval(() => {
-      setActive((prev) => (prev + 1) % GALLERY.length);
-    }, 4000);
-    return () => window.clearInterval(interval);
-  }, []);
 
   return (
     <section className="relative py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal direction="left">
-            <Badge variant="default" className="mb-4">
-              Transformations
-            </Badge>
-            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
-              Every Body Has A <span className="text-gradient">Before &amp; After</span>
+          <div>
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+              <AnimeText text="The proof is in the mirror" effect="blur" scroll />
             </h2>
             <p className="text-muted-foreground mt-5 max-w-md leading-relaxed">
               Thousands of members have rewritten their stories at Titan. Track your own
@@ -45,55 +132,24 @@ export function TransformationGallery() {
                   key={item.label}
                   onClick={() => setActive(i)}
                   className={cn(
-                    "rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300",
+                    "rounded-full border px-5 py-2.5 text-sm font-medium transition-colors duration-200",
                     active === i
-                      ? "border-primary bg-primary/10 text-primary shadow-glow"
-                      : "border-border bg-surface text-muted-foreground hover:text-foreground hover:border-white/20"
+                      ? "border-primary text-primary bg-primary/5"
+                      : "border-border bg-surface text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  {item.emoji} {item.label}
+                  {item.label}
                 </button>
               ))}
             </div>
-          </Reveal>
+          </div>
 
-          <Reveal direction="right" delay={0.15}>
-            <div className="border-border relative aspect-square overflow-hidden rounded-3xl border">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={active}
-                  initial={{ opacity: 0, scale: 1.08 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  className={cn(
-                    "absolute inset-0 flex items-end bg-gradient-to-br p-8",
-                    GALLERY[active].gradient
-                  )}
-                >
-                  <div className="bg-grid absolute inset-0 opacity-40" />
-                  <div className="relative">
-                    <p className="font-display text-foreground text-2xl font-bold uppercase">
-                      {GALLERY[active].label}
-                    </p>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      Member success story · verified by Titan coaches
-                    </p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-              <div className="absolute top-4 left-4 flex gap-2">
-                <span className="glass text-muted-foreground rounded-full px-3 py-1 text-[10px] font-medium tracking-widest uppercase">
-                  Before
-                </span>
-              </div>
-              <div className="absolute top-4 right-4 flex gap-2">
-                <span className="glass text-success rounded-full px-3 py-1 text-[10px] font-medium tracking-widest uppercase">
-                  After
-                </span>
-              </div>
-            </div>
-          </Reveal>
+          <BeforeAfter
+            key={GALLERY[active].label}
+            before={GALLERY[active].before}
+            after={GALLERY[active].after}
+            label={GALLERY[active].label}
+          />
         </div>
       </div>
     </section>

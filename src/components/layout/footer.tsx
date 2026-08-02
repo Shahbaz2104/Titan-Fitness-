@@ -55,7 +55,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="border-border bg-surface text-muted-foreground hover:border-primary/50 hover:text-primary hover:shadow-glow flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300"
+                  className="border-border bg-surface text-muted-foreground hover:border-primary/50 hover:text-primary flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
                 >
                   <Icon className="h-4 w-4" />
                 </Link>
@@ -65,9 +65,7 @@ export function Footer() {
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8">
             <div>
-              <h3 className="font-display text-foreground text-sm font-semibold tracking-widest uppercase">
-                Programs
-              </h3>
+              <h3 className="text-foreground text-sm font-semibold">Programs</h3>
               <ul className="mt-4 space-y-3">
                 {PRODUCT_LINKS.map((link) => (
                   <li key={link.href}>
@@ -82,9 +80,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-display text-foreground text-sm font-semibold tracking-widest uppercase">
-                Company
-              </h3>
+              <h3 className="text-foreground text-sm font-semibold">Company</h3>
               <ul className="mt-4 space-y-3">
                 {COMPANY_LINKS.map((link) => (
                   <li key={link.href}>
@@ -99,9 +95,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-display text-foreground text-sm font-semibold tracking-widest uppercase">
-                Contact
-              </h3>
+              <h3 className="text-foreground text-sm font-semibold">Contact</h3>
               <ul className="text-muted-foreground mt-4 space-y-3 text-sm">
                 <li className="flex items-center gap-2.5">
                   <MapPin className="text-primary h-4 w-4" />

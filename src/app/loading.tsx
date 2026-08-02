@@ -6,7 +6,7 @@ export default function Loading() {
         <div className="animate-spin-slow border-primary/20 border-t-primary relative h-16 w-16 rounded-full border-2" />
       </div>
       <div className="flex flex-col items-center gap-3">
-        <p className="font-display text-foreground text-xl font-bold tracking-widest uppercase">
+        <p className="font-display text-foreground text-xl font-bold tracking-[-0.02em]">
           Titan<span className="text-primary">Fitness</span>
         </p>
         <div className="bg-surface-2 h-1 w-40 overflow-hidden rounded-full">

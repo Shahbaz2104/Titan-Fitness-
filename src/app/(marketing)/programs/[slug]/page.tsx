@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
+import { SmartImage } from "@/components/ui/smart-image";
+import { GsapReveal, MaskReveal } from "@/components/ui/gsap-reveal";
 import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-static";
@@ -52,8 +53,7 @@ export const PROGRAMS = [
       "Monthly 1-on-1 coach check-in",
       "Progress photo & measurement logging",
     ],
-    color: "text-accent",
-    gradient: "from-accent/25",
+    image: "/images/programs/weight-loss.jpg",
   },
   {
     slug: "bodybuilding",
@@ -83,8 +83,7 @@ export const PROGRAMS = [
       "Quarterly physique photo analysis",
       "Competition prep guidance",
     ],
-    color: "text-primary",
-    gradient: "from-primary/25",
+    image: "/images/programs/bodybuilding.jpg",
   },
   {
     slug: "crossfit",
@@ -114,8 +113,7 @@ export const PROGRAMS = [
       "Mobility & recovery sessions",
       "Open Gym access 6am–11pm",
     ],
-    color: "text-warning",
-    gradient: "from-warning/25",
+    image: "/images/programs/crossfit.jpg",
   },
   {
     slug: "yoga",
@@ -145,8 +143,7 @@ export const PROGRAMS = [
       "Mats & props provided",
       "AI-posture feedback on request",
     ],
-    color: "text-success",
-    gradient: "from-success/25",
+    image: "/images/programs/yoga.jpg",
   },
   {
     slug: "cardio",
@@ -176,8 +173,7 @@ export const PROGRAMS = [
       "Recovery heart-rate analytics",
       "AI-pacing suggestions per session",
     ],
-    color: "text-success",
-    gradient: "from-success/25",
+    image: "/images/programs/cardio.jpg",
   },
   {
     slug: "hiit",
@@ -207,8 +203,7 @@ export const PROGRAMS = [
       "Rest timer built into app",
       "Ideal for busy schedules",
     ],
-    color: "text-primary-light",
-    gradient: "from-primary/25",
+    image: "/images/programs/hiit.jpg",
   },
   {
     slug: "powerlifting",
@@ -238,8 +233,7 @@ export const PROGRAMS = [
       "Meet-day preparation plan",
       "Belt & accessory guidance",
     ],
-    color: "text-accent",
-    gradient: "from-accent/25",
+    image: "/images/programs/powerlifting.jpg",
   },
   {
     slug: "calisthenics",
@@ -269,8 +263,7 @@ export const PROGRAMS = [
       "Strength milestone tracking",
       "Advanced: muscle-up, planche, front lever",
     ],
-    color: "text-warning",
-    gradient: "from-warning/25",
+    image: "/images/programs/calisthenics.jpg",
   },
 ];
 
@@ -294,34 +287,27 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <section className="relative overflow-hidden pt-32 pb-16 sm:pt-40">
-        <div
-          className={`pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-gradient-to-br ${program.gradient} blur-3xl`}
-        />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/programs"
-            className="group text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
+            className="text-muted-foreground hover:text-primary inline-flex items-center gap-2 text-sm transition-colors"
           >
-            <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+            <ArrowLeft className="h-4 w-4" />
             All programs
           </Link>
           <div className="mt-8 grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
               <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${program.gradient} border-border border`}
-                >
-                  <program.icon className={`h-7 w-7 ${program.color}`} />
+                <div className="border-border bg-surface-2 flex h-14 w-14 items-center justify-center rounded-xl border">
+                  <program.icon className={`h-7 w-7 ${program.icon === Flame || program.icon === Weight ? "text-accent" : "text-primary"}`} />
                 </div>
                 <Badge variant="secondary">{program.difficulty}</Badge>
                 <Badge variant="secondary">{program.duration}</Badge>
               </div>
-              <h1 className="font-display text-foreground mt-6 text-5xl font-bold tracking-tight uppercase sm:text-7xl">
+              <h1 className="font-display text-foreground mt-6 text-4xl font-bold tracking-[-0.02em] sm:text-6xl">
                 {program.name}
               </h1>
-              <p className="font-display text-primary mt-4 text-lg tracking-wide uppercase">
-                {program.tagline}
-              </p>
+              <p className="text-primary mt-4 text-lg font-medium">{program.tagline}</p>
               <p className="text-muted-foreground mt-5 max-w-xl leading-relaxed">
                 {program.description}
               </p>
@@ -340,35 +326,32 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                   ${program.price}
                   <span className="text-muted-foreground text-sm font-normal">/month</span>
                 </p>
-                <Button asChild size="lg" className="group">
+                <Button asChild size="lg">
                   <Link href="/register">
-                    Enroll Now
-                    <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                    Enroll now
+                    <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </div>
             </div>
 
-            <Reveal direction="left">
-              <div
-                className={`border-border relative aspect-square overflow-hidden rounded-3xl border bg-gradient-to-br ${program.gradient} to-transparent`}
-              >
-                <div className="bg-grid absolute inset-0 opacity-50" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <program.icon className={`h-40 w-40 ${program.color} opacity-30`} />
-                </div>
-                <div className="absolute right-5 bottom-5 left-5">
-                  <div className="glass rounded-2xl p-5">
-                    <p className="text-muted-foreground text-xs tracking-widest uppercase">
-                      This week
-                    </p>
-                    <p className="font-display text-foreground mt-1 text-lg font-semibold">
-                      {program.schedule[0].day}: {program.schedule[0].focus}
-                    </p>
-                  </div>
+            <div className="border-border relative aspect-[4/3] overflow-hidden rounded-2xl border">
+              <SmartImage
+                src={program.image}
+                alt={program.name}
+                className="h-full w-full object-cover"
+                fallbackClassName="bg-surface-2 h-full w-full"
+                fallback={<program.icon className="text-muted-foreground h-24 w-24 opacity-40" />}
+              />
+              <div className="absolute right-5 bottom-5 left-5">
+                <div className="bg-background/70 rounded-xl p-5 backdrop-blur-sm">
+                  <p className="text-muted-foreground text-xs">This week</p>
+                  <p className="font-display text-foreground mt-1 text-lg font-semibold">
+                    {program.schedule[0].day}: {program.schedule[0].focus}
+                  </p>
                 </div>
               </div>
-            </Reveal>
+            </div>
           </div>
         </div>
       </section>
@@ -377,29 +360,26 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2">
             <div>
-              <h2 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
-                Weekly <span className="text-gradient">Schedule</span>
+              <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em]">
+                <MaskReveal as="span">Weekly schedule</MaskReveal>
               </h2>
               <div className="mt-8 space-y-3">
-                {program.schedule.map((slot) => (
-                  <div
-                    key={slot.day}
-                    className="border-border bg-surface/60 hover:border-primary/30 flex items-center justify-between rounded-xl border px-5 py-4 transition-all duration-300"
-                  >
-                    <span className="font-display text-primary w-14 text-sm font-bold tracking-widest uppercase">
-                      {slot.day}
-                    </span>
-                    <span className="text-foreground flex items-center gap-2 text-sm">
-                      <Clock className="text-muted-foreground h-4 w-4" />
-                      {slot.focus}
-                    </span>
-                  </div>
+                {program.schedule.map((slot, i) => (
+                  <GsapReveal key={slot.day} delay={i * 0.03}>
+                    <div className="border-border bg-surface/60 hover:border-white/15 flex items-center justify-between rounded-xl border px-5 py-4 transition-colors duration-300">
+                      <span className="text-primary text-sm font-semibold">{slot.day}</span>
+                      <span className="text-foreground flex items-center gap-2 text-sm">
+                        <Clock className="text-muted-foreground h-4 w-4" />
+                        {slot.focus}
+                      </span>
+                    </div>
+                  </GsapReveal>
                 ))}
               </div>
             </div>
             <div>
-              <h2 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
-                What&apos;s <span className="text-gradient">Included</span>
+              <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em]">
+                <MaskReveal as="span">What&apos;s included</MaskReveal>
               </h2>
               <ul className="mt-8 space-y-4">
                 {program.features.map((feature) => (
@@ -411,10 +391,10 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                   </li>
                 ))}
               </ul>
-              <Button asChild variant="outline" size="lg" className="group mt-8">
+              <Button asChild variant="outline" size="lg" className="mt-8">
                 <Link href="/trainers">
                   Meet your coach — {program.trainer}
-                  <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>

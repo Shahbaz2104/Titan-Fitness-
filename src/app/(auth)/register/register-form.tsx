@@ -70,7 +70,7 @@ export function RegisterPageForm() {
     <div className="border-border bg-surface/60 shadow-card rounded-3xl border p-8 backdrop-blur-xl">
       <div className="text-center">
         <h1 className="font-display text-foreground text-3xl font-bold tracking-tight uppercase">
-          Join <span className="text-gradient">Titan</span>
+          Join <span className="text-primary">Titan</span>
         </h1>
         <p className="text-muted-foreground mt-2 text-sm">
           Create your account — it takes less than a minute.

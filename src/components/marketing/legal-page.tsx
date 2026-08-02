@@ -27,8 +27,8 @@ export function LegalPage({ data }: { data: LegalPageData }) {
         <p className="text-muted mb-10 text-sm">Last updated: {data.updated}</p>
         <div className="space-y-10">
           {data.sections.map((section) => (
-            <div key={section.heading} className="glass rounded-2xl p-6 sm:p-8">
-              <h2 className="font-display mb-4 text-xl font-semibold tracking-tight uppercase sm:text-2xl">
+            <div key={section.heading} className="border-border bg-surface/60 rounded-xl border p-6 sm:p-8">
+              <h2 className="text-foreground mb-4 text-xl font-bold tracking-[-0.01em] sm:text-2xl">
                 {section.heading}
               </h2>
               <div className="space-y-3">

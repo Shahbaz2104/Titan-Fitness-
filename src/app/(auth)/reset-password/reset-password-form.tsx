@@ -80,7 +80,7 @@ export function ResetPasswordPageForm() {
           )}
         </span>
         <h1 className="font-display text-foreground mt-6 text-2xl font-bold tracking-tight uppercase">
-          Choose a new <span className="text-gradient">password</span>
+          Choose a new <span className="text-primary">password</span>
         </h1>
         <p className="text-muted-foreground mt-2 text-sm">
           {isOtpMode

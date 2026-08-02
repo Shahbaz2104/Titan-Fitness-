@@ -1,9 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowRight, Clock, Eye, Heart } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/ui/reveal";
+import { ArrowRight, Clock } from "lucide-react";
+import { ImageReveal } from "@/components/ui/image-reveal";
+import { AnimeText } from "@/components/ui/anime-text";
+import { GsapReveal } from "@/components/ui/gsap-reveal";
 
 const POSTS = [
   {
@@ -13,8 +12,7 @@ const POSTS = [
       "Forget crash diets. These evidence-based habits are what actually move the needle long-term.",
     category: "Nutrition",
     readTime: 8,
-    views: 12400,
-    likes: 342,
+    image: "/images/blog/fat-loss.webp",
   },
   {
     slug: "the-complete-beginner-guide-to-barbell-training",
@@ -23,8 +21,7 @@ const POSTS = [
       "Master the squat, bench, and deadlift with this step-by-step guide to technique and programming.",
     category: "Strength",
     readTime: 12,
-    views: 9800,
-    likes: 415,
+    image: "/images/blog/barbell.jpeg",
   },
   {
     slug: "why-rest-days-are-where-gains-are-made",
@@ -33,8 +30,7 @@ const POSTS = [
       "Recovery isn't laziness — it's training. Here's how to optimize sleep, nutrition, and recovery.",
     category: "Recovery",
     readTime: 6,
-    views: 15200,
-    likes: 528,
+    image: "/images/blog/recovery.jpg",
   },
 ];
 
@@ -43,60 +39,50 @@ export function BlogPreview() {
     <section className="relative py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-          <Reveal>
-            <Badge variant="default" className="mb-4">
-              The Titan Blog
-            </Badge>
-            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
-              Latest <span className="text-gradient">Insights</span>
+          <div className="max-w-xl">
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+              <AnimeText text="From the Titan blog" effect="blur" scroll />
             </h2>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <Link
-              href="/blog"
-              className="group text-primary hover:text-accent inline-flex items-center gap-2 text-sm font-medium transition-colors"
-            >
-              All articles
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </Reveal>
+          </div>
+          <Link
+            href="/blog"
+            className="text-primary hover:text-primary-light inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
+          >
+            All articles
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
           {POSTS.map((post, i) => (
-            <Reveal key={post.slug} delay={i * 0.1}>
-              <Link
-                href={`/blog/${post.slug}`}
-                className="group border-border bg-surface/60 hover:border-primary/30 hover:shadow-glow flex h-full flex-col rounded-2xl border p-7 backdrop-blur-xl transition-all duration-500"
-              >
-                <div className="mb-5 flex items-center justify-between">
-                  <Badge variant="secondary">{post.category}</Badge>
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                    <Clock className="h-3.5 w-3.5" />
-                    {post.readTime} min read
-                  </span>
+            <GsapReveal key={post.slug} delay={i * 0.1}>
+              <Link href={`/blog/${post.slug}`} className="group flex h-full flex-col">
+                <div className="border-border aspect-[16/10] overflow-hidden rounded-xl border">
+                  <ImageReveal
+                    src={post.image}
+                    alt={post.title}
+                    className="h-full w-full"
+                    imgClassName="group-hover:scale-105"
+                    fallbackClassName="bg-surface-2 h-full w-full"
+                  />
                 </div>
-                <h3 className="font-display text-foreground group-hover:text-primary text-lg leading-snug font-semibold tracking-wide transition-colors duration-300">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground mt-3 flex-1 text-sm leading-relaxed">
-                  {post.excerpt}
-                </p>
-                <div className="border-border text-muted-foreground mt-6 flex items-center gap-5 border-t pt-4 text-xs">
-                  <span className="flex items-center gap-1.5">
-                    <Eye className="h-3.5 w-3.5" />
-                    {(post.views / 1000).toFixed(1)}k
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Heart className="text-primary h-3.5 w-3.5" />
-                    {post.likes}
-                  </span>
-                  <span className="text-primary ml-auto flex items-center gap-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    Read <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
+                <div className="flex flex-1 flex-col px-1 pt-5">
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="text-primary font-medium">{post.category}</span>
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5" />
+                      {post.readTime} min read
+                    </span>
+                  </div>
+                  <h3 className="text-foreground mt-3 text-lg leading-snug font-semibold tracking-[-0.01em] transition-colors duration-200 group-hover:text-primary">
+                    {post.title}
+                  </h3>
+                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                    {post.excerpt}
+                  </p>
                 </div>
               </Link>
-            </Reveal>
+            </GsapReveal>
           ))}
         </div>
       </div>

@@ -1,7 +1,5 @@
 import { PageHeader } from "@/components/marketing/page-header";
-import { Reveal } from "@/components/ui/reveal";
-import { Badge } from "@/components/ui/badge";
-import { Counter } from "@/components/ui/counter";
+import { GsapReveal, MaskReveal } from "@/components/ui/gsap-reveal";
 import { Trophy, Award, Medal, ShieldCheck, Target, Heart } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 
@@ -15,31 +13,31 @@ export const metadata = buildMetadata({
 const TIMELINE = [
   {
     year: "2018",
-    title: "The First Rep",
+    title: "The first rep",
     description:
       "Titan Fitness opens its doors as a single 2,000 sq ft warehouse gym with 3 squat racks and a dream.",
   },
   {
     year: "2020",
-    title: "Going Digital",
+    title: "Going digital",
     description:
       "We launch member tracking apps, QR check-ins, and online class booking — a first in our city.",
   },
   {
     year: "2022",
-    title: "The Trainer Academy",
+    title: "The trainer academy",
     description:
       "Our in-house certification program produces 85+ elite coaches with a 4.9-star average rating.",
   },
   {
     year: "2024",
-    title: "AI Enters The Game",
+    title: "AI enters the game",
     description:
       "Titan becomes the first gym in the region powered by AI — generating workouts, meal plans, and coaching in seconds.",
   },
   {
     year: "2026",
-    title: "12,000+ Strong",
+    title: "12,000+ strong",
     description:
       "Three flagship branches, 240 weekly classes, and a community that shows up every single day.",
   },
@@ -48,7 +46,7 @@ const TIMELINE = [
 const VALUES = [
   {
     icon: Target,
-    title: "Results First",
+    title: "Results first",
     description: "Every program, every coach, every feature exists to move your numbers.",
   },
   {
@@ -58,7 +56,7 @@ const VALUES = [
   },
   {
     icon: ShieldCheck,
-    title: "Safety Always",
+    title: "Safety always",
     description: "Certified coaching, clean equipment, and injury-prevention first training.",
   },
 ];
@@ -68,68 +66,61 @@ export default function AboutPage() {
     <>
       <PageHeader
         badge="Our Story"
-        title="Forged In"
-        highlight="Iron & Discipline"
+        title="Forged in"
+        highlight="iron & discipline"
         description="From a single squat rack to an AI-powered fitness empire — this is the Titan story."
       />
 
       {/* Mission & Vision */}
       <section className="relative py-12">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <Reveal>
-            <div className="group border-border bg-surface/60 hover:border-primary/30 h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500">
+          <GsapReveal>
+            <div className="border-border bg-surface/60 h-full rounded-xl border p-8">
               <div className="bg-primary/15 mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
                 <Target className="text-primary h-6 w-6" />
               </div>
-              <h2 className="font-display text-foreground text-2xl font-bold tracking-wide uppercase">
-                Our Mission
-              </h2>
+              <h2 className="text-foreground text-2xl font-bold tracking-[-0.01em]">Our mission</h2>
               <p className="text-muted-foreground mt-3 leading-relaxed">
                 To make world-class coaching accessible to everyone by pairing certified human
                 trainers with AI intelligence — so that no member ever wonders what to do next.
               </p>
             </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="group border-border bg-surface/60 hover:border-accent/30 h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500">
+          </GsapReveal>
+          <GsapReveal delay={0.1}>
+            <div className="border-border bg-surface/60 h-full rounded-xl border p-8">
               <div className="bg-accent/15 mb-4 flex h-12 w-12 items-center justify-center rounded-xl">
                 <Award className="text-accent h-6 w-6" />
               </div>
-              <h2 className="font-display text-foreground text-2xl font-bold tracking-wide uppercase">
-                Our Vision
-              </h2>
+              <h2 className="text-foreground text-2xl font-bold tracking-[-0.01em]">Our vision</h2>
               <p className="text-muted-foreground mt-3 leading-relaxed">
                 A world where every person has a personal coach — where technology and training
                 merge so deeply that reaching your goals becomes the default outcome.
               </p>
             </div>
-          </Reveal>
+          </GsapReveal>
         </div>
       </section>
 
       {/* Timeline */}
       <section className="relative py-16 sm:py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <Reveal className="text-center">
-            <Badge variant="default" className="mb-4">
-              Our Journey
-            </Badge>
-            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase sm:text-5xl">
-              The <span className="text-gradient">Timeline</span>
+          <div className="text-center">
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+              <MaskReveal as="span">The journey</MaskReveal>
             </h2>
-          </Reveal>
+          </div>
           <div className="relative mt-16">
             <div className="from-primary via-border absolute top-0 left-4 h-full w-px bg-gradient-to-b to-transparent sm:left-1/2" />
             <div className="space-y-12">
               {TIMELINE.map((item, i) => (
-                <Reveal key={item.year} delay={i * 0.05}>
+                <GsapReveal key={item.year} delay={i * 0.05}>
                   <div
                     className={`relative flex flex-col gap-3 pl-12 sm:w-1/2 sm:pl-0 ${
                       i % 2 === 0 ? "sm:pr-12 sm:text-right" : "sm:ml-auto sm:pl-12"
                     }`}
                   >
                     <span
-                      className={`border-primary/40 bg-surface shadow-glow absolute top-1 left-4 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border sm:left-auto ${
+                      className={`border-primary/40 bg-surface absolute top-1 left-4 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border sm:left-auto ${
                         i % 2 === 0
                           ? "sm:-right-4 sm:translate-x-1/2"
                           : "sm:-left-4 sm:-translate-x-1/2"
@@ -137,11 +128,9 @@ export default function AboutPage() {
                     >
                       <Medal className="text-primary h-4 w-4" />
                     </span>
-                    <div className="border-border bg-surface/60 hover:border-primary/30 rounded-2xl border p-6 backdrop-blur-xl transition-all duration-500">
-                      <p className="font-display text-gradient-red text-2xl font-bold">
-                        {item.year}
-                      </p>
-                      <h3 className="font-display text-foreground mt-1 text-lg font-semibold tracking-wide uppercase">
+                    <div className="border-border bg-surface/60 rounded-xl border p-6">
+                      <p className="font-display text-primary text-2xl font-bold">{item.year}</p>
+                      <h3 className="text-foreground mt-1 text-lg font-semibold tracking-[-0.01em]">
                         {item.title}
                       </h3>
                       <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
@@ -149,7 +138,7 @@ export default function AboutPage() {
                       </p>
                     </div>
                   </div>
-                </Reveal>
+                </GsapReveal>
               ))}
             </div>
           </div>
@@ -157,50 +146,29 @@ export default function AboutPage() {
       </section>
 
       {/* Awards & Certifications */}
-      <section className="border-border bg-surface/30 relative border-y py-16 sm:py-24">
+      <section className="border-border bg-surface/30 border-y py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal className="text-center">
-            <Badge variant="warning" className="mb-4">
-              Awards &amp; Certifications
-            </Badge>
-            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight uppercase">
-              Recognized <span className="text-gradient">Excellence</span>
+          <div className="text-center">
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
+              <MaskReveal as="span">Recognized excellence</MaskReveal>
             </h2>
-          </Reveal>
+          </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              {
-                icon: Trophy,
-                title: "Best Gym of the Year",
-                org: "Fitness Awards 2025",
-              },
-              {
-                icon: Medal,
-                title: "Top 10 Fitness Tech",
-                org: "Startup Weekly 2024",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Certified Safe Facility",
-                org: "National Fitness Council",
-              },
-              {
-                icon: Award,
-                title: "Outstanding Coaching",
-                org: "Coach Excellence Program 2025",
-              },
+              { icon: Trophy, title: "Best gym of the year", org: "Fitness Awards 2025" },
+              { icon: Medal, title: "Top 10 fitness tech", org: "Startup Weekly 2024" },
+              { icon: ShieldCheck, title: "Certified safe facility", org: "National Fitness Council" },
+              { icon: Award, title: "Outstanding coaching", org: "Coach Excellence Program 2025" },
             ].map((award, i) => (
-              <Reveal key={award.title} delay={i * 0.08}>
-                <div className="group border-border bg-surface/60 hover:border-warning/40 rounded-2xl border p-7 text-center backdrop-blur-xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,193,7,0.15)]">
-                  <div className="bg-warning/10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+              <GsapReveal key={award.title} delay={i * 0.08}>
+                <div className="border-border bg-surface/60 h-full rounded-xl border p-7 text-center">
+                  <div className="bg-warning/10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl">
                     <award.icon className="text-warning h-7 w-7" />
                   </div>
-                  <h3 className="font-display text-foreground text-base font-semibold tracking-wide uppercase">
-                    {award.title}
-                  </h3>
+                  <h3 className="text-foreground text-base font-semibold">{award.title}</h3>
                   <p className="text-muted-foreground mt-1.5 text-xs">{award.org}</p>
                 </div>
-              </Reveal>
+              </GsapReveal>
             ))}
           </div>
         </div>
@@ -210,21 +178,17 @@ export default function AboutPage() {
       <section className="py-16 sm:py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 text-center sm:px-6 lg:grid-cols-4 lg:px-8">
           {[
-            { value: 12000, suffix: "+", label: "Members Transformed" },
-            { value: 85, suffix: "", label: "Certified Trainers" },
-            { value: 3, suffix: "", label: "Branches" },
-            { value: 97, suffix: "%", label: "Renewal Rate" },
+            { value: "12,000+", label: "Members transformed" },
+            { value: "85", label: "Certified trainers" },
+            { value: "3", label: "Branches" },
+            { value: "97%", label: "Renewal rate" },
           ].map((stat, i) => (
-            <Reveal key={stat.label} delay={i * 0.08}>
+            <GsapReveal key={stat.label} delay={i * 0.08}>
               <p className="font-display text-foreground text-4xl font-bold sm:text-6xl">
-                <span className="text-gradient-red">
-                  <Counter to={stat.value} suffix={stat.suffix} />
-                </span>
+                {stat.value}
               </p>
-              <p className="text-muted-foreground mt-2 text-sm tracking-widest uppercase">
-                {stat.label}
-              </p>
-            </Reveal>
+              <p className="text-muted-foreground mt-2 text-sm">{stat.label}</p>
+            </GsapReveal>
           ))}
         </div>
       </section>
@@ -234,19 +198,19 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-5 lg:grid-cols-3">
             {VALUES.map((value, i) => (
-              <Reveal key={value.title} delay={i * 0.1}>
-                <div className="group border-border bg-surface/60 h-full rounded-2xl border p-8 backdrop-blur-xl transition-all duration-500 hover:border-white/15">
-                  <div className="border-border bg-surface-2 mb-5 flex h-12 w-12 items-center justify-center rounded-xl border transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+              <GsapReveal key={value.title} delay={i * 0.1}>
+                <div className="border-border bg-surface/60 h-full rounded-xl border p-8">
+                  <div className="border-border bg-surface-2 mb-5 flex h-12 w-12 items-center justify-center rounded-xl border">
                     <value.icon className="text-primary h-6 w-6" />
                   </div>
-                  <h3 className="font-display text-foreground text-lg font-semibold tracking-wide uppercase">
+                  <h3 className="text-foreground text-lg font-semibold tracking-[-0.01em]">
                     {value.title}
                   </h3>
                   <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                     {value.description}
                   </p>
                 </div>
-              </Reveal>
+              </GsapReveal>
             ))}
           </div>
         </div>
