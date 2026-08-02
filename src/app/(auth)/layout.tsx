@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/shared/logo";
+import { SmartImage } from "@/components/ui/smart-image";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <span>85 trainers</span>
             <span>240+ classes weekly</span>
             <span>12k members</span>
+          </div>
+          <div className="border-border mt-10 max-w-sm overflow-hidden rounded-xl border">
+            <SmartImage
+              src="/girl1.png"
+              alt="Titan Fitness community"
+              className="aspect-[2/1] w-full object-cover"
+              fallbackClassName="bg-surface-2 aspect-[2/1] w-full"
+            />
           </div>
         </div>
         <p className="text-muted-foreground text-xs">

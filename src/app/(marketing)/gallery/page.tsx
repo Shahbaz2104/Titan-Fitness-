@@ -18,14 +18,14 @@ const CATEGORIES = [
 const TILES = [
   { id: "power-rack", category: "strength", caption: "Power rack zone", image: "/images/gallery/power-rack.jpg", h: "row-span-2" },
   { id: "hiit-studio", category: "classes", caption: "HIIT studio", image: "/images/gallery/hiit-studio.jpg", h: "" },
-  { id: "member-month", category: "members", caption: "Member of the month", image: "/images/gallery/member-of-the-month.jpg", h: "" },
+  { id: "member-month", category: "members", caption: "Member of the month", image: "/marcus.jpg", h: "" },
   { id: "main-floor", category: "facility", caption: "Main floor", image: "/images/gallery/main-floor.jpg", h: "row-span-2" },
   { id: "yoga-room", category: "classes", caption: "Yoga room", image: "/images/gallery/yoga-room.jpg", h: "" },
-  { id: "challenge-winners", category: "members", caption: "Challenge winners", image: "/images/gallery/challenge-winners.jpg", h: "" },
+  { id: "challenge-winners", category: "members", caption: "Challenge winners", image: "/male3.jpg", h: "" },
   { id: "free-weights", category: "strength", caption: "Free weights", image: "/images/gallery/free-weights.jpg", h: "" },
   { id: "recovery-suite", category: "facility", caption: "Recovery suite", image: "/images/gallery/recovery-suite.jpg", h: "" },
   { id: "boxing-corner", category: "classes", caption: "Boxing corner", image: "/images/gallery/boxing-corner.jpg", h: "row-span-2" },
-  { id: "community-night", category: "members", caption: "Community night", image: "/images/gallery/community-night.jpg", h: "" },
+  { id: "community-night", category: "members", caption: "Community night", image: "/female2.jpg", h: "" },
 ];
 
 export default function GalleryPage() {

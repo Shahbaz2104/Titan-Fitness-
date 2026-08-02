@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import * as React from "react";
 import { AnimeText } from "@/components/ui/anime-text";
+import { SmartImage } from "@/components/ui/smart-image";
 import { cn } from "@/lib/utils";
 
 const TESTIMONIALS = [
@@ -13,6 +14,7 @@ const TESTIMONIALS = [
     quote:
       "The AI workout generator feels like having a personal coach in my pocket. I lost 24 kg without ever feeling lost in the gym.",
     initials: "JR",
+    avatar: "/marcus.jpg",
     rating: 5,
   },
   {
@@ -29,6 +31,7 @@ const TESTIMONIALS = [
     quote:
       "The strength program took me from 90kg to 140kg bench in a year. The trainer feedback and analytics kept me dialed in.",
     initials: "TW",
+    avatar: "/male3.jpg",
     rating: 5,
   },
   {
@@ -53,6 +56,7 @@ const TESTIMONIALS = [
     quote:
       "As a busy mom, the 20-minute HIIT sessions and smart scheduling changed my life. I've never been more consistent.",
     initials: "PS",
+    avatar: "/female2.jpg",
     rating: 5,
   },
 ];
@@ -107,9 +111,23 @@ export function Testimonials() {
                     &ldquo;{testimonial.quote}&rdquo;
                   </blockquote>
                   <figcaption className="border-border mt-6 flex items-center gap-3 border-t pt-5">
-                    <div className="bg-surface-2 border-border flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold text-muted-foreground">
-                      {testimonial.initials}
-                    </div>
+                    {testimonial.avatar ? (
+                      <SmartImage
+                        src={testimonial.avatar}
+                        alt={testimonial.name}
+                        className="border-border h-10 w-10 rounded-full border object-cover"
+                        fallbackClassName="bg-surface-2 border-border h-10 w-10 rounded-full border"
+                        fallback={
+                          <span className="text-muted-foreground text-xs font-semibold">
+                            {testimonial.initials}
+                          </span>
+                        }
+                      />
+                    ) : (
+                      <div className="bg-surface-2 border-border flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold text-muted-foreground">
+                        {testimonial.initials}
+                      </div>
+                    )}
                     <div>
                       <p className="text-foreground text-sm font-semibold">{testimonial.name}</p>
                       <p className="text-muted-foreground text-xs">{testimonial.role}</p>
