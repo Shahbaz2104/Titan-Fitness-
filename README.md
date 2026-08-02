@@ -133,6 +133,24 @@ npm run dev          # http://localhost:3000
 npm run build && npm run start   # production
 ```
 
+### 4. Deploy to Vercel
+
+The marketing site is fully static (build needs **no** database — blog/programs/trainers are bundled data), and `prisma/schema.prisma` already has the serverless `binaryTargets` (`linux-musl-openssl-3.0.x`).
+
+1. **Create a hosted Postgres** (Neon / Supabase / Vercel Postgres) — the app's dynamic features (auth, dashboard, admin, AI, payments) need a real DB; the local `localhost` URL won't work.
+2. **Add env vars in Vercel** (Project → Settings → Environment Variables):
+   - Required: `DATABASE_URL` (hosted), `BETTER_AUTH_SECRET` (keep the same value as local), `BETTER_AUTH_URL` and `NEXT_PUBLIC_APP_URL` = your production domain
+   - Optional (all have graceful fallbacks): `OPENAI_API_KEY`, `AI_MODEL`, Stripe keys + `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`, `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`
+3. **Migrate + seed the production DB** (against the prod `DATABASE_URL`):
+   ```bash
+   npx prisma migrate deploy
+   npm run db:seed        # creates the admin/member test accounts on prod
+   ```
+4. **Deploy** — connect the GitHub repo (`Shahbaz2104/Titan-Fitness-`) in Vercel. Build command stays `next build`; `postinstall: prisma generate` runs automatically. Your public assets (blog images, hero video) are committed and deploy with the repo.
+5. **After deploy** — point the **Stripe webhook** at `https://<your-domain>/api/payments/webhook` (Stripe Dashboard → Developers → Webhooks).
+
+> **Note**: local DB data doesn't carry over; sessions invalidate when the domain changes. The membership-expiry and dead-push-subscription scanner needs an external cron trigger (no `vercel.json` cron is configured yet).
+
 ### Test accounts (seed, password `Titan@12345`)
 
 | Role        | Email                     |

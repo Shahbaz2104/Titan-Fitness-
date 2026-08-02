@@ -67,6 +67,17 @@ fa71c1f feat: Phase 2 — notifications & nutrition dashboards, AI stubs, auth p
 59e1236 chore: foundation — migrations, seed, legal pages, PWA assets, tests, CI, fixes
 ```
 
+## Vercel deploy checklist (ready to go)
+
+Code-side is done: marketing site is fully static (build needs no DB), `binaryTargets` = `["native", "linux-musl-openssl-3.0.x"]` committed (`cfacbb9`). Remaining steps are Vercel-side:
+
+1. Hosted Postgres (Neon / Supabase / Vercel Postgres) → set `DATABASE_URL`
+2. Vercel env vars: `DATABASE_URL`, `BETTER_AUTH_SECRET` (same as local), `BETTER_AUTH_URL`, `NEXT_PUBLIC_APP_URL` = prod domain; optional `OPENAI_API_KEY`, Stripe keys, `RESEND_API_KEY`, VAPID keys, Google OAuth
+3. `npx prisma migrate deploy` + `npm run db:seed` against prod DB (creates admin/member test accounts)
+4. Deploy from GitHub repo (`Shahbaz2104/Titan-Fitness-`); build = `next build`, `postinstall: prisma generate` runs automatically
+5. Point Stripe webhook at `https://<domain>/api/payments/webhook`
+6. Post-deploy: add a cron (Vercel cron / GitHub Action) for membership-expiry + dead-push-subscription scanning (no cron configured yet)
+
 ## Remaining (nice-to-have, NOT blockers)
 
 - Real API keys in `.env`: `OPENAI_API_KEY`, `STRIPE_SECRET_KEY`+`STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` (all fall back gracefully)
