@@ -2,6 +2,8 @@
 
 Updated: 2026-08-02
 
+> Short version of pending work + reminders: see **[NEXT-STEPS.md](./NEXT-STEPS.md)**.
+
 ## Phase 9 — Marketing redesign ("Black Iron") + motion enhancement — committed `b59e714`
 
 Marketing-only UI/UX redesign (per user request, killing "AI slop"). Dashboard/admin untouched but share the primitives.
