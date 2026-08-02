@@ -49,9 +49,36 @@ Marketing-only UI/UX redesign (per user request, killing "AI slop"). Dashboard/a
 - Missing real images (render icon fallback, nothing breaks): `public/images/gallery/*` (10), `public/images/transformations/*` (8). Trainers/programs/hero-poster still Unsplash placeholders — drop real files in place, no code changes needed
 - Next: Playwright screenshot sweep of all marketing pages
 
+## Phase 9 post — auth fix + Vercel deploy prep — committed (`cfacbb9`, `0ef4b28`, `70c7bac`)
+
+### Deploy prep (committed)
+
+- **Prisma serverless fix** (`cfacbb9`): `generator client` now has `binaryTargets = ["native", "linux-musl-openssl-3.0.x"]` so the query engine works on Vercel/AWS Lambda. `prisma generate` + typecheck verified.
+- **Vercel deploy checklist** added to README §4 + PROGRESS (`0ef4b28`): hosted Postgres → env vars → `migrate deploy` + `db:seed` → deploy → Stripe webhook → cron for expiry/push cleanup. Marketing site is fully static — build needs no DB.
+
+### Auth bug fixed (this session, `70c7bac`)
+
+- **Login 500** — `.env` had `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/titan_fitness"` but the local `postgres` role has no password (auth fails); working creds are `shahbaz:1234` (verified via psql). Fixed `.env` (gitignored, local-only; README already documents the correct URL).
+- **Register 422 "FAILED_TO_CREATE_USER"** — better-auth `admin()` plugin adds `banned`/`banReason`/`banExpires` to the User schema and `impersonatedBy` to Session, and writes `banned: false` on user creation; the Prisma model had no such columns → `PrismaClientValidationError: Unknown argument banned`. There is **no `userBanSchema` option in better-auth 1.6.25** (option absent from types+dist — a no-op, reverted).
+  - Fix: added columns to `prisma/schema.prisma` + migration `20260802101238_add_admin_ban_fields` (applied locally, verified via `\d "User"`).
+- **E2E verified** (dev server, curl):
+  - sign-up → 200 (user created, role MEMBER; token absent by design)
+  - send verification OTP → 200 (email skipped w/o RESEND key, console warning)
+  - login unverified → 403 "Email not verified" (correct — `requireEmailVerification: true`)
+  - login `member@titanfitness.com` / `Titan@12345` → 200 + session token; wrong password → 401
+  - test user deleted after
+- Quality gates: typecheck ✓, lint ✓ (0 err / 3 img warnings), tests 51/51 ✓, build ✓ (133 pages).
+
+### Gotcha
+
+- `pkill -f "next dev"` matched the invoking shell's own command line and hung the tool — kill dev server by port instead: `fuser -k 3000/tcp`.
+
 ## Git history
 
 ```
+70c7bac fix: register sign-up 500/422 — add better-auth admin ban fields (migration), correct local DATABASE_URL
+0ef4b28 docs: Vercel deployment checklist (README + PROGRESS)
+cfacbb9 fix: Prisma binaryTargets for Vercel serverless (linux-musl-openssl-3.0.x)
 b59e714 feat: Phase 9 — Black Iron marketing redesign: anime.js text fx, Lenis smooth scroll, GSAP choreography, real blog/hero assets
 7586056 docs: project complete — all phases pushed to GitHub
 36a5841 feat: Phase 7 — 30 new tests (validators, AI pricing), fix CI format check, format whole repo
