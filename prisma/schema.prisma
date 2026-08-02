@@ -20,6 +20,9 @@ model User {
   dateOfBirth   DateTime?
   role          UserRole  @default(MEMBER)
   isActive      Boolean   @default(true)
+  banned        Boolean   @default(false)
+  banReason     String?
+  banExpires    DateTime?
   lastLoginAt   DateTime?
   deletedAt     DateTime?
 
@@ -92,6 +95,7 @@ model Session {
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
+  impersonatedBy String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
