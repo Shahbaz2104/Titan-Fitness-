@@ -111,7 +111,9 @@ export function MembersAdmin() {
 
   const { data: detail, isLoading: detailLoading } = useApiQuery<MemberDetail>(
     [...QUERY_KEYS.adminMemberDetail, expandedId ?? ""],
-    `/api/admin/members/${expandedId ?? "none"}`
+    `/api/admin/members/${expandedId ?? ""}`,
+    undefined,
+    { enabled: !!expandedId }
   );
 
   const toggleActive = useApiMutation<{ member: { isActive: boolean } }>(

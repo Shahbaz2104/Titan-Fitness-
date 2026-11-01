@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api";
 import { REFERRAL_REWARD } from "@/lib/constants";
-import { awardPoints, getOrCreatePoints } from "@/services/gamification";
+import { awardPoints } from "@/services/gamification";
 import { createNotification } from "@/services/notifications";
 import { APP_URL, getStripe } from "@/lib/stripe";
 
@@ -391,21 +391,22 @@ export async function getReferralInfo(userId: string) {
     select: { referralCode: true },
   });
 
-  const [referrals, points] = await Promise.all([
-    prisma.referral.findMany({
-      where: { referredById: userId },
-      include: {
-        referredUser: { select: { id: true, name: true, image: true, createdAt: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    getOrCreatePoints(userId),
-  ]);
+  const referrals = await prisma.referral.findMany({
+    where: { referredById: userId },
+    include: {
+      referredUser: { select: { id: true, name: true, image: true, createdAt: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const pointsEarned = referrals
+    .filter((referral) => referral.status === "REWARDED")
+    .reduce((sum, referral) => sum + Number(referral.rewardAmount ?? REFERRAL_REWARD), 0);
 
   return {
     referralCode: user?.referralCode ?? null,
     referrals,
-    points: points.points,
+    points: pointsEarned,
     rewardPerReferral: REFERRAL_REWARD,
   };
 }

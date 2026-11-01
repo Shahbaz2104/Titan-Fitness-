@@ -10,6 +10,11 @@ const ROLE_GUARDS: { prefix: string; roles: string[] }[] = [
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === "true" && pathname.startsWith("/register")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   const isProtected = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
   const cache = await getCookieCache(request, {

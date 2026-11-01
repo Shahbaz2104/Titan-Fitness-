@@ -127,17 +127,16 @@ export default function ProgramsPage() {
         <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:px-8">
           {PROGRAMS.map((program, i) => (
             <GsapReveal key={program.slug} delay={(i % 3) * 0.07}>
-              <Link
-                href={`/programs/${program.slug}`}
-                className="group flex h-full flex-col"
-              >
+              <Link href={`/programs/${program.slug}`} className="group flex h-full flex-col">
                 <div className="border-border relative aspect-[16/10] overflow-hidden rounded-xl border">
                   <SmartImage
                     src={program.image}
                     alt={program.name}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     fallbackClassName="bg-surface-2 h-full w-full"
-                    fallback={<program.icon className="text-muted-foreground h-12 w-12 opacity-60" />}
+                    fallback={
+                      <program.icon className="text-muted-foreground h-12 w-12 opacity-60" />
+                    }
                   />
                   <span className="border-border bg-background/70 text-muted-foreground absolute top-3 right-3 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur-sm">
                     {program.difficulty}

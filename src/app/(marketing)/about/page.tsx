@@ -157,7 +157,11 @@ export default function AboutPage() {
             {[
               { icon: Trophy, title: "Best gym of the year", org: "Fitness Awards 2025" },
               { icon: Medal, title: "Top 10 fitness tech", org: "Startup Weekly 2024" },
-              { icon: ShieldCheck, title: "Certified safe facility", org: "National Fitness Council" },
+              {
+                icon: ShieldCheck,
+                title: "Certified safe facility",
+                org: "National Fitness Council",
+              },
               { icon: Award, title: "Outstanding coaching", org: "Coach Excellence Program 2025" },
             ].map((award, i) => (
               <GsapReveal key={award.title} delay={i * 0.08}>

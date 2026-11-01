@@ -299,7 +299,9 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             <div>
               <div className="flex items-center gap-3">
                 <div className="border-border bg-surface-2 flex h-14 w-14 items-center justify-center rounded-xl border">
-                  <program.icon className={`h-7 w-7 ${program.icon === Flame || program.icon === Weight ? "text-accent" : "text-primary"}`} />
+                  <program.icon
+                    className={`h-7 w-7 ${program.icon === Flame || program.icon === Weight ? "text-accent" : "text-primary"}`}
+                  />
                 </div>
                 <Badge variant="secondary">{program.difficulty}</Badge>
                 <Badge variant="secondary">{program.duration}</Badge>
@@ -366,7 +368,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               <div className="mt-8 space-y-3">
                 {program.schedule.map((slot, i) => (
                   <GsapReveal key={slot.day} delay={i * 0.03}>
-                    <div className="border-border bg-surface/60 hover:border-white/15 flex items-center justify-between rounded-xl border px-5 py-4 transition-colors duration-300">
+                    <div className="border-border bg-surface/60 flex items-center justify-between rounded-xl border px-5 py-4 transition-colors duration-300 hover:border-white/15">
                       <span className="text-primary text-sm font-semibold">{slot.day}</span>
                       <span className="text-foreground flex items-center gap-2 text-sm">
                         <Clock className="text-muted-foreground h-4 w-4" />

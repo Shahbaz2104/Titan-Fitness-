@@ -94,6 +94,32 @@ export async function calculateStreak(userId: string): Promise<number> {
   return streak;
 }
 
+export async function calculateAttendanceStreak(userId: string): Promise<number> {
+  const records = await prisma.attendance.findMany({
+    where: { userId },
+    select: { checkInTime: true },
+    orderBy: { checkInTime: "desc" },
+    take: 400,
+  });
+  if (records.length === 0) return 0;
+
+  const days = new Set(records.map((record) => record.checkInTime.toISOString().slice(0, 10)));
+
+  let streak = 0;
+  const cursor = new Date();
+  const today = cursor.toISOString().slice(0, 10);
+
+  if (!days.has(today)) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  while (days.has(cursor.toISOString().slice(0, 10))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
 export async function getLeaderboard(limit = 20) {
   return prisma.userPoint.findMany({
     orderBy: { points: "desc" },

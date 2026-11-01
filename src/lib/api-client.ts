@@ -70,13 +70,15 @@ export async function apiDelete<T>(path: string): Promise<T> {
 export function useApiQuery<T>(
   queryKey: readonly unknown[],
   path: string,
-  params?: Record<string, string | number | boolean | undefined>
+  params?: Record<string, string | number | boolean | undefined>,
+  options?: { enabled?: boolean }
 ) {
   return useQuery({
     queryKey,
     queryFn: () => apiGet<T>(path, params),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
+    enabled: options?.enabled ?? true,
   });
 }
 

@@ -63,7 +63,9 @@ export function PricingSection() {
           <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
             <AnimeText text="Membership, minus the fine print" effect="blur" scroll />
           </h2>
-          <p className="text-muted-foreground mt-4">No hidden fees. No contracts. Cancel anytime.</p>
+          <p className="text-muted-foreground mt-4">
+            No hidden fees. No contracts. Cancel anytime.
+          </p>
         </div>
 
         <div className="mt-16 grid gap-6 lg:grid-cols-3">
@@ -105,10 +107,7 @@ export function PricingSection() {
                         )}
                       >
                         <Check
-                          className={cn(
-                            "h-3 w-3",
-                            plan.popular ? "text-primary" : "text-success"
-                          )}
+                          className={cn("h-3 w-3", plan.popular ? "text-primary" : "text-success")}
                         />
                       </span>
                       {feature}

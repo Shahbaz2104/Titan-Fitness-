@@ -106,7 +106,7 @@ export function ReferralsDashboard() {
                   Points earned
                 </p>
                 <p className="font-display text-foreground mt-2 text-3xl font-bold">
-                  {data?.points ?? 0}
+                  {(data?.points ?? 0).toLocaleString()}
                 </p>
               </CardContent>
             </Card>

@@ -21,7 +21,7 @@ export async function GET() {
   });
 
   if (!session) {
-    return NextResponse.json(null, { status: 401 });
+    return NextResponse.json(null);
   }
 
   const user = session.user as unknown as MeUser;

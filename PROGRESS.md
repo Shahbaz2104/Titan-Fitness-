@@ -1,8 +1,40 @@
 # Titan Fitness — Build Progress
 
-Updated: 2026-08-02
+Updated: 2026-10-22
 
 > Short version of pending work + reminders: see **[NEXT-STEPS.md](./NEXT-STEPS.md)**.
+
+## Phase 10 — Demo readiness, rich seed, QA fixes (UNCOMMITTED, 2026-10-22)
+
+### Seed / demo experience
+
+- Rewrote `prisma/seed.ts` with relative dates (`seedNow`, `daysAgo`, `daysFromNow`) so the demo never looks stale: 24 demo members + photos/branches, relative memberships/payments, 87 class schedules (−14…+14 days), 60 days attendance (today's open check-in), 56 days body metrics, 30 days water, 8 weeks of workouts/PRs, 7 tickets with threads, referrals, progress photos, 7-day meal plan, AIUsage, audit logs, relative blog covers/dates, coupons/challenges.
+- Safe destructive seed guard (production requires `SEED_ALLOW_DESTRUCTIVE=true`); seed verified (32 users, 25 payments, 8 programs, 44 exercises).
+- Demo mode: `.env` flags, demo login buttons, `/register` redirect, demo helper constants.
+
+### Auth / app shell
+
+- **Session-drop fix**: better-auth cookie cache was 5 min → 7 days (`src/lib/auth.ts`); proxy protected routes now stay signed in.
+- Sidebar defaults open; separate desktop/mobile drawers; nav links close mobile drawer.
+- Header streak/unread notifications now live (`/api/attendance/stats`, `/api/me/notifications`); attendance-based streak helper added.
+- Attendance **check-out** added (service + `/api/attendance/check-out`) and dashboard check-in/out state wired.
+
+### Data-contract and flow fixes
+
+- Dashboard: `setsCompleted`, class `title`, `/api/bookings` (was `/api/me/bookings`), dynamic week strip, hydration-safe greeting, live stats.
+- Classes: block booking after start (409 `CLASS_STARTED` + UI "Class started"); fixed rebook/cancel 500 caused by `(userId,classId,status)` unique constraint (reuse cancelled row; transactional cancel).
+- Admin: program `schedule.sessionsPerWeek` mapping, challenge `reward` mapping, password omitted from member detail, `enabled` option on `useApiQuery` stops `/api/admin/members/none` 404.
+- Admin delete for programs/coupons/blog posts was broken by stale mutation URLs — switched to `apiDelete` with explicit ids; blog dates use `publishedAt` and sort newest-first.
+- Blog: `src/lib/blog.ts` DB-first + static fallback; guest comments migration (`20261022152745_blog_guest_comments`); featured card dedupe; duplicate H1 stripped.
+- `SmartImage`: cached above-the-fold images stayed `opacity:0` — ref checks `complete`; blog featured image fixed.
+- Hydration: replaced nested `<p>` around `WordReveal` in marketing grids.
+
+### Verification
+
+- `format` ✓, `typecheck` ✓, `lint` 0 errors / 4 known `<img>` warnings, tests **56/56** ✓. Build + final reseed/screenshot sweep still pending (see NEXT-STEPS).
+- Browser sweeps: all 13 member + 11 admin routes load; booking, cancel/rebook, notifications read-all, ticket reply/status, admin program/coupon/blog create+delete exercised.
+- Desktop screenshots (dashboard/admin/blog) and mobile screenshots (overview, workout, nutrition, attendance, membership, payments, challenges) reviewed; remaining mobile/profile/admin captures noted in NEXT-STEPS.
+- QA artifacts exist in the local DB (test comment/replies/read notifications) — **reseed before final screenshots**.
 
 ## Phase 9 — Marketing redesign ("Black Iron") + motion enhancement — committed `b59e714`
 
@@ -130,7 +162,7 @@ Code-side is done: marketing site is fully static (build needs no DB), `binaryTa
 | 6     | PWA, SEO, security                                                                  | ✅ Done (commit `aba5724`)                         |
 | 7     | Tests + CI                                                                          | ✅ Done (commit `36a5841`, 51 tests)               |
 | 8     | Final audit, README, GitHub push                                                    | ✅ Done — pushed to GitHub (`origin/main`)         |
-| 9     | Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion) | ✅ Done (commit `b59e714`) |
+| 9     | Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion)            | ✅ Done (commit `b59e714`)                         |
 
 ## Phase 5 — Stripe + OTP Auth (UNCOMMITTED)
 

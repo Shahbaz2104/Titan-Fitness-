@@ -124,7 +124,7 @@ export function Testimonials() {
                         }
                       />
                     ) : (
-                      <div className="bg-surface-2 border-border flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold text-muted-foreground">
+                      <div className="bg-surface-2 border-border text-muted-foreground flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold">
                         {testimonial.initials}
                       </div>
                     )}

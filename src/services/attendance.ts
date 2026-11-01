@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api";
-import { calculateStreak, updateChallengeProgress } from "@/services/gamification";
+import { calculateAttendanceStreak, updateChallengeProgress } from "@/services/gamification";
 import { createNotification } from "@/services/notifications";
 
 export async function checkIn(
@@ -52,6 +52,25 @@ export async function checkIn(
   return record;
 }
 
+export async function checkOut(userId: string) {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const record = await prisma.attendance.findFirst({
+    where: { userId, checkInTime: { gte: todayStart } },
+    orderBy: { checkInTime: "desc" },
+  });
+  if (!record) throw new ApiError("No check-in found for today", 404, "NOT_FOUND");
+  if (record.checkOutTime) {
+    throw new ApiError("Already checked out today", 409, "ALREADY_CHECKED_OUT");
+  }
+
+  return prisma.attendance.update({
+    where: { id: record.id },
+    data: { checkOutTime: new Date() },
+  });
+}
+
 export async function getAttendanceHistory(userId: string, limit = 60) {
   return prisma.attendance.findMany({
     where: { userId },
@@ -68,7 +87,7 @@ export async function getAttendanceStats(userId: string) {
   const [total, thisMonth, currentStreak, weekRecords] = await Promise.all([
     prisma.attendance.count({ where: { userId } }),
     prisma.attendance.count({ where: { userId, checkInTime: { gte: monthStart } } }),
-    calculateStreak(userId),
+    calculateAttendanceStreak(userId),
     prisma.attendance.findMany({
       where: {
         userId,

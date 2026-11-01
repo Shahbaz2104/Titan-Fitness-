@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { rateLimitByIp } from "@/lib/rate-limit";
-import { getPost } from "@/lib/blog-data";
+import { getSessionUser } from "@/lib/api";
 
 const commentSchema = z.object({
   name: z.string().min(2).max(60),
@@ -11,7 +11,6 @@ const commentSchema = z.object({
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getPost(slug);
 
   try {
     const dbPost = await prisma.blogPost.findUnique({
@@ -26,28 +25,23 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
         take: 50,
       });
       return NextResponse.json({
-        comments: comments.map((c) => ({
-          id: c.id,
-          name: c.user.name,
-          content: c.content,
-          createdAt: c.createdAt,
-        })),
+        comments: comments.map((c) => {
+          const name = c.user?.name ?? c.guestName ?? "Titan Reader";
+          return {
+            id: c.id,
+            name,
+            initials: name.slice(0, 2).toUpperCase(),
+            content: c.content,
+            createdAt: c.createdAt,
+          };
+        }),
       });
     }
   } catch {
     // DB unavailable — return seeded comments
   }
 
-  return NextResponse.json({
-    comments: [
-      {
-        id: "seed-1",
-        name: post ? "Titan Member" : "Anonymous",
-        content: post ? `Great read — this is exactly the kind of content I joined Titan for.` : "",
-        createdAt: post ? post.publishedAt : new Date().toISOString(),
-      },
-    ].filter((c) => c.content),
-  });
+  return NextResponse.json({ comments: [] });
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -72,10 +66,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    const user = await getSessionUser();
     const comment = await prisma.blogComment.create({
       data: {
         postId: dbPost.id,
-        userId: "system-anonymous",
+        userId: user?.id ?? null,
+        guestName: user ? null : parsed.data.name,
         content: parsed.data.content,
         status: "APPROVED",
       },

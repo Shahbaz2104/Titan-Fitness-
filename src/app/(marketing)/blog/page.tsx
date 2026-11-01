@@ -1,5 +1,8 @@
 import { BlogIndexClient } from "./blog-index-client";
+import { getPublishedPosts } from "@/lib/blog";
 import { buildMetadata } from "@/lib/seo";
+
+export const revalidate = 300;
 
 export const metadata = buildMetadata({
   title: "Blog",
@@ -8,6 +11,7 @@ export const metadata = buildMetadata({
   path: "/blog",
 });
 
-export default function BlogPage() {
-  return <BlogIndexClient />;
+export default async function BlogPage() {
+  const posts = await getPublishedPosts();
+  return <BlogIndexClient initialPosts={posts} />;
 }

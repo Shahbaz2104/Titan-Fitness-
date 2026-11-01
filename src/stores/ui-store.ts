@@ -15,7 +15,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>()((set) => ({
-  sidebarOpen: false,
+  sidebarOpen: true,
   mobileNavOpen: false,
   searchOpen: false,
   notificationsOpen: false,
@@ -25,7 +25,7 @@ export const useUIStore = create<UIState>()((set) => ({
   setNotificationsOpen: (open) => set({ notificationsOpen: open }),
   closeAll: () =>
     set({
-      sidebarOpen: false,
+      sidebarOpen: true,
       mobileNavOpen: false,
       searchOpen: false,
       notificationsOpen: false,

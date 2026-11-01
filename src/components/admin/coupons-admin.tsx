@@ -23,9 +23,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QUERY_KEYS } from "@/lib/constants";
-import { useApiQuery, useApiMutation } from "@/lib/api-client";
+import { apiDelete, useApiQuery, useApiMutation } from "@/lib/api-client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -76,6 +77,7 @@ export function CouponsAdmin() {
   const [form, setForm] = React.useState<CouponForm>(EMPTY_FORM);
   const [saving, setSaving] = React.useState(false);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<Coupon | null>(null);
 
   const {
     data: coupons,
@@ -83,7 +85,6 @@ export function CouponsAdmin() {
     isError,
   } = useApiQuery<Coupon[]>(QUERY_KEYS.adminCoupons, "/api/admin/coupons");
   const createCoupon = useApiMutation("/api/admin/coupons");
-  const deleteCoupon = useApiMutation(`/api/admin/coupons/${deletingId ?? ""}`, "DELETE");
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminCoupons });
 
@@ -117,7 +118,7 @@ export function CouponsAdmin() {
   const handleDelete = async (coupon: Coupon) => {
     setDeletingId(coupon.id);
     try {
-      await deleteCoupon();
+      await apiDelete(`/api/admin/coupons/${coupon.id}`);
       toast.success("Coupon deleted");
       await refresh();
     } catch {
@@ -236,9 +237,9 @@ export function CouponsAdmin() {
                     variant="outline"
                     size="icon-sm"
                     className="text-destructive hover:border-destructive/50"
-                    onClick={() => handleDelete(coupon)}
+                    onClick={() => setDeleteTarget(coupon)}
                     disabled={deletingId === coupon.id}
-                    aria-label="Delete coupon"
+                    aria-label={`Delete ${coupon.code} coupon`}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -326,6 +327,21 @@ export function CouponsAdmin() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Delete coupon?"
+        description={`Coupon “${deleteTarget?.code ?? "this code"}” will be permanently removed. This cannot be undone.`}
+        loading={deletingId === deleteTarget?.id}
+        onConfirm={async () => {
+          if (!deleteTarget) return;
+          await handleDelete(deleteTarget);
+          setDeleteTarget(null);
+        }}
+      />
     </div>
   );
 }

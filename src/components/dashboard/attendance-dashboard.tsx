@@ -61,17 +61,24 @@ export function AttendanceDashboard() {
     "/api/me/profile"
   );
 
-  const [checkingIn, setCheckingIn] = React.useState(false);
+  const [busy, setBusy] = React.useState(false);
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.attendance });
 
-  const checkIn = async () => {
-    if (!profile?.branchId) return;
-    setCheckingIn(true);
+  const markAttendance = async () => {
+    if (!today?.checkedIn && !profile?.branchId) return;
+    setBusy(true);
     try {
-      await apiPost("/api/attendance/check-in", { branchId: profile.branchId, method: "MANUAL" });
+      if (today?.checkedIn) {
+        await apiPost("/api/attendance/check-out");
+      } else {
+        await apiPost("/api/attendance/check-in", {
+          branchId: profile?.branchId,
+          method: "MANUAL",
+        });
+      }
     } finally {
-      setCheckingIn(false);
+      setBusy(false);
       refresh();
     }
   };
@@ -100,8 +107,8 @@ export function AttendanceDashboard() {
         actions={
           <Button
             size="sm"
-            onClick={checkIn}
-            disabled={checkingIn || today?.checkedIn}
+            onClick={markAttendance}
+            disabled={busy || today?.checkedOut || (!today?.checkedIn && !profile?.branchId)}
             variant={today?.checkedIn ? "outline" : "default"}
           >
             {today?.checkedOut ? (
@@ -114,7 +121,7 @@ export function AttendanceDashboard() {
               </>
             ) : (
               <>
-                <LogIn className="h-4 w-4" /> {checkingIn ? "Checking in…" : "Check in"}
+                <LogIn className="h-4 w-4" /> {busy ? "Checking in…" : "Check in"}
               </>
             )}
           </Button>

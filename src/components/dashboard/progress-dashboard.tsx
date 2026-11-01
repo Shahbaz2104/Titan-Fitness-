@@ -74,13 +74,19 @@ export function ProgressDashboard() {
   };
 
   const weightHistory = [...(metrics ?? [])].reverse().filter((m) => m.weightKg !== null);
+  const chartHistory = weightHistory.slice(-12);
   const firstWeight = weightHistory[0]?.weightKg ?? null;
   const lastWeight = weightHistory[weightHistory.length - 1]?.weightKg ?? null;
   const weightDelta = firstWeight !== null && lastWeight !== null ? lastWeight - firstWeight : null;
 
-  const maxWeight = Math.max(...weightHistory.map((m) => m.weightKg ?? 0), 1);
-  const minWeight = Math.min(...weightHistory.map((m) => m.weightKg ?? 0), 0);
+  const maxWeight = Math.max(...chartHistory.map((m) => m.weightKg ?? 0), 1);
+  const minWeight = Math.min(...chartHistory.map((m) => m.weightKg ?? 0), 0);
   const weightSpan = Math.max(maxWeight - minWeight, 1);
+
+  const formatChartDate = (metric?: BodyMetric) =>
+    metric
+      ? new Date(metric.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })
+      : "";
 
   return (
     <div className="space-y-6">
@@ -181,22 +187,28 @@ export function ProgressDashboard() {
                 </p>
               </div>
             ) : (
-              <div className="mt-6 flex h-40 items-end gap-2">
-                {weightHistory.map((m) => (
-                  <div key={m.id} className="group relative flex-1">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{
-                        height: `${(((m.weightKg ?? 0) - minWeight + weightSpan * 0.1) / (weightSpan * 1.2)) * 100}%`,
-                      }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="from-primary/40 to-primary rounded-t-lg bg-gradient-to-t"
-                    />
-                    <div className="text-muted-foreground mt-1 text-center text-[10px]">
-                      {new Date(m.date).getDate()}/{new Date(m.date).getMonth() + 1}
+              <div className="mt-6">
+                <div className="flex h-40 items-end gap-2 overflow-hidden">
+                  {chartHistory.map((m) => (
+                    <div key={m.id} className="flex h-full min-w-0 flex-1 items-end">
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{
+                          height: `${(((m.weightKg ?? 0) - minWeight + weightSpan * 0.1) / (weightSpan * 1.2)) * 100}%`,
+                        }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="from-primary/40 to-primary w-full rounded-t-lg bg-gradient-to-t"
+                      />
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+                <div className="text-muted-foreground mt-2 flex justify-between text-[10px]">
+                  <span>{formatChartDate(chartHistory[0])}</span>
+                  <span className="hidden sm:inline">
+                    {formatChartDate(chartHistory[Math.floor(chartHistory.length / 2)])}
+                  </span>
+                  <span>{formatChartDate(chartHistory[chartHistory.length - 1])}</span>
+                </div>
               </div>
             )}
 
@@ -254,34 +266,33 @@ export function ProgressDashboard() {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: Math.min(i * 0.03, 0.4) }}
-                    className="flex items-center justify-between py-3"
+                    className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="bg-surface-2 text-muted-foreground flex h-9 w-9 items-center justify-center rounded-xl">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="bg-surface-2 text-muted-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-xl">
                         <CalendarCheck className="h-4 w-4" />
                       </span>
-                      <p className="text-foreground text-sm font-medium">
+                      <p className="text-foreground truncate text-sm font-medium">
                         {new Date(m.date).toLocaleDateString(undefined, {
                           month: "short",
                           day: "numeric",
-                          year: "numeric",
                         })}
                       </p>
                     </div>
-                    <div className="text-muted-foreground flex gap-4 text-xs">
+                    <div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 pl-12 text-[11px] sm:justify-end sm:pl-0 sm:text-right sm:text-xs">
                       {m.weightKg !== null && (
-                        <span>
-                          <b className="text-foreground">{m.weightKg} kg</b> weight
+                        <span className="whitespace-nowrap">
+                          <b className="text-foreground">{m.weightKg.toFixed(1)} kg</b> weight
                         </span>
                       )}
                       {m.bodyFatPct !== null && (
-                        <span>
-                          <b className="text-foreground">{m.bodyFatPct}%</b> fat
+                        <span className="whitespace-nowrap">
+                          <b className="text-foreground">{m.bodyFatPct.toFixed(1)}%</b> fat
                         </span>
                       )}
                       {m.muscleMassKg !== null && (
-                        <span>
-                          <b className="text-foreground">{m.muscleMassKg} kg</b> muscle
+                        <span className="whitespace-nowrap">
+                          <b className="text-foreground">{m.muscleMassKg.toFixed(1)} kg</b> muscle
                         </span>
                       )}
                     </div>

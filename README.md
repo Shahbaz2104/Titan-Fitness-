@@ -64,21 +64,21 @@ Points (dashboard ring), badges (12+ achievements), streaks, check-in streaks, w
 
 ## 🧱 Tech Stack
 
-| Layer            | Choice                                                           |
-| ---------------- | ---------------------------------------------------------------- |
-| Framework        | Next.js 16.2.12 (App Router, Turbopack)                          |
-| UI               | React 19, TypeScript, Tailwind CSS v4                            |
+| Layer            | Choice                                                                     |
+| ---------------- | -------------------------------------------------------------------------- |
+| Framework        | Next.js 16.2.12 (App Router, Turbopack)                                    |
+| UI               | React 19, TypeScript, Tailwind CSS v4                                      |
 | Animations       | framer-motion 12 + GSAP (ScrollTrigger) + anime.js 4 + Lenis smooth scroll |
-| Forms/validation | react-hook-form + zod                                            |
-| Data             | Prisma 6.16 + PostgreSQL 16                                      |
-| Auth             | better-auth 1.6 (email+password, email OTP plugin, admin plugin) |
-| AI               | AI SDK v7 + `@ai-sdk/openai`                                     |
-| Payments         | Stripe SDK 22                                                    |
-| Web Push         | `web-push` (VAPID) + service worker                              |
-| State            | Zustand (scalar selectors only!) + TanStack Query                |
-| Emails           | Resend (REST)                                                    |
-| Testing          | Vitest (51 tests), Playwright (manual UI checks)                 |
-| CI               | GitHub Actions workflow included                                 |
+| Forms/validation | react-hook-form + zod                                                      |
+| Data             | Prisma 6.16 + PostgreSQL 16                                                |
+| Auth             | better-auth 1.6 (email+password, email OTP plugin, admin plugin)           |
+| AI               | AI SDK v7 + `@ai-sdk/openai`                                               |
+| Payments         | Stripe SDK 22                                                              |
+| Web Push         | `web-push` (VAPID) + service worker                                        |
+| State            | Zustand (scalar selectors only!) + TanStack Query                          |
+| Emails           | Resend (REST)                                                              |
+| Testing          | Vitest (51 tests), Playwright (manual UI checks)                           |
+| CI               | GitHub Actions workflow included                                           |
 
 ---
 
@@ -121,6 +121,9 @@ RESEND_API_KEY="re_..."
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=""
 VAPID_PRIVATE_KEY=""
 
+# Cron (required for /api/cron/maintenance; Vercel Cron sends it as a bearer token)
+CRON_SECRET=""
+
 # Optional: Google OAuth, Cloudinary
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
@@ -149,7 +152,7 @@ The marketing site is fully static (build needs **no** database — blog/program
 4. **Deploy** — connect the GitHub repo (`Shahbaz2104/Titan-Fitness-`) in Vercel. Build command stays `next build`; `postinstall: prisma generate` runs automatically. Your public assets (blog images, hero video) are committed and deploy with the repo.
 5. **After deploy** — point the **Stripe webhook** at `https://<your-domain>/api/payments/webhook` (Stripe Dashboard → Developers → Webhooks).
 
-> **Note**: local DB data doesn't carry over; sessions invalidate when the domain changes. The membership-expiry and dead-push-subscription scanner needs an external cron trigger (no `vercel.json` cron is configured yet).
+> **Note**: local DB data doesn't carry over; sessions invalidate when the domain changes. A daily Vercel Cron (`vercel.json`, 05:00 UTC) calls `/api/cron/maintenance` to expire memberships and prune dead push subscriptions. Set `CRON_SECRET` in Vercel — Cron sends it automatically as `Authorization: Bearer <secret>`. Locally: `curl -H "Authorization: Bearer $CRON_SECRET" localhost:3000/api/cron/maintenance`.
 
 ### Test accounts (seed, password `Titan@12345`)
 
@@ -270,18 +273,18 @@ CI: `.github/workflows/ci.yml` (typecheck + lint + tests on push/PR).
 
 ## 📈 Roadmap / Status
 
-| Phase                                                          | Status                        |
-| -------------------------------------------------------------- | ----------------------------- |
-| 0 — Foundation (env, DB, auth, seed, PWA, tests, CI)           | ✅ `59e1236`                  |
-| 1 — Services + API routes (~95)                                | ✅ `0b9dbdd`                  |
-| 2 — User dashboard (16 pages)                                  | ✅ `8234d9b`                  |
-| 3 — Admin panel (11 pages)                                     | ✅ `629deb4`                  |
-| 4 — AI features (LLM + fallback)                               | ✅ `8e0399c`                  |
-| 5 — Stripe checkout + webhook, OTP auth                        | ✅ `267b5fb`                  |
-| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js) | ✅ `223d3d6`                  |
-| 6 — PWA/SEO/security audit (robots, sitemap, headers)          | ✅ `aba5724`                  |
-| 7 — Tests + CI (51 tests, format fix)                          | ✅ `36a5841`                  |
-| 8 — Final audit, GitHub push                                   | ✅ `origin/main`              |
+| Phase                                                                        | Status                        |
+| ---------------------------------------------------------------------------- | ----------------------------- |
+| 0 — Foundation (env, DB, auth, seed, PWA, tests, CI)                         | ✅ `59e1236`                  |
+| 1 — Services + API routes (~95)                                              | ✅ `0b9dbdd`                  |
+| 2 — User dashboard (16 pages)                                                | ✅ `8234d9b`                  |
+| 3 — Admin panel (11 pages)                                                   | ✅ `629deb4`                  |
+| 4 — AI features (LLM + fallback)                                             | ✅ `8e0399c`                  |
+| 5 — Stripe checkout + webhook, OTP auth                                      | ✅ `267b5fb`                  |
+| 5b — Web push notifications (VAPID, `PushSubscription`, sw.js)               | ✅ `223d3d6`                  |
+| 6 — PWA/SEO/security audit (robots, sitemap, headers)                        | ✅ `aba5724`                  |
+| 7 — Tests + CI (51 tests, format fix)                                        | ✅ `36a5841`                  |
+| 8 — Final audit, GitHub push                                                 | ✅ `origin/main`              |
 | 9 — Marketing redesign (Black Iron, Archivo, GSAP + anime.js + Lenis motion) | 🔶 uncommitted (working tree) |
 
 > **Phase 9 note**: marketing pages reference `public/images/{trainers,programs,gallery,transformations,blog}/*` and `public/videos/hero-bg.mp4`. Blog images (6) and the hero video are real user assets. Unsplash placeholders cover trainers/programs/hero-poster; gallery/transformations render an icon fallback until real assets are added. No code changes needed to swap images — just drop files in place.

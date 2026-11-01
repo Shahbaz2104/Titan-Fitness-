@@ -74,7 +74,7 @@ export function BlogPreview() {
                       {post.readTime} min read
                     </span>
                   </div>
-                  <h3 className="text-foreground mt-3 text-lg leading-snug font-semibold tracking-[-0.01em] transition-colors duration-200 group-hover:text-primary">
+                  <h3 className="text-foreground group-hover:text-primary mt-3 text-lg leading-snug font-semibold tracking-[-0.01em] transition-colors duration-200">
                     {post.title}
                   </h3>
                   <p className="text-muted-foreground mt-2 text-sm leading-relaxed">

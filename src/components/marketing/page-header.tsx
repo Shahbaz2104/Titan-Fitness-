@@ -14,13 +14,7 @@ interface PageHeaderProps {
   className?: string;
 }
 
-export function PageHeader({
-  badge,
-  title,
-  highlight,
-  description,
-  className,
-}: PageHeaderProps) {
+export function PageHeader({ badge, title, highlight, description, className }: PageHeaderProps) {
   const ref = React.useRef<HTMLDivElement>(null);
 
   useGSAP(

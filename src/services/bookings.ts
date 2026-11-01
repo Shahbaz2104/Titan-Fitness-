@@ -86,6 +86,9 @@ export async function bookClass(userId: string, classId: string) {
     where: { id: classId, isActive: true },
   });
   if (!cls) throw new ApiError("Class not found", 404, "NOT_FOUND");
+  if (cls.startTime <= new Date()) {
+    throw new ApiError("This class has already started", 409, "CLASS_STARTED");
+  }
 
   const bookedCount = await prisma.booking.count({
     where: { classId, status: "BOOKED" },
@@ -98,6 +101,21 @@ export async function bookClass(userId: string, classId: string) {
     where: { userId, classId, status: "BOOKED" },
   });
   if (existing) throw new ApiError("Already booked", 409, "ALREADY_BOOKED");
+
+  const cancelled = await prisma.booking.findFirst({
+    where: { userId, classId, status: "CANCELLED" },
+  });
+  if (cancelled) {
+    return prisma.booking.update({
+      where: { id: cancelled.id },
+      data: {
+        status: "BOOKED",
+        cancelledAt: null,
+        branchId: cls.branchId,
+        programId: cls.programId,
+      },
+    });
+  }
 
   return prisma.booking.create({
     data: {
@@ -115,10 +133,21 @@ export async function cancelBooking(userId: string, bookingId: string) {
     where: { id: bookingId, userId },
   });
   if (!booking) throw new ApiError("Booking not found", 404, "NOT_FOUND");
+  if (booking.status === "CANCELLED") return booking;
 
-  return prisma.booking.update({
-    where: { id: bookingId },
-    data: { status: "CANCELLED", cancelledAt: new Date() },
+  return prisma.$transaction(async (tx) => {
+    await tx.booking.deleteMany({
+      where: {
+        userId,
+        classId: booking.classId,
+        status: "CANCELLED",
+        id: { not: bookingId },
+      },
+    });
+    return tx.booking.update({
+      where: { id: bookingId },
+      data: { status: "CANCELLED", cancelledAt: new Date() },
+    });
   });
 }
 

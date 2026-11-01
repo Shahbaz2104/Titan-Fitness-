@@ -69,6 +69,7 @@ export async function adminGetMemberDetail(memberId: string) {
       payments: { orderBy: { createdAt: "desc" }, take: 10 },
       attendance: { orderBy: { checkInTime: "desc" }, take: 10 },
     },
+    omit: { password: true },
   });
   if (!member) throw new ApiError("Member not found", 404, "NOT_FOUND");
   return member;
@@ -192,12 +193,24 @@ export async function adminGetAttendanceReport(days = 30) {
   };
 }
 
+function programSessionsPerWeek(schedule: Prisma.JsonValue): number {
+  if (schedule && typeof schedule === "object" && !Array.isArray(schedule)) {
+    const value = (schedule as Prisma.JsonObject).sessionsPerWeek;
+    return typeof value === "number" ? value : 3;
+  }
+  return 3;
+}
+
 export async function adminGetPrograms() {
-  return prisma.program.findMany({
+  const programs = await prisma.program.findMany({
     where: { deletedAt: null },
     include: { _count: { select: { classes: true } } },
     orderBy: { createdAt: "desc" },
   });
+  return programs.map((program) => ({
+    ...program,
+    sessionsPerWeek: programSessionsPerWeek(program.schedule),
+  }));
 }
 
 export async function adminCreateProgram(data: {
@@ -217,7 +230,11 @@ export async function adminCreateProgram(data: {
       description: data.description,
       difficulty: data.difficulty as never,
       durationWeeks: data.durationWeeks,
-      sessionsPerWeek: data.sessionsPerWeek,
+      schedule: {
+        sessionsPerWeek: data.sessionsPerWeek,
+        sessionLengthMin: 75,
+        preferredDays: ["Mon", "Wed", "Fri", "Sat"],
+      },
       imageUrl: data.imageUrl,
     },
   });
@@ -242,6 +259,10 @@ export async function adminUpdateProgram(
   if (!program) throw new ApiError("Program not found", 404, "NOT_FOUND");
 
   const { ...rest } = data;
+  const existingSchedule =
+    program.schedule && typeof program.schedule === "object" && !Array.isArray(program.schedule)
+      ? (program.schedule as Prisma.JsonObject)
+      : {};
   return prisma.program.update({
     where: { id: programId },
     data: {
@@ -250,7 +271,9 @@ export async function adminUpdateProgram(
       ...(rest.description ? { description: rest.description } : {}),
       ...(rest.difficulty ? { difficulty: rest.difficulty as never } : {}),
       ...(rest.durationWeeks !== undefined ? { durationWeeks: rest.durationWeeks } : {}),
-      ...(rest.sessionsPerWeek !== undefined ? { sessionsPerWeek: rest.sessionsPerWeek } : {}),
+      ...(rest.sessionsPerWeek !== undefined
+        ? { schedule: { ...existingSchedule, sessionsPerWeek: rest.sessionsPerWeek } }
+        : {}),
       ...(rest.imageUrl !== undefined ? { imageUrl: rest.imageUrl } : {}),
       ...(rest.isActive !== undefined ? { isActive: rest.isActive } : {}),
     },
@@ -382,7 +405,7 @@ export async function adminGetBlogPosts() {
       author: { select: { name: true } },
       category: { select: { name: true, slug: true } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ publishedAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
   });
 }
 
@@ -421,11 +444,21 @@ export async function adminDeleteBlogPost(postId: string) {
   });
 }
 
+function challengeRewardDescription(reward: Prisma.JsonValue): string | null {
+  if (!reward || typeof reward !== "object" || Array.isArray(reward)) return null;
+  const description = (reward as Prisma.JsonObject).description;
+  return typeof description === "string" ? description : null;
+}
+
 export async function adminGetChallenges() {
-  return prisma.challenge.findMany({
+  const challenges = await prisma.challenge.findMany({
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { participants: true } } },
   });
+  return challenges.map((challenge) => ({
+    ...challenge,
+    rewardDescription: challengeRewardDescription(challenge.reward),
+  }));
 }
 
 export async function adminCreateChallenge(data: {
@@ -440,13 +473,12 @@ export async function adminCreateChallenge(data: {
   return prisma.challenge.create({
     data: {
       title: data.title,
-      slug: slugify(data.title),
       description: data.description,
       goalType: data.goalType as never,
       goalValue: data.goalValue,
       startDate: data.startDate,
       endDate: data.endDate,
-      rewardDescription: data.rewardDescription,
+      reward: data.rewardDescription ? { description: data.rewardDescription } : undefined,
     },
   });
 }

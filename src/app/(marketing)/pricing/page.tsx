@@ -134,10 +134,7 @@ export default function PricingPage() {
                         )}
                       >
                         <Check
-                          className={cn(
-                            "h-3 w-3",
-                            plan.popular ? "text-primary" : "text-success"
-                          )}
+                          className={cn("h-3 w-3", plan.popular ? "text-primary" : "text-success")}
                         />
                       </span>
                       {feature}

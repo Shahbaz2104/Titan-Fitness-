@@ -7,5 +7,8 @@ export const metadata = buildMetadata({
 });
 
 export default function LoginPage() {
-  return <LoginPageForm />;
+  const googleEnabled = Boolean(
+    process.env.GOOGLE_CLIENT_ID?.trim() && process.env.GOOGLE_CLIENT_SECRET?.trim()
+  );
+  return <LoginPageForm googleEnabled={googleEnabled} />;
 }

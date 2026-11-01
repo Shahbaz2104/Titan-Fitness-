@@ -24,9 +24,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QUERY_KEYS } from "@/lib/constants";
-import { useApiQuery, useApiMutation } from "@/lib/api-client";
+import { apiDelete, useApiQuery, useApiMutation } from "@/lib/api-client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -90,6 +91,7 @@ export function BlogAdmin() {
   const [form, setForm] = React.useState<BlogForm>(EMPTY_FORM);
   const [saving, setSaving] = React.useState(false);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<BlogPost | null>(null);
 
   const {
     data: posts,
@@ -101,7 +103,6 @@ export function BlogAdmin() {
     "/api/posts/categories"
   );
   const createPost = useApiMutation("/api/admin/blog-posts");
-  const deletePost = useApiMutation(`/api/admin/blog-posts/${deletingId ?? ""}`, "DELETE");
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.adminBlogPosts });
 
@@ -139,7 +140,7 @@ export function BlogAdmin() {
   const handleDelete = async (post: BlogPost) => {
     setDeletingId(post.id);
     try {
-      await deletePost();
+      await apiDelete(`/api/admin/blog-posts/${post.id}`);
       toast.success("Post deleted");
       await refresh();
     } catch {
@@ -202,7 +203,7 @@ export function BlogAdmin() {
                   {post.excerpt ?? "No excerpt"} · {post.readTimeMin} min read
                 </p>
                 <p className="text-muted-foreground mt-1 text-xs">
-                  By {post.author.name} · {formatDate(post.createdAt)}
+                  By {post.author.name} · {formatDate(post.publishedAt ?? post.createdAt)}
                 </p>
               </div>
               <div className="flex items-center gap-2 sm:shrink-0">
@@ -211,9 +212,9 @@ export function BlogAdmin() {
                   variant="outline"
                   size="icon-sm"
                   className="text-destructive hover:border-destructive/50"
-                  onClick={() => handleDelete(post)}
+                  onClick={() => setDeleteTarget(post)}
                   disabled={deletingId === post.id}
-                  aria-label="Delete post"
+                  aria-label={`Delete ${post.title} post`}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
@@ -325,6 +326,21 @@ export function BlogAdmin() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Delete blog post?"
+        description={`“${deleteTarget?.title ?? "This post"}” will be permanently removed. This cannot be undone.`}
+        loading={deletingId === deleteTarget?.id}
+        onConfirm={async () => {
+          if (!deleteTarget) return;
+          await handleDelete(deleteTarget);
+          setDeleteTarget(null);
+        }}
+      />
     </div>
   );
 }

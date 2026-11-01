@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 interface GymClass {
   id: string;
-  name: string;
+  title: string;
   description: string | null;
   type: string;
   startTime: string;
@@ -36,7 +36,7 @@ interface Booking {
   createdAt: string;
   class: {
     id: string;
-    name: string;
+    title: string;
     type: string;
     startTime: string;
     endTime: string;
@@ -69,7 +69,7 @@ export function ClassesDashboard() {
   );
   const { data: bookingsData } = useApiQuery<{ upcoming: Booking[]; past: Booking[] }>(
     QUERY_KEYS.bookings,
-    "/api/me/bookings"
+    "/api/bookings"
   );
 
   const refresh = () => {
@@ -140,7 +140,7 @@ export function ClassesDashboard() {
                     <Dumbbell className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-foreground text-sm font-semibold">{booking.class.name}</p>
+                    <p className="text-foreground text-sm font-semibold">{booking.class.title}</p>
                     <p className="text-muted-foreground text-xs">
                       {new Date(booking.class.startTime).toLocaleDateString(undefined, {
                         weekday: "short",
@@ -259,6 +259,7 @@ export function ClassesDashboard() {
           {data.classes.map((cls, i) => {
             const isBooked = bookedClassIds.has(cls.id);
             const isFull = cls.spotsLeft === 0;
+            const hasStarted = new Date(cls.startTime) <= new Date();
             return (
               <motion.div
                 key={cls.id}
@@ -276,7 +277,7 @@ export function ClassesDashboard() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-display text-foreground text-base font-bold tracking-wide uppercase">
-                        {cls.name}
+                        {cls.title}
                       </h3>
                       <Badge variant="secondary">{cls.type}</Badge>
                     </div>
@@ -330,6 +331,10 @@ export function ClassesDashboard() {
                   {isBooked ? (
                     <Button className="w-full" disabled>
                       Booked ✓
+                    </Button>
+                  ) : hasStarted ? (
+                    <Button className="w-full" disabled>
+                      Class started
                     </Button>
                   ) : isFull ? (
                     <Button

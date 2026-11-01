@@ -57,12 +57,7 @@ interface MaskRevealProps {
   delay?: number;
 }
 
-export function MaskReveal({
-  as: Tag = "span",
-  children,
-  className,
-  delay = 0,
-}: MaskRevealProps) {
+export function MaskReveal({ as: Tag = "span", children, className, delay = 0 }: MaskRevealProps) {
   const ref = React.useRef<HTMLElement>(null);
 
   useGSAP(

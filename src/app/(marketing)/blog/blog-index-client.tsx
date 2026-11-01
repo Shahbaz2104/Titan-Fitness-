@@ -10,20 +10,30 @@ import { Input } from "@/components/ui/input";
 import { SmartImage } from "@/components/ui/smart-image";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
-import { BLOG_CATEGORIES, searchPosts } from "@/lib/blog-data";
+import { BLOG_CATEGORIES, type BlogPostData } from "@/lib/blog-data";
 
-export function BlogIndexClient() {
+export function BlogIndexClient({ initialPosts }: { initialPosts: BlogPostData[] }) {
   const [category, setCategory] = React.useState<string>("All");
   const [query, setQuery] = React.useState("");
   const [saved, setSaved] = React.useState<Set<string>>(new Set());
   const debouncedQuery = useDebounce(query, 300);
 
-  const posts = React.useMemo(
-    () => searchPosts(debouncedQuery, category),
-    [debouncedQuery, category]
-  );
+  const posts = React.useMemo(() => {
+    const q = debouncedQuery.toLowerCase().trim();
+    return initialPosts.filter((post) => {
+      const matchesCategory = category === "All" || post.category === category;
+      const matchesQuery =
+        !q ||
+        post.title.toLowerCase().includes(q) ||
+        post.excerpt.toLowerCase().includes(q) ||
+        post.tags.some((tag) => tag.toLowerCase().includes(q));
+      return matchesCategory && matchesQuery;
+    });
+  }, [initialPosts, debouncedQuery, category]);
 
   const featured = posts.find((p) => p.featured);
+  const showFeatured = !!featured && category === "All" && !query;
+  const gridPosts = showFeatured ? posts.filter((post) => post.slug !== featured.slug) : posts;
 
   return (
     <>
@@ -65,10 +75,10 @@ export function BlogIndexClient() {
             </div>
           </div>
 
-          {featured && category === "All" && !query && (
+          {showFeatured && featured && (
             <Link
               href={`/blog/${featured.slug}`}
-              className="group border-border bg-surface/60 hover:border-white/15 relative mt-10 block overflow-hidden rounded-2xl border transition-colors duration-300"
+              className="group border-border bg-surface/60 relative mt-10 block overflow-hidden rounded-2xl border transition-colors duration-300 hover:border-white/15"
             >
               <div className="grid lg:grid-cols-2">
                 <div className="relative aspect-[16/10] overflow-hidden lg:aspect-auto lg:h-full">
@@ -106,7 +116,7 @@ export function BlogIndexClient() {
           )}
 
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post, i) => (
+            {gridPosts.map((post, i) => (
               <motion.article
                 key={post.slug}
                 initial={{ opacity: 0, y: 24 }}
@@ -176,7 +186,7 @@ export function BlogIndexClient() {
             ))}
           </div>
 
-          {posts.length === 0 && (
+          {gridPosts.length === 0 && !showFeatured && (
             <div className="mt-16 text-center">
               <p className="text-foreground text-xl font-semibold">No articles found</p>
               <p className="text-muted-foreground mt-2 text-sm">

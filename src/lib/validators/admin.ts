@@ -6,7 +6,8 @@ export const programSchema = z.object({
     .string()
     .min(2)
     .max(80)
-    .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only"),
+    .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers, hyphens only")
+    .optional(),
   category: z.enum([
     "WEIGHT_LOSS",
     "BODYBUILDING",
@@ -22,6 +23,7 @@ export const programSchema = z.object({
   price: z.number().min(0).max(10000).optional().nullable(),
   description: z.string().min(10).max(500),
   longDescription: z.string().max(3000).optional().nullable(),
+  sessionsPerWeek: z.number().int().min(1).max(7).default(3),
   trainerId: z.string().optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),
   videoUrl: z.string().url().optional().nullable(),
@@ -115,6 +117,7 @@ export const challengeSchema = z.object({
   endDate: z.coerce.date(),
   goalType: z.enum(["WORKOUTS", "CALORIES", "STEPS", "WATER", "ATTENDANCE", "STREAK_DAYS"]),
   goalValue: z.number().int().min(1),
+  rewardDescription: z.string().max(300).optional().nullable(),
   isActive: z.boolean().default(true),
 });
 

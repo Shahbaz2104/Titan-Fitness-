@@ -100,10 +100,10 @@ function BeforeAfter({ before, after, label }: BeforeAfterProps) {
         className="absolute top-0 bottom-0 w-px bg-white/90 shadow-[0_0_8px_rgba(0,0,0,0.5)]"
         style={{ left: `${value}%` }}
       />
-      <span className="bg-background/60 text-muted-foreground absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-wider backdrop-blur-sm">
+      <span className="bg-background/60 text-muted-foreground absolute top-3 left-3 rounded-full px-3 py-1 text-[11px] font-medium tracking-wider uppercase backdrop-blur-sm">
         Before
       </span>
-      <span className="bg-background/60 text-success absolute top-3 right-3 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-wider backdrop-blur-sm">
+      <span className="bg-background/60 text-success absolute top-3 right-3 rounded-full px-3 py-1 text-[11px] font-medium tracking-wider uppercase backdrop-blur-sm">
         After
       </span>
     </div>

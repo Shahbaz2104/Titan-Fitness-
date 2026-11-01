@@ -22,6 +22,9 @@ export function SmartImage({
 }: SmartImageProps) {
   const [failed, setFailed] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
+  const handleRef = React.useCallback((node: HTMLImageElement | null) => {
+    if (node?.complete) setLoaded(true);
+  }, []);
 
   if (!src || failed) {
     return (
@@ -41,6 +44,7 @@ export function SmartImage({
 
   return (
     <img
+      ref={handleRef}
       src={src}
       alt={alt}
       loading={priority ? "eager" : "lazy"}

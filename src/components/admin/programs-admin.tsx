@@ -24,9 +24,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QUERY_KEYS } from "@/lib/constants";
-import { useApiQuery, useApiMutation } from "@/lib/api-client";
+import { apiDelete, useApiQuery, useApiMutation } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -90,6 +91,7 @@ export function ProgramsAdmin() {
   const [form, setForm] = React.useState<ProgramForm>(EMPTY_FORM);
   const [saving, setSaving] = React.useState(false);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<Program | null>(null);
 
   const {
     data: programs,
@@ -102,7 +104,6 @@ export function ProgramsAdmin() {
     `/api/admin/programs/${editing?.id ?? ""}`,
     "PATCH"
   );
-  const deleteProgram = useApiMutation(`/api/admin/programs/${deletingId ?? ""}`, "DELETE");
 
   const openCreate = () => {
     setEditing(null);
@@ -161,7 +162,7 @@ export function ProgramsAdmin() {
   const handleDelete = async (program: Program) => {
     setDeletingId(program.id);
     try {
-      await deleteProgram();
+      await apiDelete(`/api/admin/programs/${program.id}`);
       toast.success("Program deleted");
       await refresh();
     } catch {
@@ -260,9 +261,9 @@ export function ProgramsAdmin() {
                     variant="outline"
                     size="icon-sm"
                     className="text-destructive hover:border-destructive/50"
-                    onClick={() => handleDelete(program)}
+                    onClick={() => setDeleteTarget(program)}
                     disabled={deletingId === program.id}
-                    aria-label="Delete program"
+                    aria-label={`Delete ${program.name} program`}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -375,6 +376,21 @@ export function ProgramsAdmin() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        title="Delete program?"
+        description={`“${deleteTarget?.name ?? "This program"}” will be permanently removed. This cannot be undone.`}
+        loading={deletingId === deleteTarget?.id}
+        onConfirm={async () => {
+          if (!deleteTarget) return;
+          await handleDelete(deleteTarget);
+          setDeleteTarget(null);
+        }}
+      />
     </div>
   );
 }

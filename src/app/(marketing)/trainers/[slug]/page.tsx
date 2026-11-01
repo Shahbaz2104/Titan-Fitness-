@@ -254,7 +254,7 @@ export default async function TrainerDetailPage({ params }: { params: Promise<{ 
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="bg-surface-2 border-border flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold text-muted-foreground">
+                          <div className="bg-surface-2 border-border text-muted-foreground flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold">
                             {review.initials}
                           </div>
                           <div>

@@ -18,7 +18,7 @@ export function StatsBar() {
           <GsapReveal
             key={stat.label}
             delay={i * 0.08}
-            className="flex flex-col items-center gap-1 border-border px-4 py-10 border-b odd:border-r sm:py-12 lg:border-b-0 lg:odd:border-r-0 lg:[&:not(:first-child)]:border-l"
+            className="border-border flex flex-col items-center gap-1 border-b px-4 py-10 odd:border-r sm:py-12 lg:border-b-0 lg:odd:border-r-0 lg:[&:not(:first-child)]:border-l"
           >
             <p className="font-display text-foreground text-4xl font-bold tracking-[-0.02em] sm:text-5xl">
               <CountUp to={stat.to} suffix={stat.suffix} />

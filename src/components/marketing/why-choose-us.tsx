@@ -34,8 +34,7 @@ const FEATURES = [
   {
     icon: HeartPulse,
     title: "Health analytics",
-    description:
-      "BMI, body fat, muscle mass, and calorie trends — charts that keep you honest.",
+    description: "BMI, body fat, muscle mass, and calorie trends — charts that keep you honest.",
   },
   {
     icon: ShieldCheck,
@@ -87,9 +86,7 @@ function FeatureRow({ feature, index }: { feature: (typeof FEATURES)[number]; in
         <h3 className="feature-title text-foreground text-base font-semibold transition-colors duration-300">
           {feature.title}
         </h3>
-        <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-          {feature.description}
-        </p>
+        <p className="text-muted-foreground mt-1 text-sm leading-relaxed">{feature.description}</p>
       </div>
     </li>
   );

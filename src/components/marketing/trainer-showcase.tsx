@@ -53,9 +53,10 @@ export function TrainerShowcase() {
             <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
               <AnimeText text="Learn from coaches who compete" effect="blur" scroll />
             </h2>
-            <p className="text-muted-foreground mt-4">
-              <WordReveal text="Certified, results-driven trainers who have been where you are." />
-            </p>
+            <WordReveal
+              className="text-muted-foreground mt-4"
+              text="Certified, results-driven trainers who have been where you are."
+            />
           </div>
           <Link
             href="/trainers"

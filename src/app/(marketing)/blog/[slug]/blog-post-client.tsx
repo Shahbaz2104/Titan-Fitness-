@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Markdown } from "@/components/shared/markdown";
 import { cn } from "@/lib/utils";
-import { getPost, getPosts } from "@/lib/blog-data";
+import type { BlogPostData } from "@/lib/blog-data";
 
 interface Comment {
   id: string;
@@ -18,8 +18,8 @@ interface Comment {
   createdAt: string;
 }
 
-export function BlogPostClient({ slug }: { slug: string }) {
-  const post = getPost(slug);
+export function BlogPostClient({ post, related }: { post: BlogPostData; related: BlogPostData[] }) {
+  const slug = post.slug;
   const [liked, setLiked] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
   const [comments, setComments] = React.useState<Comment[]>([]);
@@ -40,12 +40,6 @@ export function BlogPostClient({ slug }: { slug: string }) {
     }
     loadComments();
   }, [slug]);
-
-  if (!post) return null;
-
-  const related = getPosts()
-    .filter((p) => p.slug !== slug)
-    .slice(0, 3);
 
   const submitComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,7 +136,7 @@ export function BlogPostClient({ slug }: { slug: string }) {
           </Button>
         </div>
 
-        <Markdown className="mt-10">{post.content}</Markdown>
+        <Markdown className="mt-10">{post.content.replace(/^# .+\n+/, "")}</Markdown>
 
         {/* Comments */}
         <section className="mt-16">
@@ -181,10 +175,7 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
           <div className="mt-8 space-y-4">
             {comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="border-border bg-surface/60 rounded-xl border p-6"
-              >
+              <div key={comment.id} className="border-border bg-surface/60 rounded-xl border p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
@@ -217,7 +208,7 @@ export function BlogPostClient({ slug }: { slug: string }) {
               <Link
                 key={p.slug}
                 href={`/blog/${p.slug}`}
-                className="group border-border bg-surface/60 hover:border-white/15 rounded-xl border p-5 transition-colors duration-300"
+                className="group border-border bg-surface/60 rounded-xl border p-5 transition-colors duration-300 hover:border-white/15"
               >
                 <Badge variant="secondary" className="mb-3">
                   {p.category}

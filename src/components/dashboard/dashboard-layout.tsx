@@ -34,6 +34,8 @@ import { Badge } from "@/components/ui/badge";
 import { authClient } from "@/lib/auth-client";
 import { useUser } from "@/hooks/use-user";
 import { useUIStore } from "@/stores/ui-store";
+import { useApiQuery } from "@/lib/api-client";
+import { QUERY_KEYS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -83,7 +85,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: user } = useUser();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
+  const mobileNavOpen = useUIStore((s) => s.mobileNavOpen);
+  const setMobileNavOpen = useUIStore((s) => s.setMobileNavOpen);
   const [signingOut, setSigningOut] = React.useState(false);
+  const { data: attendanceStats } = useApiQuery<{ currentStreak: number }>(
+    [...QUERY_KEYS.attendance, "header"],
+    "/api/attendance/stats"
+  );
+  const { data: notificationSummary } = useApiQuery<{ unreadCount: number }>(
+    ["notifications", "header"],
+    "/api/me/notifications",
+    { limit: 1 }
+  );
 
   React.useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -187,14 +200,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile sidebar */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {mobileNavOpen && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
-              onClick={() => setSidebarOpen(false)}
+              onClick={() => setMobileNavOpen(false)}
             />
             <motion.aside
               initial={{ x: "-100%" }}
@@ -206,7 +219,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <div className="flex h-20 items-center justify-between px-6">
                 <Logo />
                 <button
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={() => setMobileNavOpen(false)}
                   className="text-muted-foreground rounded-full p-2 transition-colors hover:bg-white/5"
                   aria-label="Close menu"
                 >
@@ -224,7 +237,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         <Link
                           key={item.href}
                           href={item.href}
-                          onClick={() => setSidebarOpen(false)}
+                          onClick={() => setMobileNavOpen(false)}
                           className={cn(
                             "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                             isActive(item.href)
@@ -261,9 +274,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <header className="border-border bg-background/80 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-4 backdrop-blur-xl sm:h-20 sm:px-6">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="border-border bg-surface text-foreground flex h-10 w-10 items-center justify-center rounded-full border lg:hidden"
-              aria-label="Toggle menu"
+              onClick={() => {
+                if (window.matchMedia("(min-width: 1024px)").matches) {
+                  setSidebarOpen(true);
+                } else {
+                  setMobileNavOpen(true);
+                }
+              }}
+              className={cn(
+                "border-border bg-surface text-foreground flex h-10 w-10 items-center justify-center rounded-full border",
+                sidebarOpen && "lg:hidden"
+              )}
+              aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -278,10 +300,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <Badge variant="success" className="hidden sm:inline-flex">
-              <Zap className="h-3 w-3" />
-              Streak: 21 days
-            </Badge>
+            {(attendanceStats?.currentStreak ?? 0) > 0 && (
+              <Badge variant="success" className="hidden sm:inline-flex">
+                <Zap className="h-3 w-3" />
+                Streak: {attendanceStats?.currentStreak}{" "}
+                {attendanceStats?.currentStreak === 1 ? "day" : "days"}
+              </Badge>
+            )}
             <Link
               href="/dashboard/ai/chat"
               className="border-border bg-surface text-accent hover:border-accent/50 hover:shadow-glow-accent flex h-10 w-10 items-center justify-center rounded-full border transition-all"
@@ -295,9 +320,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               aria-label="Notifications"
             >
               <Bell className="h-4 w-4" />
-              <span className="bg-primary absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white">
-                3
-              </span>
+              {(notificationSummary?.unreadCount ?? 0) > 0 && (
+                <span className="bg-primary absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white">
+                  {notificationSummary?.unreadCount}
+                </span>
+              )}
             </Link>
             <Link
               href="/dashboard/profile"

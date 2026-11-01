@@ -32,7 +32,12 @@ export function Hero() {
         { yPercent: 0, duration: 1.2, stagger: 0.12, ease: "power4.out" },
         0.15
       );
-      tl.fromTo(fade, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 }, 0.6);
+      tl.fromTo(
+        fade,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 },
+        0.6
+      );
     },
     { scope: ref }
   );
@@ -46,12 +51,12 @@ export function Hero() {
           loop
           muted
           playsInline
-          poster="/images/hero-poster.jpg"
+          poster="/hero-poster.jpg"
         >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
         </video>
         <SmartImage
-          src="/images/hero-poster.jpg"
+          src="/hero-poster.jpg"
           alt="Titan Fitness training floor"
           className="h-full w-full object-cover"
           fallbackClassName="bg-surface-2 h-full w-full"
@@ -88,7 +93,10 @@ export function Hero() {
               </span>
             </span>
           </h1>
-          <p data-hero-fade className="text-muted-foreground mt-6 max-w-xl text-base leading-relaxed sm:text-lg">
+          <p
+            data-hero-fade
+            className="text-muted-foreground mt-6 max-w-xl text-base leading-relaxed sm:text-lg"
+          >
             Titan builds your workouts, meal plans, and coaching around you — not a template. Log a
             session and watch the plan adapt.
           </p>
@@ -109,9 +117,12 @@ export function Hero() {
         </div>
       </motion.div>
 
-      <div data-hero-fade className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
+      <div
+        data-hero-fade
+        className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3"
+      >
         <span className="text-muted-foreground text-xs">Scroll</span>
-        <span className="bg-white/10 relative h-10 w-px overflow-hidden">
+        <span className="relative h-10 w-px overflow-hidden bg-white/10">
           <motion.span
             className="bg-primary absolute inset-x-0 top-0 h-1/2"
             animate={{ y: ["-100%", "220%"] }}

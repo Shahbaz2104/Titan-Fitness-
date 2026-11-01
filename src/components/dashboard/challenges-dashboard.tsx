@@ -119,7 +119,7 @@ export function ChallengesDashboard() {
                   <div className="text-muted-foreground flex justify-between text-xs">
                     <span>Progress</span>
                     <span>
-                      {mine.progress}/{mine.challenge.goalValue}
+                      {mine.progress.toLocaleString()}/{mine.challenge.goalValue.toLocaleString()}
                     </span>
                   </div>
                   <Progress
@@ -143,13 +143,13 @@ export function ChallengesDashboard() {
       {/* Active challenges */}
       <div>
         <h3 className="font-display text-foreground mb-3 text-sm font-bold tracking-widest uppercase">
-          Open challenges
+          All challenges
         </h3>
         {active.length === 0 ? (
           <Card className="flex flex-col items-center gap-3 p-12 text-center">
             <Flag className="text-muted-foreground h-10 w-10" />
             <p className="font-display text-foreground text-lg font-bold tracking-wide uppercase">
-              No open challenges
+              No active challenges
             </p>
             <p className="text-muted-foreground max-w-sm text-sm">
               New challenges drop regularly. Check back soon!
@@ -179,7 +179,8 @@ export function ChallengesDashboard() {
                   <div className="text-muted-foreground mt-4 flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1.5">
                       <Medal className="h-3.5 w-3.5" />
-                      Goal: {challenge.goalValue} {challenge.goalType.toLowerCase()}
+                      Goal: {challenge.goalValue.toLocaleString()}{" "}
+                      {challenge.goalType.toLowerCase()}
                     </span>
                     <span>
                       {new Date(challenge.startDate).toLocaleDateString(undefined, {

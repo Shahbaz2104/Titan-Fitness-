@@ -22,7 +22,7 @@ export function Marquee({ items, className, speed = 40 }: MarqueeProps) {
       )}
     >
       <div
-        className="flex w-max items-center gap-0 whitespace-nowrap motion-reduce:animate-none group-hover:[animation-play-state:paused]"
+        className="flex w-max items-center gap-0 whitespace-nowrap group-hover:[animation-play-state:paused] motion-reduce:animate-none"
         style={{
           animation: `marquee-scroll ${duration}s linear infinite`,
         }}

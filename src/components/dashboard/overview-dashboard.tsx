@@ -39,7 +39,12 @@ interface TodayWorkout {
     id: string;
     isCompleted: boolean;
     durationMinutes: number | null;
-    logs: { id: string; exercise: { name: string }; sets: number; reps: string | null }[];
+    logs: {
+      id: string;
+      exercise: { name: string };
+      setsCompleted: number;
+      reps: string | null;
+    }[];
   }[];
   plan: {
     id: string;
@@ -58,6 +63,7 @@ interface AttendanceStats {
   total: number;
   thisMonth: number;
   currentStreak: number;
+  weekRecords: { id: string; checkInTime: string }[];
 }
 
 interface PointsInfo {
@@ -69,7 +75,7 @@ interface Booking {
   id: string;
   class: {
     id: string;
-    name: string;
+    title: string;
     type: string;
     startTime: string;
     branch: { name: string; city: string };
@@ -113,7 +119,7 @@ export function OverviewDashboard() {
   );
   const { data: bookings } = useApiQuery<{ upcoming: Booking[]; past: Booking[] }>(
     QUERY_KEYS.bookings,
-    "/api/me/bookings"
+    "/api/bookings"
   );
   const { data: membership } = useApiQuery<Membership | null>(
     QUERY_KEYS.membership,
@@ -125,13 +131,19 @@ export function OverviewDashboard() {
   );
 
   const waterPct = Math.min(100, Math.round(((nutrition?.water ?? 0) / WATER_DAILY_GOAL_ML) * 100));
+  const checkedDayIndexes = new Set(
+    (attendanceStats?.weekRecords ?? []).map((record) => {
+      const day = new Date(record.checkInTime).getDay();
+      return (day + 6) % 7;
+    })
+  );
 
   const todaySession = todayWorkout?.sessions?.[0] ?? null;
   const todayExercises =
     todaySession?.logs?.map((l) => ({
       id: l.id,
       name: l.exercise.name,
-      sets: l.sets,
+      sets: l.setsCompleted,
       reps: l.reps ?? "—",
     })) ??
     todayWorkout?.plan?.days?.[0]?.exercises?.map((e) => ({
@@ -342,7 +354,7 @@ export function OverviewDashboard() {
                       </span>
                       <div>
                         <p className="text-foreground text-sm font-semibold">
-                          {booking.class.name}
+                          {booking.class.title}
                         </p>
                         <p className="text-muted-foreground text-xs">
                           {new Date(booking.class.startTime).toLocaleDateString(undefined, {
@@ -386,12 +398,12 @@ export function OverviewDashboard() {
                     <span
                       className={cn(
                         "flex h-10 w-10 items-center justify-center rounded-full border text-xs font-bold transition-all duration-300",
-                        attendance?.checkedIn && new Date().getDay() === i
+                        checkedDayIndexes.has(i)
                           ? "border-primary bg-primary/15 text-primary shadow-glow"
                           : "border-border bg-surface text-muted-foreground"
                       )}
                     >
-                      {attendance?.checkedIn && new Date().getDay() === i ? "✓" : day}
+                      {checkedDayIndexes.has(i) ? "✓" : day}
                     </span>
                     <span className="text-muted-foreground text-[10px] uppercase">{day}</span>
                   </div>

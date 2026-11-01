@@ -104,7 +104,7 @@ export default function TrainersPage() {
             <GsapReveal key={trainer.slug} delay={(i % 3) * 0.07}>
               <Link
                 href={`/trainers/${trainer.slug}`}
-                className="group border-border bg-surface/60 hover:border-white/15 flex h-full flex-col rounded-xl border transition-colors duration-300"
+                className="group border-border bg-surface/60 flex h-full flex-col rounded-xl border transition-colors duration-300 hover:border-white/15"
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <SmartImage

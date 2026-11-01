@@ -82,9 +82,10 @@ export function ProgramsGrid() {
             <h2 className="font-display text-foreground text-3xl font-bold tracking-[-0.02em] sm:text-4xl lg:text-5xl">
               <AnimeText text="Programs built for how you train" effect="rise" scroll />
             </h2>
-            <p className="text-muted-foreground mt-4">
-              <WordReveal text="Every program is built by certified coaches and enhanced with AI personalization." />
-            </p>
+            <WordReveal
+              className="text-muted-foreground mt-4"
+              text="Every program is built by certified coaches and enhanced with AI personalization."
+            />
           </div>
           <Link
             href="/programs"
@@ -97,38 +98,35 @@ export function ProgramsGrid() {
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {PROGRAMS.map((program, i) => (
             <GsapReveal key={program.slug} delay={(i % 4) * 0.07}>
-              <Link
-                href={`/programs/${program.slug}`}
-                className="group flex flex-col"
-              >
-              <div className="border-border relative aspect-[4/3] overflow-hidden rounded-xl border">
-                <ImageReveal
-                  src={`/images/programs/${program.slug}.jpg`}
-                  alt={program.name}
-                  className="h-full w-full"
-                  imgClassName="group-hover:scale-105"
-                  fallbackClassName="bg-surface-2 h-full w-full"
-                  fallback={
-                    <program.icon className="text-muted-foreground h-10 w-10 opacity-60" />
-                  }
-                />
-                {program.tag && (
-                  <span className="bg-primary text-primary-foreground absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-medium">
-                    {program.tag}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-start justify-between gap-4 px-1 pt-4">
-                <div>
-                  <h3 className="font-display text-foreground text-lg font-semibold tracking-[-0.01em]">
-                    {program.name}
-                  </h3>
-                  <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
-                    {program.description}
-                  </p>
+              <Link href={`/programs/${program.slug}`} className="group flex flex-col">
+                <div className="border-border relative aspect-[4/3] overflow-hidden rounded-xl border">
+                  <ImageReveal
+                    src={`/images/programs/${program.slug}.jpg`}
+                    alt={program.name}
+                    className="h-full w-full"
+                    imgClassName="group-hover:scale-105"
+                    fallbackClassName="bg-surface-2 h-full w-full"
+                    fallback={
+                      <program.icon className="text-muted-foreground h-10 w-10 opacity-60" />
+                    }
+                  />
+                  {program.tag && (
+                    <span className="bg-primary text-primary-foreground absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-medium">
+                      {program.tag}
+                    </span>
+                  )}
                 </div>
-              </div>
-            </Link>
+                <div className="flex items-start justify-between gap-4 px-1 pt-4">
+                  <div>
+                    <h3 className="font-display text-foreground text-lg font-semibold tracking-[-0.01em]">
+                      {program.name}
+                    </h3>
+                    <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+                      {program.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
             </GsapReveal>
           ))}
         </div>

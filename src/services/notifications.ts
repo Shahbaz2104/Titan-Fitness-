@@ -160,10 +160,31 @@ export async function sendPushToUser(
         payload
       );
       sent++;
+      await prisma.pushSubscription
+        .update({
+          where: { endpoint: sub.endpoint },
+          data: { lastSuccessAt: new Date(), failureCount: 0 },
+        })
+        .catch(() => {});
     } catch (error) {
       const code = (error as { statusCode?: number }).statusCode;
       // 404/410: subscription is gone — clean it up
       if (code === 404 || code === 410) {
+        await prisma.pushSubscription
+          .deleteMany({ where: { endpoint: sub.endpoint } })
+          .catch(() => {});
+        continue;
+      }
+
+      const updated = await prisma.pushSubscription
+        .update({
+          where: { endpoint: sub.endpoint },
+          data: { failureCount: { increment: 1 } },
+          select: { failureCount: true },
+        })
+        .catch(() => null);
+
+      if (updated && updated.failureCount >= 3) {
         await prisma.pushSubscription
           .deleteMany({ where: { endpoint: sub.endpoint } })
           .catch(() => {});
